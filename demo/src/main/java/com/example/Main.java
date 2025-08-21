@@ -214,4 +214,15 @@ class CursosInscritos{
     public void guardarinformacion(){
 
     }
+    public void cargarDatos(){
+
+    }
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Inscripcion inscripcion : listado) {
+            sb.append(inscripcion.toString()).append("\n");
+        }
+        return sb.toString();
+    }
 }
