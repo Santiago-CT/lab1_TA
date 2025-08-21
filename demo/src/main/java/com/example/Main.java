@@ -1,4 +1,5 @@
 package com.example;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Main {
@@ -138,4 +139,57 @@ class CursoProfesor{
     public String toString(){
         return "Curso: " + curso + ", Profesor: " + profesor + ", Año: " + anio + ", Semestre: " + semestre;
     }
+}
+class InscripcionesPersonas{
+ private ArrayList<Persona> listado;
+    public InscripcionesPersonas() {
+        this.listado = new ArrayList<>();
+    }
+    public void inscribir(Persona persona) {
+        listado.add(persona);
+    }
+    public void eliminar(Persona persona) {
+        listado.remove(persona);
+    }
+    public void actualizar(Persona persona) {
+        int index = listado.indexOf(persona);
+        if (index != -1) {
+            listado.set(index, persona);
+        }
+    }
+    public void guardarinformacion(){
+
+    }
+    public void cargarDatos(){
+
+    }
+}
+class CursoProfesores{
+    private ArrayList<CursoProfesor> listado;
+        public CursoProfesores() {
+            this.listado = new ArrayList<>();
+        }
+        public void inscribir(CursoProfesor cursoProfesor) {
+            listado.add(cursoProfesor);
+        }
+    
+        public void actualizar(CursoProfesor cursoProfesor) {
+            int index = listado.indexOf(cursoProfesor);
+            if (index != -1) {
+                listado.set(index, cursoProfesor);
+            }
+        }
+        public void guardarinformacion(){
+    
+        }
+        public void cargarDatos(){
+    
+        }
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            for (CursoProfesor cp : listado) {
+                sb.append(cp.toString()).append("\n");
+            }
+            return sb.toString();}
 }
