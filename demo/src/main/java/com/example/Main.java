@@ -86,3 +86,56 @@ class Facultad{
     }
 }
 
+class Curso{
+        private int ID;
+        private String nombre;
+        private Programa programa;
+        private boolean activo;
+        public Curso(int ID, String nombre, Programa programa, boolean activo){
+            this.ID = ID;
+            this.nombre = nombre;
+            this.programa = programa;
+            this.activo = activo;
+        }
+        @Override
+        public String toString(){
+            return "ID: " + ID + ", Nombre: " + nombre + ", Programa: " + programa + ", Activo: " + activo;
+        }
+}
+class Inscripcion{
+    private Estudiante estudiante;
+    private Curso curso;
+    private int anio;
+    private int semestre;
+    public Inscripcion(Estudiante estudiante, Curso curso, int anio, int semestre){
+        this.estudiante = estudiante;
+        this.curso = curso;
+        this.anio = anio;
+        this.semestre = semestre;
+    }
+    
+    
+    @Override
+    public String toString(){
+        return "Estudiante: " + estudiante + ", Curso: " + curso + ", Año: " + anio + ", Semestre: " + semestre;
+    }
+}
+
+class CursoProfesor{
+    private Curso curso;
+    private Profesor profesor;
+    private int anio;
+    private int semestre;
+    
+    public CursoProfesor(Curso curso, Profesor profesor, int anio, int semestre){
+        this.curso = curso;
+        this.profesor = profesor;
+        this.anio = anio;
+        this.semestre = semestre;
+    }
+    
+    @Override
+    public String toString(){
+        return "Curso: " + curso + ", Profesor: " + profesor + ", Año: " + anio + ", Semestre: " + semestre;
+    }
+}
