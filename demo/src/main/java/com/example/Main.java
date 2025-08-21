@@ -1,6 +1,7 @@
 package com.example;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -121,6 +122,12 @@ class Inscripcion{
         return "Estudiante: " + estudiante + ", Curso: " + curso + ", Año: " + anio + ", Semestre: " + semestre;
     }
 }
+interface Servicios{
+    String imprimirPosicion(int posicion);
+   int candidadActual();
+   List<String> imprimirListado();
+
+}
 
 class CursoProfesor{
     private Curso curso;
@@ -140,7 +147,28 @@ class CursoProfesor{
         return "Curso: " + curso + ", Profesor: " + profesor + ", Año: " + anio + ", Semestre: " + semestre;
     }
 }
-class InscripcionesPersonas{
+class InscripcionesPersonas implements Servicios {
+    @Override
+    public String imprimirPosicion(int posicion) {
+        if (posicion < 0 || posicion >= listado.size()) {
+            return "Posición inválida";
+        }
+        return listado.get(posicion).toString();
+    }
+
+    @Override
+    public int candidadActual() {
+        return listado.size();
+    }
+
+    @Override
+    public List<String> imprimirListado() {
+        List<String> result = new ArrayList<>();
+        for (Persona persona : listado) {
+            result.add(persona.toString());
+        }
+        return result;
+    }
  private ArrayList<Persona> listado;
     public InscripcionesPersonas() {
         this.listado = new ArrayList<>();
@@ -164,7 +192,26 @@ class InscripcionesPersonas{
 
     }
 }
-class CursoProfesores{
+class CursoProfesores implements Servicios {
+        @Override
+        public String imprimirPosicion(int posicion) {
+            if (posicion < 0 || posicion >= listado.size()) {
+                return "Posición inválida";
+            }
+            return listado.get(posicion).toString();
+        }
+        @Override
+        public int candidadActual() {
+            return listado.size();
+        }
+        @Override
+        public List<String> imprimirListado() {
+            List<String> result = new ArrayList<>();
+            for (CursoProfesor cursoProfesor : listado) {
+                result.add(cursoProfesor.toString());
+            }
+            return result;
+        }
     private ArrayList<CursoProfesor> listado;
         public CursoProfesores() {
             this.listado = new ArrayList<>();
@@ -194,7 +241,27 @@ class CursoProfesores{
             return sb.toString();}
 }
 
-class CursosInscritos{
+class CursosInscritos implements Servicios {
+    @Override
+    public String imprimirPosicion(int posicion) {
+        if (posicion < 0 || posicion >= listado.size()) {
+            return "Posición inválida";
+}
+        return listado.get(posicion).toString();
+    }
+
+    @Override
+    public int candidadActual() {
+        return listado.size();
+    }
+    @Override
+    public List<String> imprimirListado() {
+        List<String> result = new ArrayList<>();
+        for (Inscripcion inscripcion : listado) {
+            result.add(inscripcion.toString());
+        }
+        return result;
+    }
     private ArrayList<Inscripcion> listado;
     public CursosInscritos() {
         this.listado = new ArrayList<>();
