@@ -193,3 +193,25 @@ class CursoProfesores{
             }
             return sb.toString();}
 }
+
+class CursosInscritos{
+    private ArrayList<Inscripcion> listado;
+    public CursosInscritos() {
+        this.listado = new ArrayList<>();
+    }
+    public void inscribirCurso(Inscripcion inscripcion) {
+        listado.add(inscripcion);
+    }
+    public void eliminar(Inscripcion inscripcion) {
+        listado.remove(inscripcion);
+    }
+    public void actualizar(Inscripcion inscripcion) {
+        int index = listado.indexOf(inscripcion);
+        if (index != -1) {
+            listado.set(index, inscripcion);
+        }
+    }
+    public void guardarinformacion(){
+
+    }
+}
