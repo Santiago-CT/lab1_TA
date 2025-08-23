@@ -1,0 +1,51 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.example.models;
+
+/**
+ *
+ * @author gon
+ */
+public class Facultad{
+    private long ID;
+    private String nombre;
+    private Persona decano;
+    public Facultad(long id, String nombre, Persona decano){
+        this.ID = id;
+        this.nombre = nombre;
+        this.decano = decano;
+    }
+
+    public long getID() {
+        return ID;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public Persona getDecano() {
+        return decano;
+    }
+
+    public void setID(long ID) {
+        this.ID = ID;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setDecano(Persona decano) {
+        this.decano = decano;
+    }
+    
+    
+    @Override
+    public String toString(){
+        return "ID: " + this.ID + " Nombre: " + this.nombre 
+                + " Decano: " + this.decano.toString();
+    }
+}
