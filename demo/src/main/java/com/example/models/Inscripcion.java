@@ -19,6 +19,38 @@ public class Inscripcion{
         this.anio = anio;
         this.semestre = semestre;
     }
+
+    public Estudiante getEstudiante() {
+        return estudiante;
+    }
+
+    public Curso getCurso() {
+        return curso;
+    }
+
+    public int getAnio() {
+        return anio;
+    }
+
+    public int getSemestre() {
+        return semestre;
+    }
+
+    public void setEstudiante(Estudiante estudiante) {
+        this.estudiante = estudiante;
+    }
+
+    public void setCurso(Curso curso) {
+        this.curso = curso;
+    }
+
+    public void setAnio(int anio) {
+        this.anio = anio;
+    }
+
+    public void setSemestre(int semestre) {
+        this.semestre = semestre;
+    }
     
     
     @Override

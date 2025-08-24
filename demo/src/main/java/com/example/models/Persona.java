@@ -9,19 +9,19 @@ package com.example.models;
  * @author gon
  */
 public class Persona{
-    private long ID;
+    private double ID;
     private String nombres;
     private String apellidos;
     private String email;
 
-    public Persona(long ID, String nombres, String apellidos, String email){
+    public Persona(double ID, String nombres, String apellidos, String email){
         this.ID = ID;
         this.nombres = nombres;
         this.apellidos = apellidos;
         this.email = email;
     }
 
-    public long getID() {
+    public double getID() {
         return ID;
     }
 
@@ -37,7 +37,7 @@ public class Persona{
         return email;
     }
 
-    public void setID(long ID) {
+    public void setID(double ID) {
         this.ID = ID;
     }
 

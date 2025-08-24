@@ -9,16 +9,16 @@ package com.example.models;
  * @author gon
  */
 public class Facultad{
-    private long ID;
+    private double ID;
     private String nombre;
     private Persona decano;
-    public Facultad(long id, String nombre, Persona decano){
+    public Facultad(double id, String nombre, Persona decano){
         this.ID = id;
         this.nombre = nombre;
         this.decano = decano;
     }
 
-    public long getID() {
+    public double getID() {
         return ID;
     }
 
@@ -30,7 +30,7 @@ public class Facultad{
         return decano;
     }
 
-    public void setID(long ID) {
+    public void setID(double ID) {
         this.ID = ID;
     }
 

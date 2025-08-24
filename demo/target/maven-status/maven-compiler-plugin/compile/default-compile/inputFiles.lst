@@ -1,5 +1,6 @@
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/Main.java
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/models/Automatizacion.java
+/home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/models/ConexionBD.java
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/models/Curso.java
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/models/CursoProfesor.java
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/models/CursosInscritos.java

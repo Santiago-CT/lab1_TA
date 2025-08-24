@@ -10,15 +10,15 @@ import java.util.Date;
  *
  * @author gon
  */
-class Programa {
+public class Programa {
 
-    private long ID;
+    private double ID;
     private String nombre;
     private double duracion;
     private Date registro;
     private Facultad facultad;
 
-    public Programa(long ID, String nombre, double duracion, Date registro, Facultad facultad) {
+    public Programa(double ID, String nombre, double duracion, Date registro, Facultad facultad) {
         this.ID = ID;
         this.nombre = nombre;
         this.duracion = duracion;
@@ -26,7 +26,7 @@ class Programa {
         this.facultad = facultad;
     }
 
-    public long getID() {
+    public double getID() {
         return ID;
     }
 
@@ -46,7 +46,7 @@ class Programa {
         return facultad;
     }
 
-    public void setID(long ID) {
+    public void setID(double ID) {
         this.ID = ID;
     }
 
