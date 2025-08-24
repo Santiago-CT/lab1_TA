@@ -10,19 +10,19 @@ package com.example.models;
  */
 public class Curso {
 
-    private long ID;
+    private int ID;
     private String nombre;
     private Programa programa;
     private boolean activo;
 
-    public Curso(long ID, String nombre, Programa programa, boolean activo) {
+    public Curso(int ID, String nombre, Programa programa, boolean activo) {
         this.ID = ID;
         this.nombre = nombre;
         this.programa = programa;
         this.activo = activo;
     }
 
-    public long getID() {
+    public int getID() {
         return ID;
     }
 
@@ -38,7 +38,7 @@ public class Curso {
         return activo;
     }
 
-    public void setID(long ID) {
+    public void setID(int ID) {
         this.ID = ID;
     }
 

@@ -7,6 +7,7 @@ com/example/models/Automatizacion.class
 com/example/models/Inscripcion.class
 com/example/models/Facultad.class
 com/example/models/Programa.class
+com/example/models/ConexionBD.class
 com/example/models/Estudiante.class
 com/example/models/InscripcionesPersonas.class
 com/example/models/Servicios.class
