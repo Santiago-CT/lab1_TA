@@ -1,0 +1,13 @@
+com/example/models/CursosInscritos.class
+com/example/models/Profesor.class
+com/example/models/CursosProfesores.class
+com/example/models/CursoProfesor.class
+com/example/models/Persona.class
+com/example/models/Automatizacion.class
+com/example/models/Inscripcion.class
+com/example/models/Facultad.class
+com/example/models/Programa.class
+com/example/models/Estudiante.class
+com/example/models/InscripcionesPersonas.class
+com/example/models/Servicios.class
+com/example/models/Curso.class
