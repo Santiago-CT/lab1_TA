@@ -60,35 +60,19 @@ public class CursosInscritos implements Servicios {
 
     public void guardarinformacion() throws Exception {
         for (Inscripcion inscripcion : listado) {
-            try (Connection cn = ConexionBD.getConnection()) {
-                cn.setAutoCommit(false); // para asegurar transacción
-
-                String sqlPersona = "INSERT INTO persona (id, nombres, apellidos, email) VALUES (?, ?, ?, ?)";
-                try (PreparedStatement psPersona = cn.prepareStatement(sqlPersona)) {
-                    psPersona.setDouble(1, 1);
-                    psPersona.setString(2, "Juan");
-                    psPersona.setString(3, "Pérez");
-                    psPersona.setString(4, "juan@mail.com");
-                    psPersona.executeUpdate();
-                }
-
-                String sqlEstudiante = "INSERT INTO estudiante (persona_id, codigo, programa_id, activo, promedio) VALUES (?, ?, ?, ?, ?)";
-                try (PreparedStatement psEstudiante = cn.prepareStatement(sqlEstudiante)) {
-                    psEstudiante.setDouble(1, 1); // mismo ID
-                    psEstudiante.setDouble(2, 12345);
-                    psEstudiante.setDouble(3, 10);
-                    psEstudiante.setBoolean(4, true);
-                    psEstudiante.setDouble(5, 4.5);
-                    psEstudiante.executeUpdate();
-                }
-
-                cn.commit();
-            }
+            ConexionBD.insertInscripcion(inscripcion);
         }
+        System.out.println("-- INFORMACION GUARDADA EN LA BASE DE DATOS --");
     }
 
-    public void cargarDatos() {
-
+    public void cargarDatos() throws Exception {
+        System.out.println("-- CARGANDO INFORMACION DESDE LA BASE DE DATOS --");
+        ConexionBD.showProfesores();
+        ConexionBD.showFacultades();
+        ConexionBD.showProgramas();
+        ConexionBD.showEstudiantes();
+        ConexionBD.showCursos();
+        ConexionBD.showInscripciones();
     }
 
     @Override

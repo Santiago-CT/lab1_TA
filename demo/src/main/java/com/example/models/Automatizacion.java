@@ -4,7 +4,7 @@
  */
 package com.example.models;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,7 +47,7 @@ public class Automatizacion {
 
     private static void buildPrograma() {
         System.out.println("\nCreando programa...");
-        Date fechaCreacion = new Date();
+        java.sql.Date fechaCreacion = new java.sql.Date(System.currentTimeMillis());
         Programa sistemas = new Programa(11.0, "Ing Sistemas", 10, fechaCreacion, facultades.get(1.0));
         System.out.println(sistemas.toString());
         programas.put(sistemas.getID(), sistemas);
@@ -138,7 +138,7 @@ public class Automatizacion {
         inscripcionesPersonas.inscribir(estudiantes.get(126.0));
     }
 
-    public static void run() {
+    public static void run() throws Exception {
         buildProfesores();
         buildFacultad();
         buildPrograma();
@@ -150,5 +150,22 @@ public class Automatizacion {
         buildInscripcionesPersonas();
         
         ConexionBD.crearTablas();
+        for (Profesor profesor : profesores.values()) {
+            ConexionBD.insertProfesor(profesor);
+        }
+        for (Facultad facultad : facultades.values()) {
+            ConexionBD.insertFacultad(facultad);
+        }
+        for (Programa programa : programas.values()) {
+            ConexionBD.insertPrograma(programa);
+        }
+        for (Estudiante estudiante : estudiantes.values()) {
+            ConexionBD.insertEstudiante(estudiante);
+        }
+        for (Curso curso : cursos.values()) {
+            ConexionBD.insertCurso(curso);
+        }
+        cursosInscritos.guardarinformacion();
+        cursosInscritos.cargarDatos();
     }
 }
