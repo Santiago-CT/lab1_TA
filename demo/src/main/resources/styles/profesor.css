@@ -4,6 +4,39 @@
     -fx-background-color: #f9fafb; /* gris-50 */
     -fx-font-smoothing-type: gray;
 }
+.form-container {
+    -fx-background-color: transparent;
+    -fx-spacing: 15;
+}
+
+.form-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #374151;
+}
+
+.form-field {
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #d1d5db;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 8 12 8 12;
+    -fx-font-size: 14px;
+    -fx-text-fill: #1f2937;
+    -fx-prompt-text-fill: #9ca3af;
+}
+
+.form-field:focused {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #1e40af;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(three-pass-box, rgba(30,64,175,0.1), 4, 0, 0, 0);
+}
+
+.form-field:hover {
+    -fx-border-color: #9ca3af;
+}
 
 /* === CONTENEDOR PRINCIPAL === */
 .border-pane {

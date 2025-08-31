@@ -342,29 +342,55 @@ public class ConexionBD {
 
     public static ArrayList<Estudiante> getEstudiantes() throws Exception {
         String sql = """
-                     SELECT p.id, p.nombres, p.apellidos, p.email, e.codigo, e.programa_id, e.activo, e.promedio
-                     FROM persona as p
-                     JOIN estudiante as e ON p.id = e.persona_id
-                     """;
-        try (Connection cn = ConexionBD.getConnection(); PreparedStatement ps = cn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+                 SELECT p.id, p.nombres, p.apellidos, p.email,
+                        e.codigo, e.activo, e.promedio,
+                        prog.id AS programa_id, prog.nombre AS programa_nombre,
+                        prog.duracion, prog.registro,
+                        f.id AS facultad_id, f.nombre AS facultad_nombre
+                 FROM persona p
+                 JOIN estudiante e ON p.id = e.persona_id
+                 JOIN programa prog ON e.programa_id = prog.id
+                 JOIN facultad f ON prog.facultad_id = f.id
+                 """;
+
+        try (Connection cn = ConexionBD.getConnection();
+             PreparedStatement ps = cn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
             ArrayList<Estudiante> estudiantes = new ArrayList<>();
             while (rs.next()) {
-                double id = rs.getDouble("id");
+                int id = rs.getInt("id");
                 String nombres = rs.getString("nombres");
                 String apellidos = rs.getString("apellidos");
                 String email = rs.getString("email");
-                double codigo = rs.getDouble("codigo");
-                double programa_id = rs.getDouble("programa_id");
-
+                int codigo = rs.getInt("codigo");
                 boolean activo = rs.getBoolean("activo");
                 double promedio = rs.getDouble("promedio");
 
-                //estudiantes.add(new Estudiante(id,nombres,apellidos,email,codigo,programa_id,activo,promedio));
+                // Crear Facultad
+                Facultad facultad = new Facultad(
+                        rs.getInt("facultad_id"),
+                        rs.getString("facultad_nombre"),
+                        null
+
+                );
+
+                // Crear Programa
+                Programa programa = new Programa(
+                        rs.getInt("programa_id"),
+                        rs.getString("programa_nombre"),
+                        rs.getDouble("duracion"),
+                        rs.getDate("registro"),
+                        facultad
+                );
+
+                // Crear Estudiante
+                estudiantes.add(new Estudiante(id, nombres, apellidos, email, codigo, programa, activo, promedio));
             }
             return estudiantes;
         }
-
     }
+
 
     public static void showCursos() throws Exception {
         String sql = """

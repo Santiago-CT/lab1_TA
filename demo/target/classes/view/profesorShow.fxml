@@ -40,7 +40,7 @@
                         styleClass="nav-button" />
                 <Button onAction="#mostrarProfesores" prefWidth="248" text="👨‍🏫 Profesores" 
                         styleClass="nav-button" />
-                <Button onAction="#mostrarEstudiantes" prefWidth="248" text="👨‍🎓 Estudiantes" 
+                <Button onAction="#mostrarEstudiantes" prefWidth="248" text="👨‍🎓 Estudiantes"
                         styleClass="nav-button" />
             </VBox>
             
@@ -142,7 +142,7 @@
                         <HBox.hgrow>ALWAYS</HBox.hgrow>
                     </Region>
         
-                    <Button fx:id="btnAgregar" text="➕ Agregar Profesor" 
+                    <Button fx:id="btnAgregarProfesor" text="➕ Agregar Profesor"
                             styleClass="modern-button, button-success" />
                 </HBox>
     
@@ -159,11 +159,11 @@
     
                 <!-- Botones de acción -->
                 <HBox spacing="15" alignment="CENTER_LEFT">
-                    <Button fx:id="btnEditar" text="✏️ Editar" 
+                    <Button fx:id="btnEditarProfesor" text="✏️ Editar"
                             styleClass="modern-button, button-secondary" />
-                    <Button fx:id="btnEliminar" text="🗑️ Eliminar" 
+                    <Button fx:id="btnEliminarProfesor" text="🗑️ Eliminar"
                             styleClass="modern-button, button-danger" />
-                    <Button fx:id="btnVerDetalles" text="👁️ Ver Detalles" 
+                    <Button fx:id="btnVerDetallesProfesor" text="👁️ Ver Detalles"
                             styleClass="modern-button" />
         
                     <Region>
