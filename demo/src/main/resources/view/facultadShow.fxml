@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox styleClass="form-container" spacing="20" 
+      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    
+    <padding>
+        <Insets top="30" left="30" right="30" bottom="30" />
+    </padding>
+    
+    <!-- Header con título y botón agregar -->
+    <HBox alignment="CENTER_LEFT">
+        <Label text="🏛️ Gestión de Facultades" styleClass="title-medium">
+            <font>
+                <Font name="System Bold" size="24.0" />
+            </font>
+        </Label>
+        
+        <Region>
+            <HBox.hgrow>ALWAYS</HBox.hgrow>
+        </Region>
+        
+        <Button fx:id="btnAgregar" text="➕ Crear Facultad" 
+                styleClass="modern-button, button-success" />
+    </HBox>
+    
+    <!-- Panel de búsqueda -->
+    <HBox styleClass="card" spacing="16" alignment="CENTER_LEFT">
+        <padding>
+            <Insets top="16" left="20" right="20" bottom="16" />
+        </padding>
+        
+        <Label text="🔍 Buscar:" styleClass="body-text">
+            <font>
+                <Font name="System Bold" size="14.0" />
+            </font>
+        </Label>
+        <TextField fx:id="txtBusqueda" promptText="Nombre de la facultad..." 
+                  prefWidth="300" />
+        <Button fx:id="btnBuscar" text="Buscar" 
+                styleClass="modern-button" />
+        <Button fx:id="btnLimpiar" text="Limpiar" 
+                styleClass="modern-button, button-secondary" />
+    </HBox>
+    
+    <!-- Tabla de facultades -->
+    <TableView fx:id="tablaFacultades" styleClass="table-view" prefHeight="400">
+        <columns>
+            <TableColumn fx:id="colCodigo" prefWidth="100" text="CÓDIGO" />
+            <TableColumn fx:id="colNombre" prefWidth="250" text="NOMBRE FACULTAD" />
+            <TableColumn fx:id="colDecano" prefWidth="200" text="DECANO" />
+            <TableColumn fx:id="colTelefono" prefWidth="150" text="TELÉFONO" />
+            <TableColumn fx:id="colEmail" prefWidth="200" text="EMAIL" />
+            <TableColumn fx:id="colProgramas" prefWidth="120" text="PROGRAMAS" />
+            <TableColumn fx:id="colEstado" prefWidth="100" text="ESTADO" />
+        </columns>
+    </TableView>
+    
+    <!-- Botones de acción -->
+    <HBox spacing="15" alignment="CENTER_LEFT">
+        <Button fx:id="btnEditar" text="✏️ Editar" 
+                styleClass="modern-button, button-secondary" />
+        <Button fx:id="btnEliminar" text="🗑️ Eliminar" 
+                styleClass="modern-button, button-danger" />
+        <Button fx:id="btnVerDetalles" text="👁️ Ver Detalles" 
+                styleClass="modern-button" />
+        <Button fx:id="btnGestionarProgramas" text="📚 Gestionar Programas" 
+                styleClass="modern-button, button-secondary" />
+        
+        <Region>
+            <HBox.hgrow>ALWAYS</HBox.hgrow>
+        </Region>
+        
+        <Button fx:id="btnReporte" text="📊 Reporte de Facultades" 
+                styleClass="modern-button, button-secondary" />
+    </HBox>
+    
+    <!-- Panel de estadísticas -->
+    <HBox spacing="24" alignment="CENTER">
+        <VBox styleClass="card" spacing="8" prefWidth="180" alignment="CENTER">
+            <padding>
+                <Insets top="20" left="20" right="20" bottom="20" />
+            </padding>
+            
+            <Label text="🏛️" style="-fx-font-size: 32px;" />
+            <Label text="12" styleClass="stat-number" style="-fx-text-fill: #1e40af;">
+                <font>
+                    <Font name="System Bold" size="28.0" />
+                </font>
+            </Label>
+            <Label text="Total Facultades" styleClass="stat-label">
+                <font>
+                    <Font size="14.0" />
+                </font>
+            </Label>
+        </VBox>
+        
+        <VBox styleClass="card" spacing="8" prefWidth="180" alignment="CENTER">
+            <padding>
+                <Insets top="20" left="20" right="20" bottom="20" />
+            </padding>
+            
+            <Label text="📚" style="-fx-font-size: 32px;" />
+            <Label text="67" styleClass="stat-number" style="-fx-text-fill: #10b981;">
+                <font>
+                    <Font name="System Bold" size="28.0" />
+                </font>
+            </Label>
+            <Label text="Programas Activos" styleClass="stat-label">
+                <font>
+                    <Font size="14.0" />
+                </font>
+            </Label>
+        </VBox>
+        
+        <VBox styleClass="card" spacing="8" prefWidth="180" alignment="CENTER">
+            <padding>
+                <Insets top="20" left="20" right="20" bottom="20" />
+            </padding>
+            
+            <Label text="👨‍🏫" style="-fx-font-size: 32px;" />
+            <Label text="89" styleClass="stat-number" style="-fx-text-fill: #0ea5e9;">
+                <font>
+                    <Font name="System Bold" size="28.0" />
+                </font>
+            </Label>
+            <Label text="Profesores Total" styleClass="stat-label">
+                <font>
+                    <Font size="14.0" />
+                </font>
+            </Label>
+        </VBox>
+        
+        <VBox styleClass="card" spacing="8" prefWidth="180" alignment="CENTER">
+            <padding>
+                <Insets top="20" left="20" right="20" bottom="20" />
+            </padding>
+            
+            <Label text="👨‍🎓" style="-fx-font-size: 32px;" />
+            <Label text="1,247" styleClass="stat-number" style="-fx-text-fill: #10b981;">
+                <font>
+                    <Font name="System Bold" size="28.0" />
+                </font>
+            </Label>
+            <Label text="Estudiantes Total" styleClass="stat-label">
+                <font>
+                    <Font size="14.0" />
+                </font>
+            </Label>
+        </VBox>
+    </HBox>
+    
+</VBox>

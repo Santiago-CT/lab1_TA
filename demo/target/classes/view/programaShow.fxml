@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox styleClass="form-container" spacing="20" 
+      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    
+    <padding>
+        <Insets top="30" left="30" right="30" bottom="30" />
+    </padding>
+    
+    <!-- Header con título y botón agregar -->
+    <HBox alignment="CENTER_LEFT">
+        <Label text="📚 Gestión de Programas Académicos" styleClass="title-medium">
+            <font>
+                <Font name="System Bold" size="24.0" />
+            </font>
+        </Label>
+        
+        <Region>
+            <HBox.hgrow>ALWAYS</HBox.hgrow>
+        </Region>
+        
+        <Button fx:id="btnAgregar" text="➕ Crear Programa" 
+                styleClass="modern-button, button-success" />
+    </HBox>
+    
+    <!-- Panel de filtros -->
+    <VBox styleClass="card" spacing="16">
+        <padding>
+            <Insets top="20" left="20" right="20" bottom="20" />
+        </padding>
+        
+        <Label text="🔍 Filtros de Búsqueda" styleClass="title-small">
+            <font>
+                <Font name="System Bold" size="16.0" />
+            </font>
+        </Label>
+        
+        <HBox spacing="16" alignment="CENTER_LEFT">
+            <VBox spacing="6">
+                <Label text="Buscar programa:" styleClass="body-text" />
+                <TextField fx:id="txtBusqueda" promptText="Nombre del programa..." 
+                          prefWidth="200" />
+            </VBox>
+            
+            <VBox spacing="6">
+                <Label text="Facultad:" styleClass="body-text" />
+                <ComboBox fx:id="cmbFacultad" promptText="Todas las facultades" 
+                         prefWidth="180" />
+            </VBox>
+            
+            <VBox spacing="6">
+                <Label text="Modalidad:" styleClass="body-text" />
+                <ComboBox fx:id="cmbModalidad" promptText="Todas" 
+                         prefWidth="140" />
+            </VBox>
+            
+            <VBox spacing="6">
+                <Label text="Estado:" styleClass="body-text" />
+                <ComboBox fx:id="cmbEstado" promptText="Todos" 
+                         prefWidth="120" />
+            </VBox>
+            
+            <VBox spacing="6">
+                <Label text=" " />
+                <Button fx:id="btnBuscar" text="🔍 Buscar" 
+                        styleClass="modern-button" />
+            </VBox>
+        </HBox>
+    </VBox>
+    
+    <!-- Tabla de programas -->
+    <TableView fx:id="tablaProgramas" styleClass="table-view" prefHeight="400">
+        <columns>
+            <TableColumn fx:id="colCodigo" prefWidth="100" text="CÓDIGO" />
+            <TableColumn fx:id="colNombre" prefWidth="250" text="NOMBRE PROGRAMA" />
+            <TableColumn fx:id="colFacultad" prefWidth="180" text="FACULTAD" />
+            <TableColumn fx:id="colModalidad" prefWidth="120" text="MODALIDAD" />
+            <TableColumn fx:id="colDuracion" prefWidth="100" text="DURACIÓN" />
+            <TableColumn fx:id="colCreditos" prefWidth="100" text="CRÉDITOS" />
+            <TableColumn fx:id="colEstudiantes" prefWidth="100" text="ESTUDIANTES" />
+            <TableColumn fx:id="colEstado" prefWidth="100" text="ESTADO" />
+        </columns>
+    </TableView>
+    
+    <!-- Botones de acción -->
+    <HBox spacing="15" alignment="CENTER_LEFT">
+        <Button fx:id="btnEditar" text="✏️ Editar" 
+                styleClass="modern-button, button-secondary" />
+        <Button fx:id="btnEliminar" text="🗑️ Eliminar" 
+                styleClass="modern-button, button-danger" />
+        <Button fx:id="btnVerDetalles" text="👁️ Ver Detalles" 
+                styleClass="modern-button" />
+        <Button fx:id="btnPlanEstudios" text="📋 Plan de Estudios" 
+                styleClass="modern-button, button-secondary" />
+        <Button fx:id="btnGestionarCursos" text="📖 Gestionar Cursos" 
+                styleClass="modern-button, button-secondary" />
+        
+        <Region>
+            <HBox.hgrow>ALWAYS</HBox.hgrow>
+        </Region>
+        
+        <Button fx:id="btnReporte" text="📊 Reporte Programas" 
+                styleClass="modern-button, button-secondary" />
+    </HBox>
+    
+    <!-- Panel de estadísticas -->
+    <HBox spacing="20" alignment="CENTER">
+        <VBox styleClass="card" spacing="8" prefWidth="160" alignment="CENTER">
+            <padding>
+                <Insets top="16" left="16" right="16" bottom="16" />
+            </padding>
+            
+            <Label text="67" styleClass="stat-number" style="-fx-text-fill: #1e40af;">
+                <font>
+                    <Font name="System Bold" size="24.0" />
+                </font>
+            </Label>
+            <Label text="Programas Activos" styleClass="stat-label">
+                <font>
+                    <Font size="12.0" />
+                </font>
+            </Label>
+        </VBox>
+        
+        <VBox styleClass="card" spacing="8" prefWidth="160" alignment="CENTER">
+            <padding>
+                <Insets top="16" left="16" right="16" bottom="16" />
+            </padding>
+            
+            <Label text="45" styleClass="stat-number" style="-fx-text-fill: #10b981;">
+                <font>
+                    <Font name="System Bold" size="24.0" />
+                </font>
+            </Label>
+            <Label text="Presenciales" styleClass="stat-label">
+                <font>
+                    <Font size="12.0" />
+                </font>
+            </Label>
+        </VBox>
+        
+        <VBox styleClass="card" spacing="8" prefWidth="160" alignment="CENTER">
+            <padding>
+                <Insets top="16" left="16" right="16" bottom="16" />
+            </padding>
+            
+            <Label text="22" styleClass="stat-number" style="-fx-text-fill: #0ea5e9;">
+                <font>
+                    <Font name="System Bold" size="24.0" />
+                </font>
+            </Label>
+            <Label text="Virtuales" styleClass="stat-label">
+                <font>
+                    <Font size="12.0" />
+                </font>
+            </Label>
+        </VBox>
+        
+        <VBox styleClass="card" spacing="8" prefWidth="160" alignment="CENTER">
+            <padding>
+                <Insets top="16" left="16" right="16" bottom="16" />
+            </padding>
+            
+            <Label text="156" styleClass="stat-number" style="-fx-text-fill: #f59e0b;">
+                <font>
+                    <Font name="System Bold" size="24.0" />
+                </font>
+            </Label>
+            <Label text="Créditos Promedio" styleClass="stat-label">
+                <font>
+                    <Font size="12.0" />
+                </font>
+            </Label>
+        </VBox>
+        
+        <VBox styleClass="card" spacing="8" prefWidth="160" alignment="CENTER">
+            <padding>
+                <Insets top="16" left="16" right="16" bottom="16" />
+            </padding>
+            
+            <Label text="8.5" styleClass="stat-number" style="-fx-text-fill: #10b981;">
+                <font>
+                    <Font name="System Bold" size="24.0" />
+                </font>
+            </Label>
+            <Label text="Semestres Promedio" styleClass="stat-label">
+                <font>
+                    <Font size="12.0" />
+                </font>
+            </Label>
+        </VBox>
+    </HBox>
+    
+</VBox>

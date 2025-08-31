@@ -14,6 +14,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ConexionBD {
 
@@ -249,6 +251,33 @@ public class ConexionBD {
         }
     }
 
+    public static ArrayList<Profesor> getProfesores() {
+        String sql = """
+                     SELECT p.id, p.nombres, p.apellidos, p.email, pr.tipoContrato 
+                     FROM persona as p
+                     JOIN profesor as pr ON p.id = pr.persona_id
+                     """;
+        ArrayList<Profesor> profesores = new ArrayList<>();
+        try (Connection cn = ConexionBD.getConnection(); PreparedStatement ps = cn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                double id = rs.getDouble("id");
+                String nombres = rs.getString("nombres");
+                String apellidos = rs.getString("apellidos");
+                String email = rs.getString("email");
+                String tipoContrato = rs.getString("tipoContrato");
+
+                profesores.add(new Profesor(id, nombres, apellidos, email, tipoContrato));
+
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            return profesores;
+        }
+    }
+
     public static void showFacultades() throws Exception {
         String sql = """
                      SELECT f.id, f.nombre, f.decano 
@@ -267,7 +296,7 @@ public class ConexionBD {
         }
 
     }
-    
+
     public static void showProgramas() throws Exception {
         String sql = """
                      SELECT p.id, p.duracion, p.registro, p.nombre, p.facultad_id
@@ -286,30 +315,57 @@ public class ConexionBD {
                         id, duracion, registro, nombre, facultad_id);
             }
         }
-        
+
     }
-    
+
     public static void showEstudiantes() throws Exception {
         String sql = """
-                     SELECT e.persona_id, e.codigo, e.programa_id, e.activo, e.promedio
-                     FROM estudiante as e
+                     SELECT p.id, p.nombres, p.apellidos, p.email, e.codigo, e.programa_id, e.activo, e.promedio
+                     FROM persona as p
+                     JOIN estudiante as e ON p.id = e.persona_id
                      """;
         try (Connection cn = ConexionBD.getConnection(); PreparedStatement ps = cn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             System.out.println("\nESTUDIANTES");
             while (rs.next()) {
-                double persona_id = rs.getDouble("persona_id");
+                double id = rs.getDouble("id");
                 double codigo = rs.getDouble("codigo");
                 double programa_id = rs.getDouble("programa_id");
                 boolean activo = rs.getBoolean("activo");
                 double promedio = rs.getDouble("promedio");
-                
+
                 System.out.printf("ID: %f | Codigo: %f | programa_id: %f | Activo: %s | Promedio: %f%n",
-                        persona_id, codigo, programa_id, activo, promedio);
+                        id, codigo, programa_id, activo, promedio);
             }
         }
-        
+
     }
-    
+
+    public static ArrayList<Estudiante> getEstudiantes() throws Exception {
+        String sql = """
+                     SELECT p.id, p.nombres, p.apellidos, p.email, e.codigo, e.programa_id, e.activo, e.promedio
+                     FROM persona as p
+                     JOIN estudiante as e ON p.id = e.persona_id
+                     """;
+        try (Connection cn = ConexionBD.getConnection(); PreparedStatement ps = cn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            ArrayList<Estudiante> estudiantes = new ArrayList<>();
+            while (rs.next()) {
+                double id = rs.getDouble("id");
+                String nombres = rs.getString("nombres");
+                String apellidos = rs.getString("apellidos");
+                String email = rs.getString("email");
+                double codigo = rs.getDouble("codigo");
+                double programa_id = rs.getDouble("programa_id");
+
+                boolean activo = rs.getBoolean("activo");
+                double promedio = rs.getDouble("promedio");
+
+                //estudiantes.add(new Estudiante(id,nombres,apellidos,email,codigo,programa_id,activo,promedio));
+            }
+            return estudiantes;
+        }
+
+    }
+
     public static void showCursos() throws Exception {
         String sql = """
                      SELECT c.id, c.nombre, c.programa_id, c.activo
@@ -322,14 +378,14 @@ public class ConexionBD {
                 String nombre = rs.getString("nombre");
                 double programa_id = rs.getDouble("programa_id");
                 boolean activo = rs.getBoolean("activo");
-                
+
                 System.out.printf("ID: %d | Nombre: %s | programa_id: %f | Activo: %s%n",
                         id, nombre, programa_id, activo);
             }
         }
-        
+
     }
-    
+
     public static void showInscripciones() throws Exception {
         String sql = """
                      SELECT i.estudiante_id, i.curso_id, i.anio, i.semestre
@@ -342,12 +398,12 @@ public class ConexionBD {
                 int curso_id = rs.getInt("curso_id");
                 int anio = rs.getInt("anio");
                 int semestre = rs.getInt("semestre");
-                
+
                 System.out.printf("estudiante_id: %f | curso_id: %d | Año: %d | Semestre: %d%n",
                         estudiante_id, curso_id, anio, semestre);
             }
         }
-        
+
     }
 
 }
