@@ -1,6 +1,7 @@
 package com.example.controller;
 
-import com.example.model.ConexionBD;
+
+import com.example.dao.ProfesorDAO;
 import com.example.model.Profesor;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +13,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.ResourceBundle;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -49,7 +52,7 @@ public class PersonaController extends SceneManager implements Initializable {
         colTipoContrato.setCellValueFactory(new PropertyValueFactory<>("tipoContrato"));
 
         // Cargar datos desde la función
-        ObservableList<Profesor> lista = FXCollections.observableArrayList(ConexionBD.getProfesores());
+        ObservableList<Profesor> lista = FXCollections.observableArrayList(ProfesorDAO.get());
         tablaProfesores.setItems(lista);
         tablaProfesores.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
@@ -60,6 +63,8 @@ public class PersonaController extends SceneManager implements Initializable {
     }
     private void configurarEventosBotones() {
         btnAgregarProfesor.setOnAction(event -> mostrarVentanaAgregarProfesor());
+        btnEditarProfesor.setOnAction(event -> editarProfesor());
+        btnVerDetallesProfesor.setOnAction(event -> verDetallesProfesor());
 
         // Deshabilitar botones que requieren selección
         btnEditarProfesor.setDisable(true);
@@ -104,7 +109,7 @@ public class PersonaController extends SceneManager implements Initializable {
     }
     public void actualizarTablaProfesores() {
         try {
-            ObservableList<Profesor> lista = FXCollections.observableArrayList(ConexionBD.getProfesores());
+            ObservableList<Profesor> lista = FXCollections.observableArrayList(ProfesorDAO.get());
             tablaProfesores.setItems(lista);
         } catch (Exception e) {
             mostrarError("Error", "No se pudieron cargar los datos de profesores: " + e.getMessage());
@@ -115,27 +120,81 @@ public class PersonaController extends SceneManager implements Initializable {
     private void editarProfesor() {
         Profesor profesorSeleccionado = tablaProfesores.getSelectionModel().getSelectedItem();
         if (profesorSeleccionado != null) {
-            // TODO: Implementar ventana de edición
-            mostrarInformacion("Información", "Funcionalidad de editar en desarrollo");
+            mostrarVentanaEditarProfesor(profesorSeleccionado);
         }
     }
     @FXML
     private void eliminarProfesor() {
         Profesor profesorSeleccionado = tablaProfesores.getSelectionModel().getSelectedItem();
-        if (profesorSeleccionado != null) {
-            Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmacion.setTitle("Confirmar Eliminación");
-            confirmacion.setHeaderText("¿Eliminar Profesor?");
-            confirmacion.setContentText("¿Está seguro que desea eliminar al profesor " +
-                    profesorSeleccionado.getNombres() + " " +
-                    profesorSeleccionado.getApellidos() + "?");
 
-            if (confirmacion.showAndWait().get() == ButtonType.OK) {
-                // TODO: Implementar eliminación lógica en la base de datos
-                mostrarInformacion("Información", "Funcionalidad de eliminar en desarrollo");
+        if (profesorSeleccionado == null) {
+            mostrarInformacion("Advertencia", "Debe seleccionar un profesor para eliminar.");
+            return;
+        }
+
+        // Mostrar confirmación antes de eliminar
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Confirmar Eliminación");
+        confirmacion.setHeaderText("¿Está seguro de eliminar este profesor?");
+        confirmacion.setContentText(String.format(
+                "Se eliminará el profesor:\n%s %s\nEsta acción no se puede deshacer.",
+                profesorSeleccionado.getNombres(),
+                profesorSeleccionado.getApellidos()
+        ));
+
+        ButtonType resultado = confirmacion.showAndWait().orElse(ButtonType.CANCEL);
+
+        if (resultado == ButtonType.OK) {
+            try {
+                //boolean eliminado = ConexionBD.eliminarProfesor(profesorSeleccionado.getID());
+                boolean eliminado = ProfesorDAO.eliminar(profesorSeleccionado.getID());
+
+
+                if (eliminado) {
+                   // mostrarInformacion("Éxito", "Profesor eliminado correctamente.");
+                    actualizarTablaProfesores(); // refresca la tabla
+                } else {
+                    mostrarError("Error", "No se pudo eliminar el profesor. Verifique si tiene registros asociados.");
+                }
+            } catch (Exception e) {
+                mostrarError("Error", "Error al eliminar el profesor: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }
+
+
+    private void mostrarVentanaEditarProfesor(Profesor profesor) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/editarProfesor.fxml"));
+            Parent root = loader.load();
+
+            // Obtener el controlador y pasarle los datos necesarios
+            EditarProfesorController controller = loader.getController();
+            controller.setParentController(this);
+            controller.setProfesor(profesor);
+
+            // Crear y configurar la ventana modal
+            Stage modalStage = new Stage();
+            modalStage.setTitle("Editar Profesor - " + profesor.getNombres() + " " + profesor.getApellidos());
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initOwner(btnEditarProfesor.getScene().getWindow());
+            modalStage.setResizable(false);
+
+            Scene scene = new Scene(root);
+            modalStage.setScene(scene);
+
+            // Mostrar la ventana modal
+            modalStage.showAndWait();
+
+        } catch (IOException e) {
+            mostrarError("Error", "No se pudo abrir la ventana de editar profesor: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+
     @FXML
     private void verDetallesProfesor() {
         Profesor profesorSeleccionado = tablaProfesores.getSelectionModel().getSelectedItem();

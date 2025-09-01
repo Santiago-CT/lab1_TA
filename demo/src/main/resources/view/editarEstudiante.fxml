@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane prefHeight="600.0" prefWidth="500.0" fitToWidth="true"
+            stylesheets="@../styles/profesor.css"
+            xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.controller.EditarEstudianteController">
+
+    <content>
+        <VBox spacing="20.0">
+
+            <padding>
+                <Insets top="30.0" left="30.0" right="30.0" bottom="30.0"/>
+            </padding>
+
+            <!-- Título -->
+            <VBox spacing="5" alignment="CENTER">
+                <Label text="Editar Estudiante" styleClass="title-large">
+                    <font>
+                        <Font name="System Bold" size="28.0"/>
+                    </font>
+                </Label>
+                <Label text="Modifica los datos del estudiante seleccionado" styleClass="subtitle">
+                    <font>
+                        <Font size="14.0"/>
+                    </font>
+                </Label>
+            </VBox>
+
+            <!-- Separador -->
+            <Separator/>
+
+            <!-- Formulario -->
+            <VBox spacing="20">
+
+                <!-- Campo ID (Solo lectura) -->
+                <VBox spacing="8">
+                    <Label text="ID del Estudiante" styleClass="form-label">
+                        <font>
+                            <Font name="System Bold" size="14.0"/>
+                        </font>
+                    </Label>
+                    <TextField fx:id="txtID" promptText="ID generado automáticamente"
+                               styleClass="form-field-readonly" editable="false" prefHeight="40.0">
+                        <font>
+                            <Font size="13.0"/>
+                        </font>
+                    </TextField>
+                </VBox>
+
+                <!-- Grid para campos en dos columnas -->
+                <GridPane hgap="20" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="50.0"/>
+                        <ColumnConstraints percentWidth="50.0"/>
+                    </columnConstraints>
+
+                    <!-- Campo Código -->
+                    <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Código *" styleClass="form-label">
+                            <font>
+                                <Font name="System Bold" size="14.0"/>
+                            </font>
+                        </Label>
+                        <TextField fx:id="txtCodigo" promptText="Ej: 160004903"
+                                   styleClass="form-field" prefHeight="40.0">
+                            <font>
+                                <Font size="13.0"/>
+                            </font>
+                        </TextField>
+                    </VBox>
+
+                    <!-- Campo Nombres -->
+                    <VBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Nombres *" styleClass="form-label">
+                            <font>
+                                <Font name="System Bold" size="14.0"/>
+                            </font>
+                        </Label>
+                        <TextField fx:id="txtNombres" promptText="Ingrese los nombres"
+                                   styleClass="form-field" prefHeight="40.0">
+                            <font>
+                                <Font size="13.0"/>
+                            </font>
+                        </TextField>
+                    </VBox>
+
+                    <!-- Campo Apellidos -->
+                    <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                        <Label text="Apellidos *" styleClass="form-label">
+                            <font>
+                                <Font name="System Bold" size="14.0"/>
+                            </font>
+                        </Label>
+                        <TextField fx:id="txtApellidos" promptText="Ingrese los apellidos"
+                                   styleClass="form-field" prefHeight="40.0">
+                            <font>
+                                <Font size="13.0"/>
+                            </font>
+                        </TextField>
+                    </VBox>
+
+                    <!-- Campo Email -->
+                    <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2">
+                        <Label text="Correo Electrónico *" styleClass="form-label">
+                            <font>
+                                <Font name="System Bold" size="14.0"/>
+                            </font>
+                        </Label>
+                        <TextField fx:id="txtEmail" promptText="ejemplo@unillanos.edu.co"
+                                   styleClass="form-field" prefHeight="40.0">
+                            <font>
+                                <Font size="13.0"/>
+                            </font>
+                        </TextField>
+                    </VBox>
+
+                    <!-- Campo Programa -->
+                    <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="2">
+                        <Label text="Programa *" styleClass="form-label">
+                            <font>
+                                <Font name="System Bold" size="14.0"/>
+                            </font>
+                        </Label>
+                        <ComboBox fx:id="cmbPrograma" promptText="Seleccione un programa"
+                                  styleClass="form-combo" prefHeight="40.0" maxWidth="Infinity"/>
+                    </VBox>
+
+                    <!-- Campo Promedio y Estado -->
+                    <HBox spacing="15" GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="2">
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
+                            <Label text="Promedio *" styleClass="form-label">
+                                <font>
+                                    <Font name="System Bold" size="14.0"/>
+                                </font>
+                            </Label>
+                            <TextField fx:id="txtPromedio" promptText="0.0 - 5.0" styleClass="form-field"
+                                       prefHeight="40.0"/>
+                        </VBox>
+
+                        <VBox spacing="8" alignment="CENTER_LEFT">
+                            <Label text="Estado" styleClass="form-label">
+                                <font>
+                                    <Font name="System Bold" size="14.0"/>
+                                </font>
+                            </Label>
+                            <CheckBox fx:id="chkActivo" text="Estudiante Activo" styleClass="form-combo" selected="true"/>
+                        </VBox>
+                    </HBox>
+                </GridPane>
+            </VBox>
+
+            <!-- Nota informativa -->
+            <HBox spacing="8" alignment="CENTER_LEFT" styleClass="info-box">
+                <Label text="ℹ️" styleClass="info-icon">
+                    <font>
+                        <Font size="16.0"/>
+                    </font>
+                </Label>
+                <Label text="Los campos marcados con (*) son obligatorios" styleClass="info-text">
+                    <font>
+                        <Font size="12.0"/>
+                    </font>
+                </Label>
+            </HBox>
+
+            <!-- Separador -->
+            <Separator/>
+
+            <!-- Botones de acción -->
+            <HBox spacing="15" alignment="CENTER_RIGHT">
+                <Button fx:id="btnCancelar" text="Cancelar" styleClass="button-secondary"
+                        prefHeight="45.0" prefWidth="120.0">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                </Button>
+                <Button fx:id="btnGuardar" text="Guardar Cambios" styleClass="button-primary"
+                        prefHeight="45.0" prefWidth="150.0">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                </Button>
+            </HBox>
+
+        </VBox>
+    </content>
+</ScrollPane>

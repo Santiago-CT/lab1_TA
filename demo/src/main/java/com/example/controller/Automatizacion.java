@@ -3,7 +3,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.example.controller;
-
+import com.example.model.DBSetup;
+import com.example.dao.EstudianteDao;
+import com.example.dao.ProfesorDAO;
+import com.example.dao.FacultadDao;
+import com.example.dao.CursoDAO;
+import com.example.dao.ProgramaDao;
 import com.example.model.ConexionBD;
 import com.example.model.Curso;
 import com.example.model.CursoProfesor;
@@ -160,21 +165,21 @@ public class Automatizacion {
             buildCursosProfesores();
             buildInscripcionesPersonas();
 
-            ConexionBD.crearTablas();
+            DBSetup.crearTablas();
             for (Profesor profesor : profesores.values()) {
-                ConexionBD.insertProfesor(profesor);
+                ProfesorDAO.insert(profesor);
             }
             for (Facultad facultad : facultades.values()) {
-                ConexionBD.insertFacultad(facultad);
+                FacultadDao.insert(facultad);
             }
             for (Programa programa : programas.values()) {
-                ConexionBD.insertPrograma(programa);
+                ProgramaDao.insert(programa);
             }
             for (Estudiante estudiante : estudiantes.values()) {
-                ConexionBD.insertEstudiante(estudiante);
+                EstudianteDao.insert(estudiante);
             }
             for (Curso curso : cursos.values()) {
-                ConexionBD.insertCurso(curso);
+                CursoDAO.insert(curso);
             }
             cursosInscritos.guardarinformacion();
             cursosInscritos.cargarDatos();
