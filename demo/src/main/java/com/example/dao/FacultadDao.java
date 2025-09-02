@@ -1,15 +1,23 @@
 package com.example.dao;
 import com.example.model.DBConnection;
 import com.example.model.Facultad;
+import com.example.model.Persona;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class FacultadDao {
     private static final String SQL_INSERT = "INSERT INTO facultad (id, nombre, decano) VALUES (?, ?, ?)";
-    private static final String SQL_SELECT_ALL = "SELECT id, nombre, decano FROM facultad";
+    private static final String SQL_SELECT_ALL = """
+            SELECT f.id, f.nombre, f.decano, 
+                   p.nombres, p.apellidos 
+            FROM facultad f 
+            LEFT JOIN persona p ON f.decano = p.id
+            """;
     private static final String SQL_SELECT_BY_ID = "SELECT id, nombre, decano FROM facultad WHERE id = ?";
     private static final String SQL_UPDATE = "UPDATE facultad SET nombre = ?, decano = ? WHERE id = ?";
     private static final String SQL_DELETE = "DELETE FROM facultad WHERE id = ?";
@@ -52,21 +60,65 @@ public class FacultadDao {
              PreparedStatement ps = cn.prepareStatement(SQL_UPDATE)) {
 
             ps.setString(1, facultad.getNombre());
-            ps.setDouble(2, facultad.getDecano().getID());
+            if (facultad.getDecano() != null) {
+                ps.setDouble(2, facultad.getDecano().getID());
+            } else {
+                ps.setNull(2, java.sql.Types.DOUBLE);
+            }
             ps.setDouble(3, facultad.getID());
 
-            ps.executeUpdate();
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0;
+        } catch (Exception e) {
+            throw new Exception("Error al actualizar facultad: " + e.getMessage(), e);
         }
-        return false;
     }
     public static boolean delete(double id) throws Exception {
         try (Connection cn = DBConnection.getConnection();
              PreparedStatement ps = cn.prepareStatement(SQL_DELETE)) {
 
             ps.setDouble(1, id);
-            ps.executeUpdate();
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0;
+        } catch (Exception e) {
+            throw new Exception("Error al eliminar facultad: " + e.getMessage(), e);
         }
-        return false;
     }
+    public static List<Facultad> getAll() throws Exception {
+        List<Facultad> facultades = new ArrayList<>();
+
+        try (Connection cn = DBConnection.getConnection();
+             PreparedStatement ps = cn.prepareStatement(SQL_SELECT_ALL);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                double id = rs.getDouble("id");
+                String nombre = rs.getString("nombre");
+
+                // Crear el objeto Persona para el decano si existe
+                Persona decano = null;
+                if (rs.getObject("decano") != null) {
+                    double decanoId = rs.getDouble("decano");
+                    String nombres = rs.getString("nombres");
+                    String apellidos = rs.getString("apellidos");
+                    String email = rs.getString("email");
+
+                    if (nombres != null && apellidos != null) {
+                        // Usar constructor completo con email (null si no existe)
+                        decano = new Persona(decanoId, nombres, apellidos, email);
+                    }
+                }
+
+                Facultad facultad = new Facultad(id, nombre, decano);
+                facultades.add(facultad);
+            }
+        } catch (Exception e) {
+            throw new Exception("Error al obtener todas las facultades: " + e.getMessage(), e);
+        }
+
+        return facultades;
+    }
+
+
 
 }

@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -62,9 +63,16 @@ public class FacultadController extends SceneManager implements Initializable {
             return new SimpleStringProperty(nombreDecano);
         });
 
-        // ⚠️ Estos campos tendrás que agregarlos al modelo si quieres que funcionen
+        // Mostrar email del decano
+        colEmail.setCellValueFactory(cellData -> {
+            Persona decano = cellData.getValue().getDecano();
+            String emailDecano = decano != null && decano.getEmail() != null ?
+                    decano.getEmail() : "N/A";
+            return new SimpleStringProperty(emailDecano);
+        });
+
+        // Campos que necesitarías agregar al modelo Facultad para que funcionen completamente
         colTelefono.setCellValueFactory(c -> new SimpleStringProperty("N/A"));
-        colEmail.setCellValueFactory(c -> new SimpleStringProperty("N/A"));
         colProgramas.setCellValueFactory(c -> new SimpleStringProperty("0"));
         colEstado.setCellValueFactory(c -> new SimpleStringProperty("Activo"));
     }
@@ -75,10 +83,12 @@ public class FacultadController extends SceneManager implements Initializable {
         btnEliminar.setOnAction(event -> eliminarFacultad());
         btnVerDetalles.setOnAction(event -> verDetallesFacultad());
 
+        // Deshabilitar botones hasta que haya selección
         btnEditar.setDisable(true);
         btnEliminar.setDisable(true);
         btnVerDetalles.setDisable(true);
 
+        // Listener para habilitar/deshabilitar botones según selección
         tablaFacultades.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             boolean haySeleccion = newSel != null;
             btnEditar.setDisable(!haySeleccion);
@@ -98,6 +108,7 @@ public class FacultadController extends SceneManager implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/agregarFacultad.fxml"));
             Parent root = loader.load();
 
+            // Asumo que tienes un controlador para agregar facultad
             AgregarFacultadController controller = loader.getController();
             controller.setParentController(this);
 
@@ -117,14 +128,19 @@ public class FacultadController extends SceneManager implements Initializable {
 
     public void actualizarTablaFacultades() {
         try {
-            // ⚠️ Aquí deberías implementar un método en FacultadDao para obtener todas las facultades
-            ObservableList<Facultad> lista = FXCollections.observableArrayList(
-                    // FacultadDao.getAll()
-            );
-            tablaFacultades.setItems(lista);
+            // Obtener todas las facultades de la base de datos
+            List<Facultad> listaFacultades = FacultadDao.getAll();
+            ObservableList<Facultad> observableList = FXCollections.observableArrayList(listaFacultades);
+            tablaFacultades.setItems(observableList);
+
+            System.out.println("Facultades cargadas: " + listaFacultades.size());
+
         } catch (Exception e) {
             mostrarError("Error", "No se pudieron cargar los datos de facultades: " + e.getMessage());
             e.printStackTrace();
+
+            // En caso de error, mostrar lista vacía
+            tablaFacultades.setItems(FXCollections.observableArrayList());
         }
     }
 
@@ -136,6 +152,7 @@ public class FacultadController extends SceneManager implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/editarFacultad.fxml"));
             Parent root = loader.load();
 
+            // Asumo que tienes un controlador para editar facultad
             EditarFacultadController controller = loader.getController();
             controller.setParentController(this);
             controller.setFacultad(facultadSeleccionada);
@@ -154,6 +171,9 @@ public class FacultadController extends SceneManager implements Initializable {
         }
     }
 
+    /**
+     * MÉTODO CORREGIDO - Verificar resultado del delete
+     */
     private void eliminarFacultad() {
         Facultad seleccionada = tablaFacultades.getSelectionModel().getSelectedItem();
         if (seleccionada == null) return;
@@ -167,10 +187,14 @@ public class FacultadController extends SceneManager implements Initializable {
         Optional<ButtonType> resultado = confirmacion.showAndWait();
         if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
             try {
-               FacultadDao.delete(seleccionada.getID());
-                if (FacultadDao.delete(seleccionada.getID())) {
-                actualizarTablaFacultades();
-                 }
+                // Verificar el resultado del delete
+                boolean eliminado = FacultadDao.delete(seleccionada.getID());
+                if (eliminado) {
+                    actualizarTablaFacultades();
+                    mostrarMensaje("Éxito", "Facultad eliminada correctamente.");
+                } else {
+                    mostrarError("Error", "No se pudo eliminar la facultad. Es posible que no exista.");
+                }
             } catch (Exception e) {
                 mostrarError("Error", "No se pudo eliminar la facultad: " + e.getMessage());
                 e.printStackTrace();
@@ -188,11 +212,14 @@ public class FacultadController extends SceneManager implements Initializable {
             ID: %.0f
             Nombre: %s
             Decano: %s
+            Email del Decano: %s
             """,
                 seleccionada.getID(),
                 seleccionada.getNombre(),
                 seleccionada.getDecano() != null ?
-                        seleccionada.getDecano().getNombres() + " " + seleccionada.getDecano().getApellidos() : "Sin asignar"
+                        seleccionada.getDecano().getNombres() + " " + seleccionada.getDecano().getApellidos() : "Sin asignar",
+                seleccionada.getDecano() != null && seleccionada.getDecano().getEmail() != null ?
+                        seleccionada.getDecano().getEmail() : "Sin email"
         );
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -211,13 +238,43 @@ public class FacultadController extends SceneManager implements Initializable {
             return;
         }
 
-        ObservableList<Facultad> filtradas = FXCollections.observableArrayList();
-        for (Facultad f : tablaFacultades.getItems()) {
-            if (f.getNombre().toLowerCase().contains(filtro)) {
-                filtradas.add(f);
+        try {
+            // Obtener todas las facultades y filtrar
+            List<Facultad> todasLasFacultades = FacultadDao.getAll();
+            ObservableList<Facultad> filtradas = FXCollections.observableArrayList();
+
+            for (Facultad f : todasLasFacultades) {
+                // Buscar por nombre de facultad
+                if (f.getNombre().toLowerCase().contains(filtro)) {
+                    filtradas.add(f);
+                }
+                // También buscar por nombre del decano
+                else if (f.getDecano() != null) {
+                    String nombreCompleto = (f.getDecano().getNombres() + " " +
+                            f.getDecano().getApellidos()).toLowerCase();
+                    if (nombreCompleto.contains(filtro)) {
+                        filtradas.add(f);
+                    }
+                }
             }
+
+            tablaFacultades.setItems(filtradas);
+
+        } catch (Exception e) {
+            mostrarError("Error", "Error al buscar facultades: " + e.getMessage());
+            e.printStackTrace();
         }
-        tablaFacultades.setItems(filtradas);
+    }
+
+    /**
+     * Método auxiliar para mostrar mensajes de éxito
+     */
+    private void mostrarMensaje(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
     }
 
     private void mostrarError(String titulo, String mensaje) {
