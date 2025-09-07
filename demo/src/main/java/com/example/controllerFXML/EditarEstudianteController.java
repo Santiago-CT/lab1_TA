@@ -1,4 +1,4 @@
-package com.example.controller;
+package com.example.controllerFXML;
 
 import com.example.dao.EstudianteDao;
 import com.example.dao.ProgramaDao;
@@ -26,7 +26,7 @@ public class EditarEstudianteController implements Initializable {
     @FXML private Button btnGuardar;
     @FXML private Button btnCancelar;
 
-    private EstudianteController parentController;
+    private EstudianteControllerV parentController;
     private Estudiante estudianteActual;
 
     @Override
@@ -107,7 +107,7 @@ public class EditarEstudianteController implements Initializable {
         btnCancelar.setOnAction(event -> cancelar());
     }
 
-    public void setParentController(EstudianteController parentController) {
+    public void setParentController(EstudianteControllerV parentController) {
         this.parentController = parentController;
     }
 

@@ -1,4 +1,4 @@
-package com.example.controller;
+package com.example.controllerFXML;
 
 
 import com.example.dao.ProfesorDAO;
@@ -13,11 +13,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.ResourceBundle;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;

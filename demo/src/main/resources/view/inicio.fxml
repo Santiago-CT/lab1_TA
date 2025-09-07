@@ -13,7 +13,7 @@
 
 <BorderPane prefHeight="800" prefWidth="1200" stylesheets="@../styles/profesor.css" 
             xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" 
-            fx:controller="com.example.controller.InicioController">
+            fx:controller="com.example.controllerFXML.InicioController">
     
     <!-- MENÚ LATERAL -->
     <left>

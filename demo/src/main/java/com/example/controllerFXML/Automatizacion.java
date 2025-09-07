@@ -2,14 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.example.controller;
+package com.example.controllerFXML;
 import com.example.model.DBSetup;
 import com.example.dao.EstudianteDao;
 import com.example.dao.ProfesorDAO;
 import com.example.dao.FacultadDao;
 import com.example.dao.CursoDAO;
 import com.example.dao.ProgramaDao;
-import com.example.model.ConexionBD;
 import com.example.model.Curso;
 import com.example.model.CursoProfesor;
 import com.example.model.CursosInscritos;

@@ -1,4 +1,4 @@
-package com.example.controller;
+package com.example.controllerFXML;
 
 import com.example.dao.FacultadDao;
 import com.example.model.Facultad;

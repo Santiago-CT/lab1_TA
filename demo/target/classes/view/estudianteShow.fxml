@@ -18,7 +18,7 @@
 
 <BorderPane prefHeight="800" prefWidth="1200" stylesheets="@../styles/profesor.css"
             xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.controller.EstudianteController">
+            fx:controller="com.example.controllerFXML.EstudianteControllerV">
 
     <!-- MENÚ LATERAL -->
     <left>
@@ -222,10 +222,10 @@
 
                 <!-- Botones de acción -->
                 <HBox spacing="15" alignment="CENTER_LEFT">
-                    <Button fx:id="btnEditar" text="✏️ Editar"
+                   <!-- <Button fx:id="btnEditar" text="✏️ Editar"
                             styleClass="modern-button, button-secondary" />
                     <Button fx:id="btnEliminar" text="🗑️ Eliminar"
-                            styleClass="modern-button, button-danger" />
+                            styleClass="modern-button, button-danger" />-->
                     <Region>
                         <HBox.hgrow>ALWAYS</HBox.hgrow>
                     </Region>

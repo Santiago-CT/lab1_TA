@@ -1,4 +1,4 @@
-package com.example.controller;
+package com.example.controllerFXML;
 
 import com.example.dao.EstudianteDao;
 import com.example.model.ConexionBD;
@@ -31,7 +31,7 @@ public class AgregarEstudianteController implements Initializable {
     @FXML private Button btnCancelar;
     @FXML private Label lblMensaje;
 
-    private EstudianteController parentController;
+    private EstudianteControllerV parentController;
 
     // Patrón para validar email
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
@@ -334,10 +334,7 @@ public class AgregarEstudianteController implements Initializable {
         lblMensaje.setText("");
     }
 
-    /**
-     * Establece el controlador padre para poder actualizar la tabla
-     */
-    public void setParentController(EstudianteController parentController) {
+    public void setParentController(EstudianteControllerV parentController) {
         this.parentController = parentController;
     }
 }

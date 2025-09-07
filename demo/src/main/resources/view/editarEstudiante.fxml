@@ -8,7 +8,7 @@
 <ScrollPane prefHeight="600.0" prefWidth="500.0" fitToWidth="true"
             stylesheets="@../styles/profesor.css"
             xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.controller.EditarEstudianteController">
+            fx:controller="com.example.controllerFXML.EditarEstudianteController">
 
     <content>
         <VBox spacing="20.0">

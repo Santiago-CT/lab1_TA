@@ -7,7 +7,7 @@
 
 <VBox spacing="20" styleClass="form-container" prefHeight="500.0" prefWidth="500.0"
       xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.example.controller.EditarProfesorController">
+      fx:controller="com.example.controllerFXML.EditarProfesorController">
 
     <padding>
         <Insets top="30" left="30" right="30" bottom="30" />

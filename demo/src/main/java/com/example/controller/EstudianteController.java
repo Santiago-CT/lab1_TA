@@ -1,320 +1,574 @@
-package com.example.controller;
+package com.example.controller;//package com.example.controller;
 
 import com.example.dao.EstudianteDao;
-
 import com.example.model.Estudiante;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import java.util.List;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Optional;
-import java.util.ResourceBundle;
+/**
+ * Controlador de Lógica de Negocio para la gestión de estudiantes
+ * Se encarga de las operaciones de datos y la lógica de negocio
+ */
+public class EstudianteController {
 
-public class EstudianteController extends SceneManager implements Initializable {
-
-    @FXML  private TableView<Estudiante> tablaEstudiantes;
-    @FXML private TableColumn<Estudiante, Double> colCodigo;
-    @FXML private TableColumn<Estudiante, String> colNombre;
-    @FXML private TableColumn<Estudiante, String> colEmail;
-    @FXML private TableColumn<Estudiante, String> colPrograma;
-    @FXML private TableColumn<Estudiante, String> colEstado;
-    @FXML private TableColumn<Estudiante, String> colFechaIngreso;
-
-    @FXML private Button btnAgregarEstudiante;
-    @FXML private Button btnEditar;
-    @FXML private Button btnEliminar;
-    @FXML private Button btnVerDetalles;
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-
-        // Configurar columnas según tu modelo
-        colCodigo.setCellValueFactory(new PropertyValueFactory<>("codigo"));
-        // Para mostrar nombre completo (nombres + apellidos)
-        colNombre.setCellValueFactory(cellData -> {
-            String nombreCompleto = cellData.getValue().getNombres() + " " + cellData.getValue().getApellidos();
-            return new javafx.beans.property.SimpleStringProperty(nombreCompleto);
-        });
-
-        colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-
-        // Para mostrar el nombre del programa
-        colPrograma.setCellValueFactory(cellData -> {
-            String nombrePrograma = cellData.getValue().getPrograma() != null ?
-                    cellData.getValue().getPrograma().getNombre() : "Sin programa";
-            return new javafx.beans.property.SimpleStringProperty(nombrePrograma);
-        });
-        // Para mostrar el estado basado en el boolean activo
-        colEstado.setCellValueFactory(cellData -> {
-            String estado = cellData.getValue().isActivo() ? "Activo" : "Inactivo";
-            return new javafx.beans.property.SimpleStringProperty(estado);
-        });
-
-        // Para fecha de ingreso necesitarás agregar este campo al modelo o manejarlo diferente
-        // Por ahora lo dejo vacío hasta que definas cómo manejar las fechas
-        colFechaIngreso.setCellValueFactory(cellData -> {
-            return new javafx.beans.property.SimpleStringProperty("N/A");
-        });
-
-        // Cargar datos desde la función
-        actualizarTablaEstudiantes();
-
-        tablaEstudiantes.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        configurarEventosBotones();
-        initVars();
-    }
-
-    private void configurarEventosBotones() {
-        btnAgregarEstudiante.setOnAction(event -> mostrarVentanaAgregarEstudiante());
-        btnEditar.setOnAction(event -> editarEstudiante());
-        btnEliminar.setOnAction(event -> eliminarEstudiante());
-
-        // Deshabilitar botones que requieren selección
-        btnEditar.setDisable(true);
-        btnEliminar.setDisable(true);
-        if (btnVerDetalles != null) {
-            btnVerDetalles.setDisable(true);
-        }
-        // Habilitar botones cuando se seleccione una fila
-        tablaEstudiantes.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            boolean haySeleccion = newSelection != null;
-            btnEditar.setDisable(!haySeleccion);
-            btnEliminar.setDisable(!haySeleccion);
-            if (btnVerDetalles != null) {
-                btnVerDetalles.setDisable(!haySeleccion);
-            }
-        });
-    }
-
-    private void mostrarVentanaAgregarEstudiante() {
+    /**
+     * Obtiene la lista de todos los estudiantes desde la base de datos
+     * @return ObservableList de estudiantes para usar en la tabla
+     * @throws Exception si hay problemas de acceso a datos
+     */
+    public ObservableList<Object> obtenerListaEstudiantes() throws Exception {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/agregarEstudiante.fxml"));
-            Parent root = loader.load();
-
-            // Obtener el controlador y pasarle la referencia de este controlador
-            AgregarEstudianteController controller = loader.getController();
-            controller.setParentController(this);
-
-            // Crear y configurar la ventana modal
-            Stage modalStage = new Stage();
-            modalStage.setTitle("Agregar Nuevo Estudiante");
-            modalStage.initModality(Modality.APPLICATION_MODAL);
-            modalStage.initOwner(btnAgregarEstudiante.getScene().getWindow());
-            modalStage.setResizable(false);
-
-            Scene scene = new Scene(root);
-            modalStage.setScene(scene);
-
-            // Mostrar la ventana modal
-            modalStage.showAndWait();
-
-        } catch (IOException e) {
-            mostrarError("Error", "No se pudo abrir la ventana de agregar estudiante: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public void actualizarTablaEstudiantes() {
-        try {
-            ObservableList<Estudiante> lista = FXCollections.observableArrayList(EstudianteDao.get());
-            tablaEstudiantes.setItems(lista);
+            List<Estudiante> estudiantes = EstudianteDao.get();
+            // Convertir la lista de Estudiante a lista de Object
+            return FXCollections.observableArrayList(estudiantes.toArray());
         } catch (Exception e) {
-            mostrarError("Error", "No se pudieron cargar los datos de estudiantes: " + e.getMessage());
-            e.printStackTrace();
+            throw new Exception("Error al obtener la lista de estudiantes: " + e.getMessage(), e);
         }
-    }
-
-    @FXML
-    private void editarEstudiante() {
-        Estudiante estudianteSeleccionado = tablaEstudiantes.getSelectionModel().getSelectedItem();
-        if (estudianteSeleccionado != null) {
-            try {
-                // Cargar el FXML para la ventana de edición
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/editarEstudiante.fxml"));
-                Parent root = loader.load();
-
-                // Obtener el controlador y configurarlo
-                EditarEstudianteController controller = loader.getController();
-                controller.setParentController(this);
-                controller.setEstudiante(estudianteSeleccionado);
-
-                // Crear y configurar la ventana modal
-                Stage modalStage = new Stage();
-                modalStage.setTitle("Editar Estudiante - " + estudianteSeleccionado.getNombres() + " " +
-                        estudianteSeleccionado.getApellidos());
-                modalStage.initModality(Modality.APPLICATION_MODAL);
-                modalStage.initOwner(btnEditar.getScene().getWindow());
-                modalStage.setResizable(false);
-
-                Scene scene = new Scene(root);
-                modalStage.setScene(scene);
-
-                // Mostrar la ventana modal
-                modalStage.showAndWait();
-
-            } catch (IOException e) {
-                mostrarError("Error", "No se pudo abrir la ventana de edición: " + e.getMessage());
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @FXML
-    private void eliminarEstudiante() {
-        Estudiante estudianteSeleccionado = tablaEstudiantes.getSelectionModel().getSelectedItem();
-        if (estudianteSeleccionado != null) {
-            // Crear confirmación personalizada con más información
-            Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmacion.setTitle("Confirmar Eliminación");
-            confirmacion.setHeaderText("¿Eliminar Estudiante?");
-
-            String mensaje = String.format("""
-                ¿Está seguro que desea eliminar al estudiante?
-                
-                Nombre: %s %s
-                Código: %.0f
-                Email: %s
-                Programa: %s
-                
-                ⚠️ ADVERTENCIA: Esta acción también eliminará:
-                • Todas las inscripciones del estudiante
-                • Toda la información personal asociada
-                
-                Esta acción NO se puede deshacer.
-                """,
-                    estudianteSeleccionado.getNombres(),
-                    estudianteSeleccionado.getApellidos(),
-                    estudianteSeleccionado.getCodigo(),
-                    estudianteSeleccionado.getEmail(),
-                    estudianteSeleccionado.getPrograma() != null ? estudianteSeleccionado.getPrograma().getNombre() : "Sin programa"
-            );
-
-            confirmacion.setContentText(mensaje);
-
-            // Personalizar botones
-            ButtonType btnEliminarBtn = new ButtonType("Eliminar", ButtonBar.ButtonData.OK_DONE);
-            ButtonType btnCancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
-            confirmacion.getButtonTypes().setAll(btnEliminarBtn, btnCancelar);
-
-            // Configurar el botón por defecto como Cancelar para mayor seguridad
-            Button defaultButton = (Button) confirmacion.getDialogPane().lookupButton(btnCancelar);
-            defaultButton.setDefaultButton(true);
-
-            Button deleteButton = (Button) confirmacion.getDialogPane().lookupButton(btnEliminarBtn);
-            deleteButton.setDefaultButton(false);
-
-            Optional<ButtonType> resultado = confirmacion.showAndWait();
-
-            if (resultado.isPresent() && resultado.get() == btnEliminarBtn) {
-                try {
-                    // Eliminar de la base de datos
-                    if (EstudianteDao.eliminar(estudianteSeleccionado.getID())) {
-                        // Actualizar tabla
-                        actualizarTablaEstudiantes();
-
-                        /*mostrarInformacion("Éxito",
-                                "El estudiante " + estudianteSeleccionado.getNombres() + " " +
-                                        estudianteSeleccionado.getApellidos() + " ha sido eliminado correctamente.");
-                                        */}
-                    else {
-                        mostrarError("Error", "No se pudo eliminar el estudiante. Puede que no exista en la base de datos.");
-                    }
-
-                } catch (Exception e) {
-                    mostrarError("Error de Base de Datos",
-                            "Error al eliminar el estudiante: " + e.getMessage() +
-                                    "\n\nPosibles causas:\n" +
-                                    "• Problemas de conectividad con la base de datos\n" +
-                                    "• Referencias en otras tablas que impiden la eliminación");
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    private void verDetallesEstudiante() {
-        Estudiante estudianteSeleccionado = tablaEstudiantes.getSelectionModel().getSelectedItem();
-        if (estudianteSeleccionado != null) {
-            String detalles = String.format("""
-                Detalles del Estudiante:
-                
-                ID: %.0f
-                Código: %.0f
-                Nombres: %s
-                Apellidos: %s
-                Email: %s
-                Programa: %s
-                Facultad: %s
-                Promedio: %.2f
-                Estado: %s
-                """,
-                    estudianteSeleccionado.getID(),
-                    estudianteSeleccionado.getCodigo(),
-                    estudianteSeleccionado.getNombres(),
-                    estudianteSeleccionado.getApellidos(),
-                    estudianteSeleccionado.getEmail(),
-                    estudianteSeleccionado.getPrograma() != null ? estudianteSeleccionado.getPrograma().getNombre() : "Sin programa",
-                    estudianteSeleccionado.getPrograma() != null && estudianteSeleccionado.getPrograma().getFacultad() != null ?
-                            estudianteSeleccionado.getPrograma().getFacultad().getNombre() : "Sin facultad",
-                    estudianteSeleccionado.getPromedio(),
-                    estudianteSeleccionado.isActivo() ? "Activo" : "Inactivo"
-            );
-
-            Alert detallesAlert = new Alert(Alert.AlertType.INFORMATION);
-            detallesAlert.setTitle("Detalles del Estudiante");
-            detallesAlert.setHeaderText("Información Completa");
-            detallesAlert.setContentText(detalles);
-
-            // Hacer que la ventana sea redimensionable para contenido largo
-            detallesAlert.setResizable(true);
-            detallesAlert.getDialogPane().setPrefWidth(500);
-
-            detallesAlert.showAndWait();
-        }
-    }
-    private void mostrarError(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(titulo);
-        alert.setHeaderText("Ha ocurrido un error");
-        alert.setContentText(mensaje);
-        alert.setResizable(true);
-        alert.getDialogPane().setPrefWidth(400);
-        alert.showAndWait();
-    }
-
-    private void mostrarInformacion(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
-    }
-
-    public Estudiante getEstudianteSeleccionado() {
-        return tablaEstudiantes.getSelectionModel().getSelectedItem();
     }
 
     /**
-     * Selecciona un estudiante en la tabla por su código
+     * Inserta un nuevo estudiante en la base de datos
+     * @param estudianteObj El objeto estudiante a insertar
+     * @return true si la inserción fue exitosa, false en caso contrario
+     * @throws Exception si hay problemas de acceso a datos
      */
-    public void seleccionarEstudiante(double codigo) {
-        for (Estudiante estudiante : tablaEstudiantes.getItems()) {
-            if (estudiante.getCodigo() == codigo) {
-                tablaEstudiantes.getSelectionModel().select(estudiante);
-                tablaEstudiantes.scrollTo(estudiante);
-                break;
-            }
+    public boolean insertarEstudiante(Object estudianteObj) throws Exception {
+        if (!(estudianteObj instanceof Estudiante estudiante)) {
+            throw new Exception("El objeto proporcionado no es un estudiante válido");
         }
+
+        try {
+            // Validar datos antes de insertar
+            if (!validarDatosEstudiante(estudiante)) {
+                throw new Exception("Los datos del estudiante no son válidos");
+            }
+
+            // Verificar que el código no esté en uso
+            if (EstudianteDao.existeCodigoEstudiante(estudiante.getCodigo(), -1)) {
+                throw new Exception("El código de estudiante ya está en uso");
+            }
+
+            // Verificar que el email no esté en uso
+            if (EstudianteDao.existeEmail(estudiante.getEmail(), -1)) {
+                throw new Exception("El email ya está en uso por otra persona");
+            }
+
+            EstudianteDao.insert(estudiante);
+            return true;
+        } catch (Exception e) {
+            throw new Exception("Error al insertar el estudiante: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Actualiza un estudiante existente en la base de datos
+     * @param estudianteObj El objeto estudiante a actualizar
+     * @return true si la actualización fue exitosa, false en caso contrario
+     * @throws Exception si hay problemas de acceso a datos
+     */
+
+
+    /**
+     * Elimina un estudiante de la base de datos
+     * @param estudianteId ID del estudiante a eliminar
+     * @return true si la eliminación fue exitosa, false en caso contrario
+     * @throws Exception si hay problemas de acceso a datos
+     */
+
+    public boolean eliminarEstudiante(double estudianteId) throws Exception {
+        try {
+            // Verificar que el estudiante existe antes de eliminar
+            if (!EstudianteDao.existeEstudiante(estudianteId)) {
+                throw new Exception("El estudiante no existe en la base de datos");
+            }
+
+            return EstudianteDao.eliminar(estudianteId);
+        } catch (Exception e) {
+            throw new Exception("Error al eliminar el estudiante: " + e.getMessage(), e);
+        }
+    }
+
+    // Métodos para obtener datos específicos de un objeto estudiante
+
+    /**
+     * Obtiene el código de un estudiante
+     */
+    public double obtenerCodigoEstudiante(Object estudianteObj) {
+        if (estudianteObj instanceof Estudiante estudiante) {
+            return estudiante.getCodigo();
+        }
+        return 0.0;
+    }
+
+    /**
+     * Obtiene el ID de un estudiante
+     */
+    public double obtenerIdEstudiante(Object estudianteObj) {
+        if (estudianteObj instanceof Estudiante estudiante) {
+            return estudiante.getID();
+        }
+        return 0.0;
+    }
+
+    /**
+     * Obtiene el nombre completo de un estudiante
+     */
+    public String obtenerNombreCompleto(Object estudianteObj) {
+        if (estudianteObj instanceof Estudiante estudiante) {
+            return estudiante.getNombres() + " " + estudiante.getApellidos();
+        }
+        return "";
+    }
+
+    /**
+     * Obtiene los nombres de un estudiante
+     */
+    public String obtenerNombres(Object estudianteObj) {
+        if (estudianteObj instanceof Estudiante estudiante) {
+            return estudiante.getNombres();
+        }
+        return "";
+    }
+
+    /**
+     * Obtiene los apellidos de un estudiante
+     */
+    public String obtenerApellidos(Object estudianteObj) {
+        if (estudianteObj instanceof Estudiante estudiante) {
+            return estudiante.getApellidos();
+        }
+        return "";
+    }
+
+    /**
+     * Obtiene el email de un estudiante
+     */
+    public String obtenerEmail(Object estudianteObj) {
+        if (estudianteObj instanceof Estudiante estudiante) {
+            return estudiante.getEmail();
+        }
+        return "";
+    }
+
+    /**
+     * Obtiene el nombre del programa de un estudiante
+     */
+    public String obtenerNombrePrograma(Object estudianteObj) {
+        if (estudianteObj instanceof Estudiante estudiante) {
+            return estudiante.getPrograma() != null ?
+                    estudiante.getPrograma().getNombre() : "Sin programa";
+        }
+        return "Sin programa";
+    }
+
+    /**
+     * Obtiene el programa completo de un estudiante
+     */
+    public Object obtenerPrograma(Object estudianteObj) {
+        if (estudianteObj instanceof Estudiante estudiante) {
+            return estudiante.getPrograma();
+        }
+        return null;
+    }
+
+    /**
+     * Obtiene el estado de un estudiante
+     */
+    public String obtenerEstado(Object estudianteObj) {
+        if (estudianteObj instanceof Estudiante estudiante) {
+            return estudiante.isActivo() ? "Activo" : "Inactivo";
+        }
+        return "Desconocido";
+    }
+
+    /**
+     * Obtiene el estado booleano de un estudiante
+     */
+    public boolean obtenerEstadoBooleano(Object estudianteObj) {
+        if (estudianteObj instanceof Estudiante estudiante) {
+            return estudiante.isActivo();
+        }
+        return false;
+    }
+
+    /**
+     * Obtiene el promedio de un estudiante
+     */
+    public double obtenerPromedio(Object estudianteObj) {
+        if (estudianteObj instanceof Estudiante estudiante) {
+            return estudiante.getPromedio();
+        }
+        return 0.0;
+    }
+
+    /**
+     * Obtiene la fecha de ingreso de un estudiante
+     */
+    public String obtenerFechaIngreso(Object estudianteObj) {
+        // Por ahora retorna N/A, pero aquí podrías implementar la lógica
+        // para obtener la fecha de ingreso si está disponible en el modelo
+        return "N/A";
+    }
+
+    /**
+     * Valida si un estudiante puede ser eliminado
+     * @param estudianteObj El objeto estudiante a validar
+     * @return true si puede ser eliminado, false en caso contrario
+     */
+    public boolean puedeEliminarEstudiante(Object estudianteObj) {
+        if (!(estudianteObj instanceof Estudiante)) {
+            return false;
+        }
+
+        Estudiante estudiante = (Estudiante) estudianteObj;
+
+        // Verificar si el estudiante existe en la base de datos
+        try {
+            return EstudianteDao.existeEstudiante(estudiante.getID());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Genera el mensaje de confirmación para eliminar un estudiante
+     * @param estudianteObj El objeto estudiante a eliminar
+     * @return String con el mensaje formateado
+     */
+    public String generarMensajeConfirmacionEliminacion(Object estudianteObj) {
+        if (!(estudianteObj instanceof Estudiante estudiante)) {
+            return "Error: Objeto no válido";
+        }
+
+        return String.format("""
+            ¿Está seguro que desea eliminar al estudiante?
+            
+            Nombre: %s %s
+            Código: %.0f
+            Email: %s
+            Programa: %s
+            
+            ⚠️ ADVERTENCIA: Esta acción también eliminará:
+            • Todas las inscripciones del estudiante
+            • Toda la información personal asociada
+            
+            Esta acción NO se puede deshacer.
+            """,
+                estudiante.getNombres(),
+                estudiante.getApellidos(),
+                estudiante.getCodigo(),
+                estudiante.getEmail(),
+                estudiante.getPrograma() != null ? estudiante.getPrograma().getNombre() : "Sin programa"
+        );
+    }
+
+    /**
+     * Genera los detalles completos de un estudiante para mostrar
+     * @param estudianteObj El objeto estudiante del cual mostrar detalles
+     * @return String con los detalles formateados
+     */
+    public String generarDetallesEstudiante(Object estudianteObj) {
+        if (!(estudianteObj instanceof Estudiante estudiante)) {
+            return "Error: Objeto no válido";
+        }
+
+        return String.format("""
+            Detalles del Estudiante:
+            
+            ID: %.0f
+            Código: %.0f
+            Nombres: %s
+            Apellidos: %s
+            Email: %s
+            Programa: %s
+            Facultad: %s
+            Promedio: %.2f
+            Estado: %s
+            """,
+                estudiante.getID(),
+                estudiante.getCodigo(),
+                estudiante.getNombres(),
+                estudiante.getApellidos(),
+                estudiante.getEmail(),
+                estudiante.getPrograma() != null ? estudiante.getPrograma().getNombre() : "Sin programa",
+                estudiante.getPrograma() != null && estudiante.getPrograma().getFacultad() != null ?
+                        estudiante.getPrograma().getFacultad().getNombre() : "Sin facultad",
+                estudiante.getPromedio(),
+                estudiante.isActivo() ? "Activo" : "Inactivo"
+        );
+    }
+
+    /**
+     * Busca un estudiante por su código
+     * @param codigo Código del estudiante a buscar
+     * @return El objeto estudiante encontrado o null si no existe
+     * @throws Exception si hay problemas de acceso a datos
+     */
+    public Object buscarEstudiantePorCodigo(double codigo) throws Exception {
+        try {
+            List<Estudiante> estudiantes = EstudianteDao.get();
+            return estudiantes.stream()
+                    .filter(e -> e.getCodigo() == codigo)
+                    .findFirst()
+                    .orElse(null);
+        } catch (Exception e) {
+            throw new Exception("Error al buscar el estudiante: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Busca un estudiante por su ID
+     * @param id ID del estudiante a buscar
+     * @return El objeto estudiante encontrado o null si no existe
+     * @throws Exception si hay problemas de acceso a datos
+     */
+    public Object buscarEstudiantePorId(double id) throws Exception {
+        try {
+            List<Estudiante> estudiantes = EstudianteDao.get();
+            return estudiantes.stream()
+                    .filter(e -> e.getID() == id)
+                    .findFirst()
+                    .orElse(null);
+        } catch (Exception e) {
+            throw new Exception("Error al buscar el estudiante: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Valida los datos de un estudiante antes de guardarlo
+     * @param estudianteObj El objeto estudiante a validar
+     * @return true si los datos son válidos, false en caso contrario
+     */
+    public boolean validarDatosEstudiante(Object estudianteObj) {
+        if (!(estudianteObj instanceof Estudiante estudiante)) {
+            return false;
+        }
+
+        // Validar campos obligatorios
+        if (estudiante.getNombres() == null || estudiante.getNombres().trim().isEmpty()) {
+            return false;
+        }
+
+        if (estudiante.getApellidos() == null || estudiante.getApellidos().trim().isEmpty()) {
+            return false;
+        }
+
+        if (estudiante.getEmail() == null || estudiante.getEmail().trim().isEmpty()) {
+            return false;
+        }
+
+        // Validar formato de email
+        if (!validarFormatoEmail(estudiante.getEmail())) {
+            return false;
+        }
+
+        // Validar código positivo
+        if (estudiante.getCodigo() <= 0) {
+            return false;
+        }
+
+        // Validar promedio entre 0 y 5
+        if (estudiante.getPromedio() < 0 || estudiante.getPromedio() > 5) {
+            return false;
+        }
+
+        // Validar que tenga programa asignado
+        if (estudiante.getPrograma() == null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Valida el formato del email
+     * @param email Email a validar
+     * @return true si el formato es válido, false en caso contrario
+     */
+    private boolean validarFormatoEmail(String email) {
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+        return email.matches(emailRegex);
+    }
+
+    /**
+     * Verifica si un código de estudiante ya existe (excluyendo un ID específico)
+     * @param codigo Código a verificar
+     * @param idExcluir ID a excluir de la verificación
+     * @return true si el código ya existe
+     */
+    public boolean existeCodigoEstudiante(double codigo, double idExcluir) {
+        try {
+            return EstudianteDao.existeCodigoEstudiante(codigo, idExcluir);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Verifica si un email ya existe (excluyendo un ID específico)
+     * @param email Email a verificar
+     * @param idExcluir ID a excluir de la verificación
+     * @return true si el email ya existe
+     */
+    public boolean existeEmail(String email, double idExcluir) {
+        try {
+            return EstudianteDao.existeEmail(email, idExcluir);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Verifica si un estudiante existe en la base de datos
+     * @param id ID del estudiante
+     * @return true si el estudiante existe
+     */
+    public boolean existeEstudiante(double id) {
+        try {
+            return EstudianteDao.existeEstudiante(id);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Obtiene estadísticas básicas de los estudiantes
+     * @return String con las estadísticas formateadas
+     * @throws Exception si hay problemas de acceso a datos
+     */
+    public String obtenerEstadisticasEstudiantes() throws Exception {
+        try {
+            List<Estudiante> estudiantes = EstudianteDao.get();
+
+            long totalEstudiantes = estudiantes.size();
+            long estudiantesActivos = estudiantes.stream()
+                    .mapToLong(e -> e.isActivo() ? 1 : 0)
+                    .sum();
+            long estudiantesInactivos = totalEstudiantes - estudiantesActivos;
+
+            double promedioGeneral = estudiantes.stream()
+                    .mapToDouble(Estudiante::getPromedio)
+                    .average()
+                    .orElse(0.0);
+
+            return String.format("""
+                Estadísticas de Estudiantes:
+                
+                Total de estudiantes: %d
+                Estudiantes activos: %d
+                Estudiantes inactivos: %d
+                Promedio general: %.2f
+                """,
+                    totalEstudiantes,
+                    estudiantesActivos,
+                    estudiantesInactivos,
+                    promedioGeneral
+            );
+        } catch (Exception e) {
+            throw new Exception("Error al obtener estadísticas: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Busca estudiantes por nombre (nombres o apellidos)
+     * @param nombre Texto a buscar en nombres o apellidos
+     * @return Lista de estudiantes que coinciden con la búsqueda
+     * @throws Exception si hay problemas de acceso a datos
+     */
+    public ObservableList<Object> buscarEstudiantesPorNombre(String nombre) throws Exception {
+        try {
+            List<Estudiante> todosLosEstudiantes = EstudianteDao.get();
+            List<Estudiante> estudiantesEncontrados = todosLosEstudiantes.stream()
+                    .filter(e ->
+                            e.getNombres().toLowerCase().contains(nombre.toLowerCase()) ||
+                                    e.getApellidos().toLowerCase().contains(nombre.toLowerCase())
+                    )
+                    .toList();
+
+            return FXCollections.observableArrayList(estudiantesEncontrados.toArray());
+        } catch (Exception e) {
+            throw new Exception("Error al buscar estudiantes: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Obtiene estudiantes por programa
+     * @param programaId ID del programa
+     * @return Lista de estudiantes del programa especificado
+     * @throws Exception si hay problemas de acceso a datos
+     */
+    public ObservableList<Object> obtenerEstudiantesPorPrograma(double programaId) throws Exception {
+        try {
+            List<Estudiante> todosLosEstudiantes = EstudianteDao.get();
+            List<Estudiante> estudiantesDelPrograma = todosLosEstudiantes.stream()
+                    .filter(e -> e.getPrograma() != null && e.getPrograma().getID() == programaId)
+                    .toList();
+
+            return FXCollections.observableArrayList(estudiantesDelPrograma.toArray());
+        } catch (Exception e) {
+            throw new Exception("Error al obtener estudiantes por programa: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Obtiene estudiantes por estado (activos/inactivos)
+     * @param activo true para estudiantes activos, false para inactivos
+     * @return Lista de estudiantes con el estado especificado
+     * @throws Exception si hay problemas de acceso a datos
+     */
+    public ObservableList<Object> obtenerEstudiantesPorEstado(boolean activo) throws Exception {
+        try {
+            List<Estudiante> todosLosEstudiantes = EstudianteDao.get();
+            List<Estudiante> estudiantesFiltrados = todosLosEstudiantes.stream()
+                    .filter(e -> e.isActivo() == activo)
+                    .toList();
+
+            return FXCollections.observableArrayList(estudiantesFiltrados.toArray());
+        } catch (Exception e) {
+            throw new Exception("Error al obtener estudiantes por estado: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Genera un mensaje de validación personalizado
+     * @param estudianteObj El objeto estudiante a validar
+     * @return String con los errores de validación encontrados
+     */
+    public String obtenerMensajesValidacion(Object estudianteObj) {
+        StringBuilder mensajes = new StringBuilder();
+
+        if (!(estudianteObj instanceof Estudiante estudiante)) {
+            mensajes.append("• El objeto no es un estudiante válido\n");
+            return mensajes.toString();
+        }
+
+        if (estudiante.getNombres() == null || estudiante.getNombres().trim().isEmpty()) {
+            mensajes.append("• Los nombres son obligatorios\n");
+        }
+
+        if (estudiante.getApellidos() == null || estudiante.getApellidos().trim().isEmpty()) {
+            mensajes.append("• Los apellidos son obligatorios\n");
+        }
+
+        if (estudiante.getEmail() == null || estudiante.getEmail().trim().isEmpty()) {
+            mensajes.append("• El email es obligatorio\n");
+        } else if (!validarFormatoEmail(estudiante.getEmail())) {
+            mensajes.append("• El formato del email no es válido\n");
+        }
+
+        if (estudiante.getCodigo() <= 0) {
+            mensajes.append("• El código debe ser mayor a cero\n");
+        }
+
+        if (estudiante.getPromedio() < 0 || estudiante.getPromedio() > 5) {
+            mensajes.append("• El promedio debe estar entre 0 y 5\n");
+        }
+
+        if (estudiante.getPrograma() == null) {
+            mensajes.append("• Debe seleccionar un programa\n");
+        }
+
+        return mensajes.toString();
     }
 }

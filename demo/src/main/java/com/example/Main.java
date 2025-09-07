@@ -1,13 +1,9 @@
 package com.example;
 
-import com.example.controller.Automatizacion;
-import com.example.controller.SceneManager;
-import com.example.dao.FacultadDao;
-import com.example.model.Facultad;
+import com.example.controllerFXML.Automatizacion;
+import com.example.controllerFXML.SceneManager;
 import javafx.application.Application;
 import javafx.stage.Stage;
-
-import java.util.List;
 
 public class Main extends Application {
     
