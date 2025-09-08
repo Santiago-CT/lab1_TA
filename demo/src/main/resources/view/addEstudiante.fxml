@@ -5,15 +5,15 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<ScrollPane fitToWidth="true" prefHeight="600.0" prefWidth="500.0"
-            xmlns="http://javafx.com/javafx/17.0.12"
+<ScrollPane fitToWidth="true" prefHeight="650.0" prefWidth="520.0"
+            xmlns="http://javafx.com/javafx/17.0.7"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.controllerFXML.AgregarProfesorController"
+            fx:controller="com.example.controllerFXML.AddEstudianteController"
             stylesheets="@../styles/profesor.css"
             styleClass="modal-container">
 
     <content>
-        <VBox spacing="20.0" prefWidth="480.0">
+        <VBox spacing="20.0" prefWidth="500.0">
 
             <padding>
                 <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
@@ -21,12 +21,12 @@
 
             <!-- Título -->
             <HBox alignment="CENTER_LEFT" spacing="10.0">
-                <Label styleClass="icon-large" text="➕">
+                <Label styleClass="icon-large" text="👨‍🎓">
                     <font>
                         <Font size="28.0" />
                     </font>
                 </Label>
-                <Label styleClass="title-large" text="Agregar Nuevo Profesor">
+                <Label styleClass="title-large" text="Agregar Nuevo Estudiante">
                     <font>
                         <Font name="System Bold" size="24.0" />
                     </font>
@@ -37,15 +37,13 @@
 
             <!-- Formulario -->
             <VBox spacing="15.0" styleClass="form-container">
-
-                <!-- ID del Profesor -->
                 <VBox spacing="5.0">
-                    <Label styleClass="form-label" text="ID *">
+                    <Label styleClass="form-label" text="Código *">
                         <font>
                             <Font name="System Bold" size="13.0" />
                         </font>
                     </Label>
-                    <TextField fx:id="txtId" prefHeight="35.0" promptText="Ingrese el ID del profesor" styleClass="form-field" />
+                    <TextField fx:id="txtCodigo" prefHeight="35.0" promptText="Código del estudiante (ej: 20241001)" styleClass="form-field" />
                 </VBox>
 
                 <!-- Nombres -->
@@ -55,7 +53,7 @@
                             <Font name="System Bold" size="13.0" />
                         </font>
                     </Label>
-                    <TextField fx:id="txtNombres" prefHeight="35.0" promptText="Nombres del profesor" styleClass="form-field" />
+                    <TextField fx:id="txtNombres" prefHeight="35.0" promptText="Nombres del estudiante" styleClass="form-field" />
                 </VBox>
 
                 <!-- Apellidos -->
@@ -65,7 +63,7 @@
                             <Font name="System Bold" size="13.0" />
                         </font>
                     </Label>
-                    <TextField fx:id="txtApellidos" prefHeight="35.0" promptText="Apellidos del Profesor" styleClass="form-field" />
+                    <TextField fx:id="txtApellidos" prefHeight="35.0" promptText="Apellidos del estudiante" styleClass="form-field" />
                 </VBox>
 
                 <!-- Email -->
@@ -88,15 +86,29 @@
                     <TextField fx:id="txtTelefono" prefHeight="35.0" promptText="Número de teléfono" styleClass="form-field" />
                 </VBox>
 
-                <!-- Tipo de Contrato -->
+                <!-- Programa -->
                 <VBox spacing="5.0">
-                    <Label styleClass="form-label" text="Tipo de Contrato *">
+                    <Label styleClass="form-label" text="Programa *">
                         <font>
                             <Font name="System Bold" size="13.0" />
                         </font>
                     </Label>
-                    <ComboBox fx:id="cmbTipoContrato" prefHeight="35.0" prefWidth="440.0" promptText="Seleccione el tipo de contrato" styleClass="form-field" />
+                    <ComboBox fx:id="cmbPrograma" prefHeight="35.0" prefWidth="460.0" promptText="Seleccione el programa académico" styleClass="form-field" />
                 </VBox>
+
+
+
+                <!-- Estado -->
+                <VBox spacing="5.0">
+                    <Label styleClass="form-label" text="Estado *">
+                        <font>
+                            <Font name="System Bold" size="13.0" />
+                        </font>
+                    </Label>
+                    <ComboBox fx:id="cmbEstado" prefHeight="35.0" prefWidth="460.0" promptText="Seleccione el estado del estudiante" styleClass="form-field" />
+                </VBox>
+
+
 
                 <!-- Mensaje de campos requeridos -->
                 <Label styleClass="help-text" text="* Campos requeridos">
@@ -112,7 +124,7 @@
             <!-- Botones de acción -->
             <HBox alignment="CENTER_RIGHT" spacing="15.0">
                 <Button fx:id="btnCancelar" onAction="#cancelar" prefHeight="40.0" prefWidth="120.0" styleClass="modern-button, button-secondary" text="❌ Cancelar" />
-                <Button fx:id="btnGuardar" onAction="#guardarProfesor" prefHeight="40.0" prefWidth="120.0" styleClass="modern-button, button-success" text="💾 Guardar" />
+                <Button fx:id="btnGuardar" onAction="#guardarEstudiante" prefHeight="40.0" prefWidth="120.0" styleClass="modern-button, button-success" text="💾 Guardar" />
             </HBox>
 
             <!-- Mensaje de estado -->

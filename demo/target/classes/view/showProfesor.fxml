@@ -15,7 +15,7 @@
 
 <BorderPane prefHeight="800" prefWidth="1200" stylesheets="@../styles/profesor.css" 
             xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" 
-            fx:controller="com.example.controllerFXML.PersonaController">
+            fx:controller="com.example.controllerFXML.ShowProfesorController">
     
     <!-- MENÚ LATERAL -->
     <left>
@@ -29,14 +29,14 @@
                 <padding>
                     <Insets top="16" left="16" right="16" bottom="8" />
                 </padding>
-                
+
                 <Label text="MENÚ PRINCIPAL" styleClass="nav-section-title">
                     <font>
                         <Font size="11.0" />
                     </font>
                 </Label>
-                
-                <Button onAction="#mostrarInicio" prefWidth="248" text="🏠 Dashboard" 
+
+                <Button onAction="#mostrarInicio" prefWidth="248" text="🏠 Inicio"
                         styleClass="nav-button" />
                 <Button onAction="#mostrarProfesores" prefWidth="248" text="👨‍🏫 Profesores" 
                         styleClass="nav-button" />
@@ -132,7 +132,7 @@
             <!-- Contenido por defecto -->
             <VBox styleClass="dashboard-container" spacing="24" alignment="TOP_CENTER">
                 <HBox alignment="CENTER_LEFT">
-                    <Label text="👨‍🏫 Listado de Profesores" styleClass="title-medium">
+                    <Label text="Gestión de Profesores" styleClass="title-medium">
                         <font>
                             <Font name="System Bold" size="24.0" />
                         </font>
@@ -142,7 +142,7 @@
                         <HBox.hgrow>ALWAYS</HBox.hgrow>
                     </Region>
         
-                    <Button fx:id="btnAgregarProfesor" text="➕ Agregar Profesor"
+                    <Button fx:id="btnAgregarProfesor" text="Agregar"
                             styleClass="modern-button, button-success" />
                 </HBox>
     
@@ -157,27 +157,7 @@
                     </columns>
                 </TableView>
     
-                <!-- Botones de acción -->
-                <HBox spacing="15" alignment="CENTER_LEFT">
-                    <Button fx:id="btnEditarProfesor" text="✏️ Editar"
-                            styleClass="modern-button, button-secondary" />
-                    <Button fx:id="btnEliminarProfesor" text="🗑️ Eliminar"
-                            onAction="#eliminarProfesor"
-                            styleClass="modern-button, button-success" />
 
-                    <Button fx:id="btnVerDetallesProfesor" text="👁️ Ver Detalles"
-                            styleClass="modern-button" />
-        
-                    <Region>
-                        <HBox.hgrow>ALWAYS</HBox.hgrow>
-                    </Region>
-        
-                    <!-- Botones adicionales -->
-                    <Button fx:id="btnExportar" text="📄 Exportar" 
-                            styleClass="modern-button, button-secondary" />
-                    <Button fx:id="btnImprimir" text="🖨️ Imprimir" 
-                            styleClass="modern-button, button-secondary" />
-                </HBox>
             </VBox>
         </StackPane>
     </center>

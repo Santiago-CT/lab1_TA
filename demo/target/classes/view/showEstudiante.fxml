@@ -18,7 +18,7 @@
 
 <BorderPane prefHeight="800" prefWidth="1200" stylesheets="@../styles/profesor.css"
             xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.controllerFXML.EstudianteControllerV">
+            fx:controller="com.example.controllerFXML.ShowEstudianteController">
 
     <!-- MENÚ LATERAL -->
     <left>
@@ -39,7 +39,7 @@
                         </font>
                     </Label>
 
-                    <Button onAction="#mostrarInicio" prefWidth="248" text="🏠 Dashboard"
+                    <Button onAction="#mostrarInicio" prefWidth="248" text="🏠 Inicio"
                             styleClass="nav-button" />
                     <Button onAction="#mostrarProfesores" prefWidth="248" text="👨‍🏫 Profesores"
                             styleClass="nav-button" />
@@ -141,7 +141,7 @@
 
                 <!-- Header con título y botón agregar -->
                 <HBox alignment="CENTER_LEFT">
-                    <Label text="👨‍🎓 Gestión de Estudiantes" styleClass="title-medium">
+                    <Label text="Gestión de Estudiantes" styleClass="title-medium">
                         <font>
                             <Font name="System Bold" size="24.0" />
                         </font>
@@ -151,7 +151,7 @@
                         <HBox.hgrow>ALWAYS</HBox.hgrow>
                     </Region>
 
-                    <Button fx:id="btnAgregarEstudiante" text="➕ Agregar Estudiante"
+                    <Button fx:id="btnAgregarEstudiante" text="Agregar"
                             styleClass="modern-button, button-success" />
                 </HBox>
 
@@ -214,9 +214,7 @@
                         <TableColumn fx:id="colNombre" prefWidth="200" text="NOMBRE COMPLETO" />
                         <TableColumn fx:id="colEmail" prefWidth="200" text="EMAIL" />
                         <TableColumn fx:id="colPrograma" prefWidth="180" text="PROGRAMA" />
-                        <TableColumn fx:id="colSemestre" prefWidth="100" text="SEMESTRE" />
-                        <TableColumn fx:id="colEstado" prefWidth="120" text="ESTADO" />
-                        <TableColumn fx:id="colFechaIngreso" prefWidth="120" text="FECHA INGRESO" />
+                        <TableColumn fx:id="colEstado" prefWidth="180" text="ESTADO" />
                     </columns>
                 </TableView>
 

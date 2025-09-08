@@ -38,7 +38,7 @@ public class SceneManager {
         primaryStage.show();
     }
 
-    static void setRoot(String fxml) throws IOException {
+    private static void setRoot(String fxml) throws IOException {
         scene.setRoot(loadFXML(fxml));
     }
 
@@ -54,32 +54,32 @@ public class SceneManager {
     
     @FXML
     public void mostrarProfesores() throws IOException {
-        SceneManager.setRoot("profesorShow");
+        SceneManager.setRoot("showProfesor");
     }
 
     @FXML
     public void mostrarEstudiantes() throws IOException {
-        SceneManager.setRoot("estudianteShow");
+        SceneManager.setRoot("showEstudiante");
     }
 
     @FXML
     public void mostrarFacultades() throws IOException {
-        SceneManager.setRoot("facultadShow");
+        SceneManager.setRoot("showFacultad");
     }
 
     @FXML
     public void mostrarProgramas() throws IOException {
-        SceneManager.setRoot("programaShow");
+        SceneManager.setRoot("showPrograma");
     }
 
     @FXML
     public void mostrarCursos() throws IOException {
-        SceneManager.setRoot("cursoShow");
+        SceneManager.setRoot("showCurso");
     }
 
     @FXML
     public void mostrarInscripciones() throws IOException {
-        SceneManager.setRoot("inscripcionShow");
+        SceneManager.setRoot("showInscripcion");
     }
     
     public void initVars(){
@@ -107,5 +107,23 @@ public class SceneManager {
                 System.exit(0);
             }
         });
+    }
+
+    public void mostrarError(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(titulo);
+        alert.setHeaderText("Ha ocurrido un error");
+        alert.setContentText(mensaje);
+        alert.setResizable(true);
+        alert.getDialogPane().setPrefWidth(400);
+        alert.showAndWait();
+    }
+
+    public void showMessage(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
     }
 }

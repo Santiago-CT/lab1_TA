@@ -62,14 +62,6 @@ public class EstudianteController {
     }
 
     /**
-     * Actualiza un estudiante existente en la base de datos
-     * @param estudianteObj El objeto estudiante a actualizar
-     * @return true si la actualización fue exitosa, false en caso contrario
-     * @throws Exception si hay problemas de acceso a datos
-     */
-
-
-    /**
      * Elimina un estudiante de la base de datos
      * @param estudianteId ID del estudiante a eliminar
      * @return true si la eliminación fue exitosa, false en caso contrario

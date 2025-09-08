@@ -14,7 +14,7 @@ public class FacultadDao {
     private static final String SQL_INSERT = "INSERT INTO facultad (id, nombre, decano) VALUES (?, ?, ?)";
     private static final String SQL_SELECT_ALL = """
             SELECT f.id, f.nombre, f.decano, 
-                   p.nombres, p.apellidos 
+                   p.nombres, p.apellidos
             FROM facultad f 
             LEFT JOIN persona p ON f.decano = p.id
             """;
@@ -95,17 +95,14 @@ public class FacultadDao {
                 double id = rs.getDouble("id");
                 String nombre = rs.getString("nombre");
 
-                // Crear el objeto Persona para el decano si existe
                 Persona decano = null;
                 if (rs.getObject("decano") != null) {
                     double decanoId = rs.getDouble("decano");
                     String nombres = rs.getString("nombres");
                     String apellidos = rs.getString("apellidos");
-                    String email = rs.getString("email");
 
                     if (nombres != null && apellidos != null) {
-                        // Usar constructor completo con email (null si no existe)
-                        decano = new Persona(decanoId, nombres, apellidos, email);
+                        decano = new Persona(decanoId, nombres, apellidos, null);
                     }
                 }
 
@@ -119,6 +116,21 @@ public class FacultadDao {
         return facultades;
     }
 
+    public static boolean existeFacultad(double id) {
+        String sql = "SELECT COUNT(*) FROM facultad WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
+            stmt.setDouble(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
 }

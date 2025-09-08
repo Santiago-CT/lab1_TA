@@ -216,4 +216,21 @@ public class ProfesorDAO {
         return false;
     }
 
+    public static boolean existeProfesor(double id) {
+        String sql = "SELECT COUNT(*) FROM profesor WHERE persona_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setDouble(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

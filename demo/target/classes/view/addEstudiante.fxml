@@ -6,9 +6,9 @@
 <?import javafx.scene.text.*?>
 
 <ScrollPane fitToWidth="true" prefHeight="650.0" prefWidth="520.0"
-            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns="http://javafx.com/javafx/17.0.7"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.controllerFXML.AgregarEstudianteController"
+            fx:controller="com.example.controllerFXML.AddEstudianteController"
             stylesheets="@../styles/profesor.css"
             styleClass="modal-container">
 
@@ -96,15 +96,7 @@
                     <ComboBox fx:id="cmbPrograma" prefHeight="35.0" prefWidth="460.0" promptText="Seleccione el programa académico" styleClass="form-field" />
                 </VBox>
 
-                <!-- Semestre -->
-                <VBox spacing="5.0">
-                    <Label styleClass="form-label" text="Semestre *">
-                        <font>
-                            <Font name="System Bold" size="13.0" />
-                        </font>
-                    </Label>
-                    <ComboBox fx:id="cmbSemestre" prefHeight="35.0" prefWidth="460.0" promptText="Seleccione el semestre" styleClass="form-field" />
-                </VBox>
+
 
                 <!-- Estado -->
                 <VBox spacing="5.0">
@@ -116,15 +108,7 @@
                     <ComboBox fx:id="cmbEstado" prefHeight="35.0" prefWidth="460.0" promptText="Seleccione el estado del estudiante" styleClass="form-field" />
                 </VBox>
 
-                <!-- Fecha de Ingreso -->
-                <VBox spacing="5.0">
-                    <Label styleClass="form-label" text="Fecha de Ingreso *">
-                        <font>
-                            <Font name="System Bold" size="13.0" />
-                        </font>
-                    </Label>
-                    <DatePicker fx:id="dpFechaIngreso" prefHeight="35.0" prefWidth="460.0" promptText="Seleccione la fecha de ingreso" styleClass="form-field" />
-                </VBox>
+
 
                 <!-- Mensaje de campos requeridos -->
                 <Label styleClass="help-text" text="* Campos requeridos">

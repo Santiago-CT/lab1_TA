@@ -6,9 +6,9 @@
 <?import javafx.scene.text.*?>
 
 <ScrollPane fitToWidth="true" prefHeight="650.0" prefWidth="520.0"
-            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns="http://javafx.com/javafx/17.0.7"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.controllerFXML.AgregarEstudianteController"
+            fx:controller="com.example.controllerFXML.AddEstudianteController"
             stylesheets="@../styles/profesor.css"
             styleClass="modal-container">
 
