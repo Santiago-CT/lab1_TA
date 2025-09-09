@@ -84,7 +84,7 @@ public class FacultadDao {
             throw new Exception("Error al eliminar facultad: " + e.getMessage(), e);
         }
     }
-    public static List<Facultad> getAll() throws Exception {
+    public static List<Facultad> getAll() {
         List<Facultad> facultades = new ArrayList<>();
 
         try (Connection cn = DBConnection.getConnection();
@@ -110,7 +110,7 @@ public class FacultadDao {
                 facultades.add(facultad);
             }
         } catch (Exception e) {
-            throw new Exception("Error al obtener todas las facultades: " + e.getMessage(), e);
+            System.out.println(e.getMessage());
         }
 
         return facultades;

@@ -151,6 +151,33 @@ public class ProfesorDAO {
         return profesores;
     }
 
+    public static ArrayList<Profesor> getAllReduced() {
+        ArrayList<Profesor> profesores = new ArrayList<>();
+        String sql = """
+            SELECT p.id, p.nombres, p.apellidos 
+            FROM persona p
+            JOIN profesor pr ON p.id = pr.persona_id
+        """;
+
+        try (Connection cn = DBConnection.getConnection();
+             PreparedStatement ps = cn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                profesores.add(new Profesor(
+                        rs.getDouble("id"),
+                        rs.getString("nombres"),
+                        rs.getString("apellidos"),
+                        null,
+                        null
+                ));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return profesores;
+    }
+
     public static boolean actualizar(Profesor profesor) {
         try (Connection conn = DBConnection.getConnection()) {
             conn.setAutoCommit(false); // Iniciar transacción

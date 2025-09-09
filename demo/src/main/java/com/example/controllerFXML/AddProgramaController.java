@@ -2,11 +2,14 @@ package com.example.controllerFXML;
 
 import com.example.dao.FacultadDao;
 import com.example.dao.ProfesorDAO;
+import com.example.dao.ProgramaDao;
 import com.example.model.Facultad;
 import com.example.model.Persona;
 import com.example.model.Profesor;
+import com.example.model.Programa;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -14,22 +17,27 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 import java.net.URL;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 
-public class AddFacultadController implements Initializable {
+public class AddProgramaController implements Initializable {
 
     @FXML
     private TextField txtId;
     @FXML
     private TextField txtNombre;
     @FXML
-    private ComboBox<Profesor> cmbDecano;
+    private ComboBox<Facultad> cmbFacultad;
     @FXML
-    private Button btnGuardar;
+    private TextField txtDuracion;
     @FXML
     private Button btnCancelar;
+    @FXML
+    private Button btnGuardar;
     @FXML
     private Label lblMensaje;
 
@@ -47,22 +55,22 @@ public class AddFacultadController implements Initializable {
      */
     private void inicializarComboBoxes() {
         // Tipos de contrato basados en tu modelo
-        ObservableList<Profesor> decanos = FXCollections.observableArrayList(
-                ProfesorDAO.getAllReduced()
+        ObservableList<Facultad> facultades = FXCollections.observableArrayList(
+                FacultadDao.getAll()
         );
 
-        cmbDecano.setItems(decanos);
+        cmbFacultad.setItems(facultades);
 
-        cmbDecano.setConverter(new javafx.util.StringConverter<Profesor>() {
+        cmbFacultad.setConverter(new StringConverter<Facultad>() {
             @Override
-            public String toString(Profesor profesores) {
-                return profesores != null ? profesores.getNombres() + " " + profesores.getApellidos() : "";
+            public String toString(Facultad facultad) {
+                return facultad != null ? facultad.getNombre() : "";
             }
 
             @Override
-            public Profesor fromString(String string) {
-                return cmbDecano.getItems().stream()
-                        .filter(profesor -> profesor.getNombres().equals(string))
+            public Facultad fromString(String string) {
+                return cmbFacultad.getItems().stream()
+                        .filter(facultad -> facultad.getNombre().equals(string))
                         .findFirst()
                         .orElse(null);
             }
@@ -102,7 +110,7 @@ public class AddFacultadController implements Initializable {
                     return;
                 }
 
-                FacultadDao.insert(new Facultad(id, txtNombre.getText().trim(), new Persona(cmbDecano.getValue().getID(), null, null, null)));
+                ProgramaDao.insert(new Programa(id, txtNombre.getText().trim(), Double.parseDouble(txtDuracion.getText()), Date.valueOf(LocalDate.now()), new Facultad(cmbFacultad.getValue().getID(), null, null)));
 
                 // Actualizar la tabla en el controlador padre
                 if (parentController != null) {
@@ -110,7 +118,7 @@ public class AddFacultadController implements Initializable {
                 }
 
                 // Cerrar ventana después de un momento
-                javafx.concurrent.Task<Void> task = new javafx.concurrent.Task<Void>() {
+                Task<Void> task = new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
                         Thread.sleep(1500);
@@ -134,8 +142,8 @@ public class AddFacultadController implements Initializable {
      */
     private boolean idExiste(double id) {
         try {
-            var profesores = FacultadDao.getAll();
-            return profesores.stream().anyMatch(p -> p.getID() == id);
+            var programas = ProgramaDao.get();
+            return programas.stream().anyMatch(p -> p.getID() == id);
         } catch (Exception e) {
             System.err.println("Error al verificar ID existente: " + e.getMessage());
             return false;
@@ -167,11 +175,6 @@ public class AddFacultadController implements Initializable {
             errores.append("• El campo Nombres es requerido\n");
         } else if (txtNombre.getText().trim().length() < 2) {
             errores.append("• Los nombres deben tener al menos 2 caracteres\n");
-        }
-
-        // Validar tipo de contrato
-        if (cmbDecano.getValue() == null) {
-            errores.append("• Debe seleccionar un decano\n");
         }
 
         if (!errores.isEmpty()) {

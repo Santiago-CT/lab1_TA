@@ -83,4 +83,21 @@ public class ProgramaDao {
             return programas;
         }
     }
+
+    public static boolean existePrograma(double id) {
+        String sql = "SELECT COUNT(*) FROM programa WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setDouble(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

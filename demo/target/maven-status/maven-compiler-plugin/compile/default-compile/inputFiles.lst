@@ -3,6 +3,7 @@
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/controller/ProfesorController.java
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/model/Estudiante.java
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/controllerFXML/AddEstudianteController.java
+/home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/controllerFXML/AddProgramaController.java
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/model/Facultad.java
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/controllerFXML/ShowFacultadController.java
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/model/Servicios.java
@@ -13,11 +14,13 @@
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/model/Programa.java
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/controllerFXML/ShowProfesorController.java
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/dao/ProgramaDao.java
+/home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/controller/ProgramaController.java
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/model/CursosProfesores.java
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/dao/CursoDAO.java
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/model/CursosInscritos.java
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/dao/EstudianteDao.java
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/model/Curso.java
+/home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/controllerFXML/ShowProgramaController.java
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/controllerFXML/InicioController.java
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/controller/FacultadController.java
 /home/gon/JAristizabal/lab1_TA/demo/src/main/java/com/example/model/Profesor.java
