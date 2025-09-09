@@ -2,19 +2,33 @@ package com.example.controller;//package com.example.controller;
 
 import com.example.dao.FacultadDao;
 import com.example.model.Facultad;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class FacultadController {
 
-    public ObservableList<Object> obtenerListaFacultades() throws Exception {
+    public List<Map<String, Object>> obtenerListaFacultades() throws Exception {
         try {
-            List<Facultad> profesores = FacultadDao.getAll();
-            return FXCollections.observableArrayList(profesores.toArray());
+            List<Facultad> facultades = FacultadDao.getAll();
+
+            // Convertir cada Facultad a Map
+            List<Map<String, Object>> listaFacultades = facultades.stream()
+                    .map(facultad -> {
+                        Map<String, Object> fila = new HashMap<>();
+                        fila.put("id", facultad.getID());
+                        fila.put("nombre", facultad.getNombre());
+                        fila.put("decano", facultad.getDecano());
+                        return fila;
+                    })
+                    .collect(Collectors.toList());
+
+            return listaFacultades;
+
         } catch (Exception e) {
-            throw new Exception("Error al obtener la lista de Profesores: " + e.getMessage(), e);
+            throw new Exception("Error al obtener la lista de Facultades: " + e.getMessage(), e);
         }
     }
 

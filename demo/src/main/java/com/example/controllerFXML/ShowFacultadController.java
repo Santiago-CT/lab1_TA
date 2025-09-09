@@ -1,8 +1,7 @@
 package com.example.controllerFXML;
 
-import com.example.dao.FacultadDao;
-import com.example.model.Facultad;
-import com.example.model.Persona;
+import com.example.controller.FacultadController;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,23 +11,24 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class ShowFacultadController extends SceneManager implements Initializable {
 
-    @FXML private TableView<Facultad> tablaFacultades;
-    @FXML private TableColumn<Facultad, Double> colID;
-    @FXML private TableColumn<Facultad, String> colNombre;
-    @FXML private TableColumn<Facultad, String> colDecano;
+    @FXML private TableView<Map<String, Object>> tablaFacultades;
+    @FXML private TableColumn<Map<String, Object>, Double> colID;
+    @FXML private TableColumn<Map<String, Object>, String> colNombre;
+    @FXML private TableColumn<Map<String, Object>, String> colDecano;
 
     @FXML private Button btnAgregar;
+    private FacultadController controller;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -39,16 +39,28 @@ public class ShowFacultadController extends SceneManager implements Initializabl
     }
 
     private void configurarColumnas() {
-        colID.setCellValueFactory(new PropertyValueFactory<>("ID"));
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        colID.setCellValueFactory(cellData -> {
+            Object value = cellData.getValue().get("id");
+            return new SimpleObjectProperty<>((Double) value);
+        });
+
+        colNombre.setCellValueFactory(cellData -> {
+            Object value = cellData.getValue().get("nombre");
+            return new SimpleStringProperty((String) value);
+        });
+
+        colDecano.setCellValueFactory(cellData -> {
+            Object value = cellData.getValue().get("decano");
+            return new SimpleStringProperty((String) value);
+        });
 
         // Mostrar nombre completo del decano
-        colDecano.setCellValueFactory(cellData -> {
+        /*colDecano.setCellValueFactory(cellData -> {
             Persona decano = cellData.getValue().getDecano();
             String nombreDecano = decano != null ?
                     decano.getNombres() + " " + decano.getApellidos() : "Sin asignar";
             return new SimpleStringProperty(nombreDecano);
-        });
+        });*/
         tablaFacultades.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
@@ -88,8 +100,8 @@ public class ShowFacultadController extends SceneManager implements Initializabl
     public void actualizarTabla() {
         try {
             // Obtener todas las facultades de la base de datos
-            List<Facultad> listaFacultades = FacultadDao.getAll();
-            ObservableList<Facultad> observableList = FXCollections.observableArrayList(listaFacultades);
+            List<Map<String, Object>> listaFacultades = controller.obtenerListaFacultades();
+            ObservableList<Map<String, Object>> observableList = FXCollections.observableArrayList(listaFacultades);
             tablaFacultades.setItems(observableList);
 
             System.out.println("Facultades cargadas: " + listaFacultades.size());

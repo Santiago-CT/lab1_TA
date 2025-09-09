@@ -4,15 +4,30 @@ import com.example.dao.ProfesorDAO;
 import com.example.model.Profesor;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class ProfesorController {
 
-    public ObservableList<Object> obtenerListaProfesores() throws Exception {
+    public List<Map<String, Object>> obtenerListaProfesores() throws Exception {
         try {
             List<Profesor> profesores = ProfesorDAO.get();
-            return FXCollections.observableArrayList(profesores.toArray());
+            List<Map<String, Object>> listaProfesores = profesores.stream()
+                    .map(facultad -> {
+                        Map<String, Object> fila = new HashMap<>();
+                        fila.put("id", facultad.getID());
+                        fila.put("nombres", facultad.getNombres());
+                        fila.put("apellidos", facultad.getApellidos());
+                        fila.put("tipoContrato", facultad.getTipoContrato());
+                        fila.put("email", facultad.getEmail());
+                        return fila;
+                    })
+                    .collect(Collectors.toList());
+            return listaProfesores;
         } catch (Exception e) {
             throw new Exception("Error al obtener la lista de Profesores: " + e.getMessage(), e);
         }
