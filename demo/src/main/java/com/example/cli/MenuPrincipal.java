@@ -1,14 +1,13 @@
 package com.example.cli;
-import java.util.Scanner;
-import com.example.cli.EstudianteCLI;
 
+import java.util.Scanner;
 import com.example.controller.EstudianteController;
 import com.example.controller.ProfesorController;
 
 public class MenuPrincipal {
     private final Scanner scanner = new Scanner(System.in);
     private final EstudianteController estudianteController = new EstudianteController();
-    private final ProfesorCLI profesorController = new ProfesorController();
+    private final ProfesorController profesorController = new ProfesorController();
 
     public void iniciar() {
         int opcion;
@@ -27,8 +26,8 @@ public class MenuPrincipal {
                     new EstudianteCLI(estudianteController).menu();
                     break;
                 case 2:
-                    new  ProfesorCLI(profesorController).menu();
-
+                    new ProfesorCLI(profesorController).menu();
+                    break;
             }
         } while (opcion != 0);
     }

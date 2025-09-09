@@ -10,7 +10,10 @@ public class ProfesorCLI {
 
     private final ProfesorController profesorController;
     private final Scanner scanner;
-
+    public ProfesorCLI(ProfesorController profesorController) {
+        this.profesorController = profesorController;
+        this.scanner = new Scanner(System.in);
+    }
     public ProfesorCLI() {
         this.profesorController = new ProfesorController();
         this.scanner = new Scanner(System.in);
@@ -22,9 +25,7 @@ public class ProfesorCLI {
         do {
             System.out.println("\n=== GESTIÓN DE PROFESORES ===");
             System.out.println("1. Listar profesores");
-            System.out.println("2. Buscar profesor por ID");
-            System.out.println("3. Agregar profesor");
-            System.out.println("4. Eliminar profesor");
+            System.out.println("2. Agregar profesor");
             System.out.println("0. Volver");
             System.out.print("Elige una opción: ");
 
@@ -34,9 +35,7 @@ public class ProfesorCLI {
 
                 switch (opcion) {
                     case 1 -> listarProfesores();
-                    case 2 -> buscarProfesorPorId();
-                    case 3 -> agregarProfesor();
-                    case 4 -> eliminarProfesor();
+                    case 2-> agregarProfesor();
                     case 0 -> System.out.println("🔙 Volviendo al menú principal...");
                     default -> System.out.println("❌ Opción no válida");
                 }
