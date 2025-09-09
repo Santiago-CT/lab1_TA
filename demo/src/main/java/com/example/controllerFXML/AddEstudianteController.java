@@ -1,10 +1,6 @@
 package com.example.controllerFXML;
 
-import com.example.dao.EstudianteDao;
-import com.example.model.ConexionBD;
-import com.example.dao.ProgramaDao;
-import com.example.model.Estudiante;
-import com.example.model.Programa;
+import com.example.controller.EstudianteController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -23,15 +19,17 @@ public class AddEstudianteController implements Initializable {
     @FXML private TextField txtApellidos;
     @FXML private TextField txtEmail;
     @FXML private TextField txtTelefono; // Este campo no se usa en tu modelo, se puede quitar del FXML
-    @FXML private ComboBox<Programa> cmbPrograma;
+    @FXML private ComboBox<Object> cmbPrograma; // Cambiado a Object para usar con EstudianteController
     @FXML private ComboBox<Integer> cmbSemestre; // Este campo no se usa en tu modelo, se puede quitar del FXML
     @FXML private ComboBox<String> cmbEstado; // Mapearemos a boolean activo
-    @FXML private DatePicker dpFechaIngreso; // Este campo no se usa en tu modelo, se puede quitar del FXML
+    @FXML private DatePicker dpFechaIngreso;
+    @FXML private TextField txtPromedio;
     @FXML private Button btnGuardar;
     @FXML private Button btnCancelar;
     @FXML private Label lblMensaje;
 
     private ShowEstudianteController parentController;
+    private EstudianteController estudianteController;
 
     // Patrón para validar email
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
@@ -40,6 +38,7 @@ public class AddEstudianteController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        estudianteController = new EstudianteController();
         inicializarComboBoxes();
         configurarValidaciones();
     }
@@ -49,22 +48,25 @@ public class AddEstudianteController implements Initializable {
      */
     private void inicializarComboBoxes() {
         try {
-            // Cargar programas desde la base de datos
-            var programas = ProgramaDao.get();
-            ObservableList<Programa> listaProgramas = FXCollections.observableArrayList(programas);
+            // Cargar programas usando EstudianteController
+            ObservableList<Object> listaProgramas = estudianteController.obtenerListaProgramas();
             cmbPrograma.setItems(listaProgramas);
 
             // Configurar cómo se muestra el programa en el ComboBox
-            cmbPrograma.setConverter(new javafx.util.StringConverter<Programa>() {
+            cmbPrograma.setConverter(new javafx.util.StringConverter<Object>() {
                 @Override
-                public String toString(Programa programa) {
-                    return programa != null ? programa.getNombre() : "";
+                public String toString(Object programa) {
+                    if (programa != null) {
+                        // Usar método del controller para obtener nombre del programa
+                        return programa.toString(); // Asumiendo que Programa tiene toString() implementado
+                    }
+                    return "";
                 }
 
                 @Override
-                public Programa fromString(String string) {
+                public Object fromString(String string) {
                     return cmbPrograma.getItems().stream()
-                            .filter(programa -> programa.getNombre().equals(string))
+                            .filter(programa -> programa.toString().equals(string))
                             .findFirst()
                             .orElse(null);
                 }
@@ -97,7 +99,7 @@ public class AddEstudianteController implements Initializable {
     private void configurarValidaciones() {
         // Validación del email en tiempo real
         txtEmail.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.isEmpty() && !EMAIL_PATTERN.matcher(newValue).matches()) {
+            if (!newValue.isEmpty() && !estudianteController.validarFormatoEmailPublico(newValue)) {
                 txtEmail.setStyle("-fx-border-color: #e74c3c;");
             } else {
                 txtEmail.setStyle("");
@@ -138,55 +140,58 @@ public class AddEstudianteController implements Initializable {
     /**
      * Maneja el evento de guardar estudiante
      */
+
     @FXML
     private void guardarEstudiante() {
         if (validarFormulario()) {
             try {
                 double codigo = Double.parseDouble(txtCodigo.getText().trim());
 
-                // Verificar si el código ya existe
-                if (codigoExiste(codigo)) {
+                // Verificar si el código ya existe usando EstudianteController
+                if (estudianteController.existeCodigoEstudiante(codigo)) {
                     mostrarMensajeError("El código " + codigo + " ya está registrado para otro estudiante");
                     return;
                 }
 
-                double personaId = codigo;
-
                 // Convertir estado a boolean
                 boolean activo = "ACTIVO".equals(cmbEstado.getValue());
 
-                // Crear objeto Estudiante usando tu constructor
-                Estudiante nuevoEstudiante = new Estudiante(
-                        personaId,  // ID de persona
+
+                // Guardar usando EstudianteController
+                double promedio = Double.parseDouble(txtPromedio.getText().trim());
+
+                boolean resultado = estudianteController.insertarEstudiante(
+                        codigo,
                         txtNombres.getText().trim(),
                         txtApellidos.getText().trim(),
                         txtEmail.getText().trim().toLowerCase(),
-                        codigo,
                         cmbPrograma.getValue(),
                         activo,
-                        0.0  // Promedio inicial
+                        promedio
                 );
 
-                // Guardar en la base de datos
-                EstudianteDao.insert(nuevoEstudiante);
 
-                mostrarMensajeExito("Estudiante guardado exitosamente");
+                if (resultado) {
+                    mostrarMensajeExito("Estudiante guardado exitosamente");
 
-                // Actualizar la tabla en el controlador padre
-                if (parentController != null) {
-                    parentController.actualizarTabla();
-                }
-
-                // Cerrar ventana después de un momento
-                javafx.concurrent.Task<Void> task = new javafx.concurrent.Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        Thread.sleep(1500);
-                        return null;
+                    // Actualizar la tabla en el controlador padre
+                    if (parentController != null) {
+                        parentController.actualizarTabla();
                     }
-                };
-                task.setOnSucceeded(e -> cerrarVentana());
-                new Thread(task).start();
+
+                    // Cerrar ventana después de un momento
+                    javafx.concurrent.Task<Void> task = new javafx.concurrent.Task<Void>() {
+                        @Override
+                        protected Void call() throws Exception {
+                            Thread.sleep(1500);
+                            return null;
+                        }
+                    };
+                    task.setOnSucceeded(e -> cerrarVentana());
+                    new Thread(task).start();
+                } else {
+                    mostrarMensajeError("No se pudo guardar el estudiante");
+                }
 
             } catch (NumberFormatException e) {
                 mostrarMensajeError("El código debe ser un número válido");
@@ -194,19 +199,6 @@ public class AddEstudianteController implements Initializable {
                 mostrarMensajeError("Error al guardar el estudiante: " + e.getMessage());
                 e.printStackTrace();
             }
-        }
-    }
-
-    /**
-     * Verifica si un código ya existe en la base de datos
-     */
-    private boolean codigoExiste(double codigo) {
-        try {
-            var estudiantes = EstudianteDao.get();
-            return estudiantes.stream().anyMatch(e -> e.getCodigo() == codigo);
-        } catch (Exception e) {
-            System.err.println("Error al verificar código existente: " + e.getMessage());
-            return false;
         }
     }
 
@@ -247,9 +239,9 @@ public class AddEstudianteController implements Initializable {
         // Validar email
         if (txtEmail.getText() == null || txtEmail.getText().trim().isEmpty()) {
             errores.append("• El campo Email es requerido\n");
-        } else if (!EMAIL_PATTERN.matcher(txtEmail.getText().trim()).matches()) {
+        } else if (!estudianteController.validarFormatoEmailPublico(txtEmail.getText().trim())) {
             errores.append("• El formato del email no es válido\n");
-        } else if (emailExiste(txtEmail.getText().trim())) {
+        } else if (estudianteController.existeEmail(txtEmail.getText().trim(),0)) {
             errores.append("• El email ya está registrado para otra persona\n");
         }
 
@@ -269,20 +261,6 @@ public class AddEstudianteController implements Initializable {
         }
 
         return true;
-    }
-
-    /**
-     * Verifica si un email ya existe
-     */
-    private boolean emailExiste(String email) {
-        try {
-            var estudiantes = ConexionBD.getEstudiantes();
-            return estudiantes.stream().anyMatch(e ->
-                    e.getEmail().equalsIgnoreCase(email));
-        } catch (Exception e) {
-            System.err.println("Error al verificar email existente: " + e.getMessage());
-            return false;
-        }
     }
 
     /**

@@ -26,6 +26,9 @@ public class Programa {
         this.facultad = facultad;
     }
 
+    public Programa(int id, String ingenieríaDeSistemas, Object o) {
+    }
+
     public double getID() {
         return ID;
     }
