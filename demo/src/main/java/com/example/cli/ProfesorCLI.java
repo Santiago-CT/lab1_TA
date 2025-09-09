@@ -1,7 +1,6 @@
 package com.example.cli;
 
 import com.example.controller.ProfesorController;
-import com.example.model.Profesor;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -55,37 +54,15 @@ public class ProfesorCLI {
             if (lista.isEmpty()) {
                 System.out.println("⚠️ No hay profesores registrados.");
             } else {
-                System.out.println("\n📋 Lista de Profesores:");
-                lista.forEach(prof -> {
-                    Profesor p = (Profesor) prof;
-                    System.out.println("ID: " + p.getID() +
-                            " | Nombre: " + p.getNombres() + " " + p.getApellidos() +
-                            " | Email: " + p.getEmail() +
-                            " | Contrato: " + p.getTipoContrato());
-                });
+
+                System.out.println("\n📋 Lista de Profesores:"+profesorController);
+
             }
         } catch (Exception e) {
             System.out.println("❌ Error al listar profesores: " + e.getMessage());
         }
     }
 
-    private void buscarProfesorPorId() {
-        try {
-            System.out.print("Ingrese el ID del profesor: ");
-            double id = scanner.nextDouble();
-            scanner.nextLine();
-
-            if (profesorController.existeProfesor(id)) {
-                System.out.println("✅ Profesor con ID " + id + " encontrado en el sistema.");
-            } else {
-                System.out.println("⚠️ No existe un profesor con ese ID.");
-            }
-
-        } catch (InputMismatchException e) {
-            System.out.println("❌ Error: ID inválido");
-            scanner.nextLine();
-        }
-    }
 
     private void agregarProfesor() {
         try {
@@ -114,22 +91,5 @@ public class ProfesorCLI {
         }
     }
 
-    private void eliminarProfesor() {
-        try {
-            System.out.print("Ingrese el ID del profesor a eliminar: ");
-            double id = scanner.nextDouble();
-            scanner.nextLine();
 
-            if (profesorController.existeProfesor(id)) {
-                System.out.println("✅ Profesor eliminado con éxito (simulación, implementar en DAO si es necesario).");
-                // Aquí deberías implementar ProfesorDAO.delete(id)
-            } else {
-                System.out.println("⚠️ No existe un profesor con ese ID.");
-            }
-
-        } catch (InputMismatchException e) {
-            System.out.println("❌ Error: ID inválido");
-            scanner.nextLine();
-        }
-    }
 }

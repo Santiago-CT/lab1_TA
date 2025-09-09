@@ -68,7 +68,6 @@ public class EstudianteCLI {
                 Object prog = programas.get(i);
                 System.out.printf("%d. %s%n", i + 1, controller.obtenerNombrePrograma(prog));
             }
-
             System.out.print("Elige el programa (número): ");
             int opcionPrograma = scanner.nextInt();
             scanner.nextLine();
