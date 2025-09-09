@@ -1,22 +1,37 @@
-package com.example.controller;//package com.example.controller;
+package com.example.controller;
 
+
+import com.example.dao.ProgramaDao;
+import com.example.model.Programa;
 import com.example.dao.EstudianteDao;
 import com.example.model.Estudiante;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.util.List;
 
-/**
- * Controlador de Lógica de Negocio para la gestión de estudiantes
- * Se encarga de las operaciones de datos y la lógica de negocio
- */
 public class EstudianteController {
+    public ObservableList<Object> obtenerListaProgramas() throws Exception {
+        try {
+            List<Programa> programas = ProgramaDao.get();
+            return FXCollections.observableArrayList(programas.toArray());
+        } catch (Exception e) {
+            throw new Exception("Error al obtener la lista de programas: " + e.getMessage(), e);
+        }
+    }
+    public boolean existeCodigoEstudiante(double codigo) {
+        try {
+            var estudiantes = EstudianteDao.get();
+            return estudiantes.stream().anyMatch(e -> e.getCodigo() == codigo);
+        } catch (Exception e) {
+            System.err.println("Error al verificar código existente: " + e.getMessage());
+            return false;
+        }
+    }
 
-    /**
-     * Obtiene la lista de todos los estudiantes desde la base de datos
-     * @return ObservableList de estudiantes para usar en la tabla
-     * @throws Exception si hay problemas de acceso a datos
-     */
+    public boolean validarFormatoEmailPublico(String email) {
+        return validarFormatoEmail(email);
+    }
+
     public ObservableList<Object> obtenerListaEstudiantes() throws Exception {
         try {
             List<Estudiante> estudiantes = EstudianteDao.get();
@@ -26,13 +41,23 @@ public class EstudianteController {
             throw new Exception("Error al obtener la lista de estudiantes: " + e.getMessage(), e);
         }
     }
+    public Object crearEstudiante(double codigo, String nombres, String apellidos,
+                                  String email, Object programa, boolean activo,double promedio) {
+        if (!(programa instanceof Programa prog)) {
+            return null;
+        }
 
-    /**
-     * Inserta un nuevo estudiante en la base de datos
-     * @param estudianteObj El objeto estudiante a insertar
-     * @return true si la inserción fue exitosa, false en caso contrario
-     * @throws Exception si hay problemas de acceso a datos
-     */
+        return new Estudiante(
+                codigo,  // ID de persona
+                nombres,
+                apellidos,
+                email.toLowerCase(),
+                codigo,
+                prog,
+                activo,
+                promedio
+        );
+    }
     public boolean insertarEstudiante(Object estudianteObj) throws Exception {
         if (!(estudianteObj instanceof Estudiante estudiante)) {
             throw new Exception("El objeto proporcionado no es un estudiante válido");
@@ -61,25 +86,7 @@ public class EstudianteController {
         }
     }
 
-    /**
-     * Elimina un estudiante de la base de datos
-     * @param estudianteId ID del estudiante a eliminar
-     * @return true si la eliminación fue exitosa, false en caso contrario
-     * @throws Exception si hay problemas de acceso a datos
-     */
 
-    public boolean eliminarEstudiante(double estudianteId) throws Exception {
-        try {
-            // Verificar que el estudiante existe antes de eliminar
-            if (!EstudianteDao.existeEstudiante(estudianteId)) {
-                throw new Exception("El estudiante no existe en la base de datos");
-            }
-
-            return EstudianteDao.eliminar(estudianteId);
-        } catch (Exception e) {
-            throw new Exception("Error al eliminar el estudiante: " + e.getMessage(), e);
-        }
-    }
 
     // Métodos para obtener datos específicos de un objeto estudiante
 
@@ -383,26 +390,6 @@ public class EstudianteController {
         return email.matches(emailRegex);
     }
 
-    /**
-     * Verifica si un código de estudiante ya existe (excluyendo un ID específico)
-     * @param codigo Código a verificar
-     * @param idExcluir ID a excluir de la verificación
-     * @return true si el código ya existe
-     */
-    public boolean existeCodigoEstudiante(double codigo, double idExcluir) {
-        try {
-            return EstudianteDao.existeCodigoEstudiante(codigo, idExcluir);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    /**
-     * Verifica si un email ya existe (excluyendo un ID específico)
-     * @param email Email a verificar
-     * @param idExcluir ID a excluir de la verificación
-     * @return true si el email ya existe
-     */
     public boolean existeEmail(String email, double idExcluir) {
         try {
             return EstudianteDao.existeEmail(email, idExcluir);
@@ -410,6 +397,7 @@ public class EstudianteController {
             return false;
         }
     }
+
 
     /**
      * Verifica si un estudiante existe en la base de datos
@@ -562,5 +550,19 @@ public class EstudianteController {
         }
 
         return mensajes.toString();
+    }
+
+    public boolean insertarEstudiante(double codigo, String nombres, String apellidos,
+                                      String email, Object programa, boolean activo,double promedio) throws Exception {
+
+        // Crear el estudiante usando el método crearEstudiante
+        Object estudianteObj = crearEstudiante(codigo, nombres, apellidos, email, programa, activo,promedio);
+
+        if (estudianteObj == null) {
+            throw new Exception("Error al crear el estudiante: programa no válido");
+        }
+
+        // Usar el método insertarEstudiante existente
+        return insertarEstudiante(estudianteObj);
     }
 }

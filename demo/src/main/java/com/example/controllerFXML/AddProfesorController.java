@@ -1,14 +1,11 @@
 package com.example.controllerFXML;
-import com.example.dao.ProfesorDAO;
-import com.example.model.Profesor;
+
+import com.example.controller.ProfesorController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -17,7 +14,6 @@ import java.util.regex.Pattern;
 
 public class AddProfesorController implements Initializable {
 
-    @FXML private TextField txtId;
     @FXML private TextField txtNombres;
     @FXML private TextField txtApellidos;
     @FXML private TextField txtEmail;
@@ -27,6 +23,7 @@ public class AddProfesorController implements Initializable {
     @FXML private Label lblMensaje;
 
     private ShowProfesorController parentController;
+    private ProfesorController profesorController;
 
     // Patrón para validar email
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
@@ -35,26 +32,23 @@ public class AddProfesorController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        profesorController = new ProfesorController();
         inicializarComboBoxes();
         configurarValidaciones();
-
     }
 
     /**
      * Inicializa los datos de los ComboBox
      */
     private void inicializarComboBoxes() {
-        // Tipos de contrato basados en tu modelo
+        // Tipos de contrato disponibles
         ObservableList<String> tiposContrato = FXCollections.observableArrayList(
-                "Fijo",
-                "Temporal",
-                "Catedra",
-                "Medio Tiempo",
-                "Tiempo Completo"
+                "TIEMPO_COMPLETO",
+                "MEDIO_TIEMPO",
+                "CATEDRA"
         );
         cmbTipoContrato.setItems(tiposContrato);
-        // Seleccionar "Fijo" por defecto como en tu ejemplo
-        cmbTipoContrato.setValue("Fijo");
+        cmbTipoContrato.setValue("TIEMPO_COMPLETO"); // Por defecto
     }
 
     /**
@@ -63,17 +57,10 @@ public class AddProfesorController implements Initializable {
     private void configurarValidaciones() {
         // Validación del email en tiempo real
         txtEmail.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.isEmpty() && !EMAIL_PATTERN.matcher(newValue).matches()) {
+            if (!newValue.isEmpty() && !profesorController.validarFormatoEmailPublico(newValue)) {
                 txtEmail.setStyle("-fx-border-color: #e74c3c;");
             } else {
                 txtEmail.setStyle("");
-            }
-        });
-
-        // Validación para solo números en ID
-        txtId.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*\\.?\\d*")) {
-                txtId.setText(oldValue);
             }
         });
 
@@ -99,47 +86,36 @@ public class AddProfesorController implements Initializable {
     private void guardarProfesor() {
         if (validarFormulario()) {
             try {
-                // Convertir ID a double como en tu modelo
-                double id = Double.parseDouble(txtId.getText().trim());
-
-                // Verificar si el ID ya existe
-                if (idExiste(id)) {
-                    mostrarMensajeError("El ID " + id + " ya está registrado para otro profesor");
-                    return;
-                }
-
-                // Crear objeto Profesor usando tu constructor
-                Profesor nuevoProfesor = new Profesor(
-                        id,
+                // Guardar usando ProfesorController
+                boolean resultado = profesorController.insertarProfesor(
                         txtNombres.getText().trim(),
                         txtApellidos.getText().trim(),
                         txtEmail.getText().trim().toLowerCase(),
                         cmbTipoContrato.getValue()
                 );
 
-                // Guardar en la base de datos usando tu método
-                ProfesorDAO.insert(nuevoProfesor);
+                if (resultado) {
+                    mostrarMensajeExito("Profesor guardado exitosamente");
 
-                mostrarMensajeExito("Profesor guardado exitosamente");
+                    // Actualizar la tabla en el controlador padre
+                    if (parentController != null) {
+                        parentController.actualizarTabla();
+                    }
 
-                // Actualizar la tabla en el controlador padre
-                if (parentController != null) {
-                    parentController.actualizarTabla();
+                    // Cerrar ventana después de un momento
+                    javafx.concurrent.Task<Void> task = new javafx.concurrent.Task<Void>() {
+                        @Override
+                        protected Void call() throws Exception {
+                            Thread.sleep(1500);
+                            return null;
+                        }
+                    };
+                    task.setOnSucceeded(e -> cerrarVentana());
+                    new Thread(task).start();
+                } else {
+                    mostrarMensajeError("No se pudo guardar el profesor");
                 }
 
-                // Cerrar ventana después de un momento
-                javafx.concurrent.Task<Void> task = new javafx.concurrent.Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        Thread.sleep(1500);
-                        return null;
-                    }
-                };
-                task.setOnSucceeded(e -> cerrarVentana());
-                new Thread(task).start();
-
-            } catch (NumberFormatException e) {
-                mostrarMensajeError("El ID debe ser un número válido");
             } catch (Exception e) {
                 mostrarMensajeError("Error al guardar el profesor: " + e.getMessage());
                 e.printStackTrace();
@@ -148,37 +124,10 @@ public class AddProfesorController implements Initializable {
     }
 
     /**
-     * Verifica si un ID ya existe en la base de datos
-     */
-    private boolean idExiste(double id) {
-        try {
-            var profesores = ProfesorDAO.get();
-            return profesores.stream().anyMatch(p -> p.getID() == id);
-        } catch (Exception e) {
-            System.err.println("Error al verificar ID existente: " + e.getMessage());
-            return false;
-        }
-    }
-
-    /**
      * Valida todos los campos del formulario
      */
     private boolean validarFormulario() {
         StringBuilder errores = new StringBuilder();
-
-        // Validar ID
-        if (txtId.getText() == null || txtId.getText().trim().isEmpty()) {
-            errores.append("• El campo ID es requerido\n");
-        } else {
-            try {
-                double id = Double.parseDouble(txtId.getText().trim());
-                if (id <= 0) {
-                    errores.append("• El ID debe ser un número positivo\n");
-                }
-            } catch (NumberFormatException e) {
-                errores.append("• El ID debe ser un número válido\n");
-            }
-        }
 
         // Validar nombres
         if (txtNombres.getText() == null || txtNombres.getText().trim().isEmpty()) {
@@ -197,11 +146,12 @@ public class AddProfesorController implements Initializable {
         // Validar email
         if (txtEmail.getText() == null || txtEmail.getText().trim().isEmpty()) {
             errores.append("• El campo Email es requerido\n");
-        } else if (!EMAIL_PATTERN.matcher(txtEmail.getText().trim()).matches()) {
+        } else if (!profesorController.validarFormatoEmailPublico(txtEmail.getText().trim())) {
             errores.append("• El formato del email no es válido\n");
-        } else if (emailExiste(txtEmail.getText().trim())) {
-            errores.append("• El email ya está registrado para otro profesor\n");
+        } else if (profesorController.existeEmailEnSistema(txtEmail.getText().trim())) {
+            errores.append("• El email ya está registrado para otra persona\n");
         }
+
 
         // Validar tipo de contrato
         if (cmbTipoContrato.getValue() == null) {
@@ -214,20 +164,6 @@ public class AddProfesorController implements Initializable {
         }
 
         return true;
-    }
-
-    /**
-     * Verifica si un email ya existe
-     */
-    private boolean emailExiste(String email) {
-        try {
-            var profesores = ProfesorDAO.get();
-            return profesores.stream().anyMatch(p ->
-                    p.getEmail().equalsIgnoreCase(email));
-        } catch (Exception e) {
-            System.err.println("Error al verificar email existente: " + e.getMessage());
-            return false;
-        }
     }
 
     /**
@@ -266,17 +202,13 @@ public class AddProfesorController implements Initializable {
      * Limpia todos los campos del formulario
      */
     private void limpiarFormulario() {
-        txtId.clear();
         txtNombres.clear();
         txtApellidos.clear();
         txtEmail.clear();
-        cmbTipoContrato.setValue("Fijo");
+        cmbTipoContrato.setValue("TIEMPO_COMPLETO");
         lblMensaje.setText("");
     }
 
-    /**
-     * Establece el controlador padre para poder actualizar la tabla
-     */
     public void setParentController(ShowProfesorController parentController) {
         this.parentController = parentController;
     }
