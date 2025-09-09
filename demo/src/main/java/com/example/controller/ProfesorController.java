@@ -133,4 +133,41 @@ public class ProfesorController {
         return mensajes.toString();
     }
 
+    public String generarDetallesProfesor(Object profesorObj) {
+        if (!(profesorObj instanceof Profesor profesor)) {
+            return "Error: Objeto no válido";
+        }
+
+        return String.format("""
+        Detalles del Profesor:
+        
+        ID: %.0f
+        Nombres: %s
+        Apellidos: %s
+        Nombre completo: %s
+        Email: %s
+        Tipo de contrato: %s
+        Estado: %s
+        """,
+                profesor.getID(),
+                profesor.getNombres(),
+                profesor.getApellidos(),
+                profesor.getNombres() + " " + profesor.getApellidos(),
+                profesor.getEmail(),
+                formatearTipoContrato(profesor.getTipoContrato()),
+                "Activo"
+        );
+    }
+    private String formatearTipoContrato(String tipoContrato) {
+        if (tipoContrato == null) return "No definido";
+
+        return switch (tipoContrato.toUpperCase()) {
+            case "TIEMPO_COMPLETO" -> "Tiempo Completo";
+            case "MEDIO_TIEMPO" -> "Medio Tiempo";
+            case "CATEDRA" -> "Cátedra";
+            default -> tipoContrato;
+        };
+    }
+
+
 }

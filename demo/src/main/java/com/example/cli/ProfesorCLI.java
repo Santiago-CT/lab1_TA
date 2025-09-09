@@ -2,7 +2,6 @@ package com.example.cli;
 
 import com.example.DTO.ProfesorDTO;
 import com.example.controller.ProfesorController;
-
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -55,14 +54,15 @@ public class ProfesorCLI {
             if (lista.isEmpty()) {
                 System.out.println("⚠️ No hay profesores registrados.");
             } else {
-
-                System.out.println("\n📋 Lista de Profesores:"+profesorController);
-
+                lista.forEach(prof ->
+                        System.out.println(profesorController.generarDetallesProfesor(prof))
+                );
             }
         } catch (Exception e) {
             System.out.println("❌ Error al listar profesores: " + e.getMessage());
         }
     }
+
 
 
     private void agregarProfesor() {
