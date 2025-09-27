@@ -1,10 +1,9 @@
 package com.example.controllerFXML;
 
-import com.example.dao.FacultadDao;
-import com.example.dao.ProfesorDAO;
-import com.example.model.Facultad;
-import com.example.model.Persona;
-import com.example.model.Profesor;
+import com.example.DTO.FacultadDTO;
+import com.example.DTO.PersonaDTO;
+import com.example.controller.FacultadController;
+import com.example.controller.ProfesorController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -16,7 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class AddFacultadController implements Initializable {
 
@@ -25,7 +24,7 @@ public class AddFacultadController implements Initializable {
     @FXML
     private TextField txtNombre;
     @FXML
-    private ComboBox<Profesor> cmbDecano;
+    private ComboBox<PersonaDTO> cmbDecano;
     @FXML
     private Button btnGuardar;
     @FXML
@@ -33,40 +32,33 @@ public class AddFacultadController implements Initializable {
     @FXML
     private Label lblMensaje;
 
-    private ShowProgramaController parentController;
+    private ShowFacultadController parentController;
+    private FacultadController facultadController;
+    private ProfesorController profesorController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        facultadController = new FacultadController();
+        profesorController = new ProfesorController();
         inicializarComboBoxes();
         configurarValidaciones();
-
     }
 
     /**
      * Inicializa los datos de los ComboBox
      */
     private void inicializarComboBoxes() {
-        // Tipos de contrato basados en tu modelo
-        ObservableList<Profesor> decanos = FXCollections.observableArrayList(
-                ProfesorDAO.getAllReduced()
-        );
+        try {
 
-        cmbDecano.setItems(decanos);
+            List<PersonaDTO> profesores = profesorController.getNombreProfesores();
+            ObservableList<PersonaDTO> observableList = FXCollections.observableArrayList(
+                    profesores
+            );
+            cmbDecano.setItems(observableList);
 
-        cmbDecano.setConverter(new javafx.util.StringConverter<Profesor>() {
-            @Override
-            public String toString(Profesor profesores) {
-                return profesores != null ? profesores.getNombres() + " " + profesores.getApellidos() : "";
-            }
-
-            @Override
-            public Profesor fromString(String string) {
-                return cmbDecano.getItems().stream()
-                        .filter(profesor -> profesor.getNombres().equals(string))
-                        .findFirst()
-                        .orElse(null);
-            }
-        });
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /**
@@ -91,7 +83,7 @@ public class AddFacultadController implements Initializable {
     }
 
     @FXML
-    private void guardar() {
+    private void save() {
         if (formularioValido()) {
             try {
                 double id = Double.parseDouble(txtId.getText().trim());
@@ -101,24 +93,21 @@ public class AddFacultadController implements Initializable {
                     mostrarMensajeError("El ID " + id + " ya está registrado");
                     return;
                 }
-
-                FacultadDao.insert(new Facultad(id, txtNombre.getText().trim(), new Persona(cmbDecano.getValue().getID(), null, null, null)));
+                facultadController.insert(
+                        new FacultadDTO(
+                                id,
+                                txtNombre.getText().trim(),
+                                (double) cmbDecano.getValue().getID(),
+                                null
+                        )
+                );
 
                 // Actualizar la tabla en el controlador padre
                 if (parentController != null) {
                     parentController.actualizarTabla();
                 }
 
-                // Cerrar ventana después de un momento
-                javafx.concurrent.Task<Void> task = new javafx.concurrent.Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        Thread.sleep(1500);
-                        return null;
-                    }
-                };
-                task.setOnSucceeded(e -> cerrarVentana());
-                new Thread(task).start();
+                cerrarVentana();
 
             } catch (NumberFormatException e) {
                 mostrarMensajeError("El ID debe ser un número válido");
@@ -134,8 +123,7 @@ public class AddFacultadController implements Initializable {
      */
     private boolean idExiste(double id) {
         try {
-            var profesores = FacultadDao.getAll();
-            return profesores.stream().anyMatch(p -> p.getID() == id);
+            return facultadController.alreadyExist(id);
         } catch (Exception e) {
             System.err.println("Error al verificar ID existente: " + e.getMessage());
             return false;
@@ -190,6 +178,7 @@ public class AddFacultadController implements Initializable {
     private void cerrarVentana() {
         Stage stage = (Stage) btnCancelar.getScene().getWindow();
         stage.close();
+        parentController.actualizarTabla();
     }
 
     private void mostrarMensajeExito(String mensaje) {
@@ -211,7 +200,7 @@ public class AddFacultadController implements Initializable {
     /**
      * Establece el controlador padre para poder actualizar la tabla
      */
-    public void setParentController(ShowProgramaController parentController) {
+    public void setParentController(ShowFacultadController parentController) {
         this.parentController = parentController;
     }
 }

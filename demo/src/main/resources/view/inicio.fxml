@@ -11,8 +11,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="800" prefWidth="1200" stylesheets="@../styles/profesor.css" 
-            xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" 
+<?import javafx.scene.layout.TilePane?>
+<BorderPane prefHeight="800" prefWidth="1200" stylesheets="@../styles/profesor.css"
+            xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.example.controllerFXML.InicioController">
     
     <!-- MENÚ LATERAL -->
@@ -34,7 +35,7 @@
                     </font>
                 </Label>
                 
-                <Button onAction="#mostrarInicio" prefWidth="248" text="🏠 Dashboard" 
+                <Button onAction="#mostrarInicio" prefWidth="248" text="🏠 Inicio"
                         styleClass="nav-button" />
                 <Button onAction="#mostrarProfesores" prefWidth="248" text="👨‍🏫 Profesores" 
                         styleClass="nav-button" />
@@ -74,6 +75,13 @@
                 <padding>
                     <Insets top="16" left="16" right="16" bottom="16" />
                 </padding>
+
+                <Label fx:id="usuarioActual" text="  Usuario: Administrador"
+                       styleClass="subtitle">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Label>
                 
                 <Separator />
                 
@@ -91,7 +99,7 @@
             </padding>
             
             <!-- Título de la sección actual -->
-            <Label fx:id="tituloSeccion" text="Dashboard" 
+            <Label fx:id="tituloSeccion" text="Universidad De Los Llanos"
                    styleClass="title-medium">
                 <font>
                     <Font name="System Bold" size="24.0" />
@@ -103,14 +111,9 @@
             
             <!-- Información del usuario (opcional) -->
             <HBox alignment="CENTER_RIGHT" spacing="12">
-                <Label fx:id="usuarioActual" text="Usuario: Administrador" 
-                       styleClass="subtitle">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                </Label>
-                
-                <Label fx:id="fechaActual" text="30 Ago 2025" 
+
+
+                <Label fx:id="fechaActual"
                        styleClass="body-text">
                     <font>
                         <Font size="12.0" />
@@ -141,7 +144,7 @@
                         </font>
                     </Label>
                     
-                    <Label text="Gestiona eficientemente estudiantes, profesores y programas académicos desde una sola plataforma." 
+                    <Label text="Gestiona eficientemente estudiantes, profesores, facultades, programas académicos, cursos e incripciones a cursos desde una sola plataforma."
                            styleClass="subtitle" wrapText="true">
                         <font>
                             <Font size="16.0" />
@@ -151,15 +154,14 @@
                 </VBox>
                 
                 <!-- Cards de estadísticas rápidas -->
-                <HBox spacing="24" alignment="CENTER">
+                <TilePane hgap="24" vgap="24" prefColumns="2" alignment="CENTER">
                     <!-- Card Estudiantes -->
-                    <VBox styleClass="card stat-card" spacing="8" prefWidth="200">
+                    <VBox styleClass="card stat-card" spacing="8" prefWidth="200" alignment="CENTER">
                         <padding>
                             <Insets top="24" left="24" right="24" bottom="24" />
                         </padding>
-                        
-                        
-                        <Label fx:id="totalEstudiantes" text="1,247" styleClass="stat-number">
+
+                        <Label fx:id="totalEstudiantes" styleClass="stat-number">
                             <font>
                                 <Font name="System Bold" size="28.0" />
                             </font>
@@ -172,12 +174,12 @@
                     </VBox>
                     
                     <!-- Card Profesores -->
-                    <VBox styleClass="card stat-card" spacing="8" prefWidth="200">
+                    <VBox styleClass="card stat-card" spacing="8" prefWidth="200"  alignment="CENTER">
                         <padding>
                             <Insets top="24" left="24" right="24" bottom="24" />
                         </padding>
                         
-                        <Label fx:id="totalProfesores" text="89" styleClass="stat-number">
+                        <Label fx:id="totalProfesores" styleClass="stat-number">
                             <font>
                                 <Font name="System Bold" size="28.0" />
                             </font>
@@ -188,9 +190,45 @@
                             </font>
                         </Label>
                     </VBox>
+
+                    <!-- Card Facultades -->
+                    <VBox styleClass="card stat-card" spacing="8" prefWidth="200" alignment="CENTER">
+                        <padding>
+                            <Insets top="24" left="24" right="24" bottom="24" />
+                        </padding>
+
+                        <Label fx:id="totalFacultades" styleClass="stat-number">
+                            <font>
+                                <Font name="System Bold" size="28.0" />
+                            </font>
+                        </Label>
+                        <Label text="Facultades" styleClass="stat-label">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                    </VBox>
+
+                    <!-- Card Programas -->
+                    <VBox styleClass="card stat-card" spacing="8" prefWidth="200" alignment="CENTER">
+                        <padding>
+                            <Insets top="24" left="24" right="24" bottom="24" />
+                        </padding>
+
+                        <Label fx:id="totalProgramas" styleClass="stat-number">
+                            <font>
+                                <Font name="System Bold" size="28.0" />
+                            </font>
+                        </Label>
+                        <Label text="Cursos" styleClass="stat-label">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                    </VBox>
                     
                     <!-- Card Cursos -->
-                    <VBox styleClass="card stat-card" spacing="8" prefWidth="200">
+                    <VBox styleClass="card stat-card" spacing="8" prefWidth="200" alignment="CENTER">
                         <padding>
                             <Insets top="24" left="24" right="24" bottom="24" />
                         </padding>
@@ -206,7 +244,26 @@
                             </font>
                         </Label>
                     </VBox>
-                </HBox>
+
+                    <!-- Card Inscripciones -->
+                    <VBox styleClass="card stat-card" spacing="8" prefWidth="200" alignment="CENTER">
+                        <padding>
+                            <Insets top="24" left="24" right="24" bottom="24" />
+                        </padding>
+
+                        <Label fx:id="totalInscripciones" text="156" styleClass="stat-number">
+                            <font>
+                                <Font name="System Bold" size="28.0" />
+                            </font>
+                        </Label>
+                        <Label text="Inscripciones a Cursos" styleClass="stat-label">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                    </VBox>
+
+                </TilePane>
             </VBox>
         </StackPane>
     </center>

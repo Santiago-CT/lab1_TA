@@ -8,11 +8,16 @@ import com.example.Main;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import com.example.services.DB_Services;
+import com.example.services.View;
+import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
@@ -21,17 +26,36 @@ import javafx.stage.Stage;
  *
  * @author gon
  */
-public class SceneManager {
+public class SceneManager extends Application implements View {
 
     private static Scene scene;
-    
+
     @FXML
     private Label usuarioActual;
     @FXML
     private Label fechaActual;
+    @FXML
+    public Button btnAgregar;
+
+    @Override
+    public void iniciar(){
+        launch();
+    }
+
+    @Override
+    public void init(){
+        Automatizacion automatizacion = new Automatizacion();
+        automatizacion.run();
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        // Delegamos la carga de la vista a otra clase
+        SceneManager.showMainView(stage);
+    }
 
     public static void showMainView(Stage primaryStage) throws IOException {
-        scene = new Scene(loadFXML("inicio"), 800, 600);
+        scene = new Scene(loadFXML("inicio"), 900, 600);
 
         primaryStage.setTitle("SGA");
         primaryStage.setScene(scene);
@@ -85,8 +109,10 @@ public class SceneManager {
     public void initVars(){
         // Configurar fecha actual
         if (fechaActual != null) {
-            LocalDate fecha = LocalDate.now();
-            fechaActual.setText(fecha.format(DateTimeFormatter.ofPattern("dd MMM yyyy")));
+            //LocalDate fecha = LocalDate.now();
+            //fechaActual.setText(fecha.format(DateTimeFormatter.ofPattern("dd MMM yyyy")));
+            String date = DB_Services.getDate();
+            fechaActual.setText("Fecha: " + date);
         }
 
         if (usuarioActual != null) {

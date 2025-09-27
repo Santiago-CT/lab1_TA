@@ -4,6 +4,8 @@
  */
 package com.example.model;
 
+import com.example.services.Servicios;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,19 +60,13 @@ public class CursosInscritos implements Servicios {
 
     public void guardarinformacion() throws Exception {
         for (Inscripcion inscripcion : listado) {
-            ConexionBD.insertInscripcion(inscripcion);
+            //ConD.insertInscripcion(inscripcion);
         }
         System.out.println("-- INFORMACION GUARDADA EN LA BASE DE DATOS --");
     }
 
-    public void cargarDatos() throws Exception {
-        System.out.println("-- CARGANDO INFORMACION DESDE LA BASE DE DATOS --");
-        ConexionBD.showProfesores();
-        ConexionBD.showFacultades();
-        ConexionBD.showProgramas();
-        ConexionBD.showEstudiantes();
-        ConexionBD.showCursos();
-        ConexionBD.showInscripciones();
+    public List<Inscripcion> getListado(){
+        return this.listado;
     }
 
     @Override

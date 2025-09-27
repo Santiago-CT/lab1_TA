@@ -26,50 +26,36 @@ public class Programa {
         this.facultad = facultad;
     }
 
-    public Programa(int id, String ingenieríaDeSistemas, Object o) {
-    }
-
     public double getID() {
         return ID;
     }
-
     public String getNombre() {
         return nombre;
     }
-
     public double getDuracion() {
         return duracion;
     }
-
     public Date getRegistro() {
         return registro;
     }
-
     public Facultad getFacultad() {
         return facultad;
     }
-
     public void setID(double ID) {
         this.ID = ID;
     }
-
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
     public void setDuracion(double duracion) {
         this.duracion = duracion;
     }
-
     public void setRegistro(Date registro) {
         this.registro = registro;
     }
-
     public void setFacultad(Facultad facultad) {
         this.facultad = facultad;
     }
-    
-    
 
     @Override
     public String toString() {

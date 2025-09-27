@@ -1,8 +1,7 @@
 package com.example.controllerFXML;
 
+import com.example.DTO.FacultadDTO;
 import com.example.controller.FacultadController;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,27 +10,27 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 public class ShowFacultadController extends SceneManager implements Initializable {
 
-    @FXML private TableView<Map<String, Object>> tablaFacultades;
-    @FXML private TableColumn<Map<String, Object>, Double> colID;
-    @FXML private TableColumn<Map<String, Object>, String> colNombre;
-    @FXML private TableColumn<Map<String, Object>, String> colDecano;
+    @FXML private TableView<FacultadDTO> tablaFacultades;
+    @FXML private TableColumn<FacultadDTO, Double> colID;
+    @FXML private TableColumn<FacultadDTO, String> colNombre;
+    @FXML private TableColumn<FacultadDTO, String> colDecano;
 
-    @FXML private Button btnAgregar;
-    private FacultadController controller;
+    private FacultadController facultadController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        facultadController = new FacultadController();
         configurarColumnas();
         actualizarTabla();
         configurarEventosBotones();
@@ -39,38 +38,15 @@ public class ShowFacultadController extends SceneManager implements Initializabl
     }
 
     private void configurarColumnas() {
-        colID.setCellValueFactory(cellData -> {
-            Object value = cellData.getValue().get("id");
-            return new SimpleObjectProperty<>((Double) value);
-        });
+        colID.setCellValueFactory(new PropertyValueFactory<>("ID"));
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        colDecano.setCellValueFactory(new PropertyValueFactory<>("nombreDecano"));
 
-        colNombre.setCellValueFactory(cellData -> {
-            Object value = cellData.getValue().get("nombre");
-            return new SimpleStringProperty((String) value);
-        });
-
-        colDecano.setCellValueFactory(cellData -> {
-            Object value = cellData.getValue().get("decano");
-            return new SimpleStringProperty((String) value);
-        });
-
-        // Mostrar nombre completo del decano
-        /*colDecano.setCellValueFactory(cellData -> {
-            Persona decano = cellData.getValue().getDecano();
-            String nombreDecano = decano != null ?
-                    decano.getNombres() + " " + decano.getApellidos() : "Sin asignar";
-            return new SimpleStringProperty(nombreDecano);
-        });*/
         tablaFacultades.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
     private void configurarEventosBotones() {
         btnAgregar.setOnAction(event -> mostrarVentanaAgregarFacultad());
-
-        // Listener para habilitar/deshabilitar botones según selección
-        tablaFacultades.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
-            boolean haySeleccion = newSel != null;
-        });
 
     }
 
@@ -79,9 +55,8 @@ public class ShowFacultadController extends SceneManager implements Initializabl
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/addFacultad.fxml"));
             Parent root = loader.load();
 
-            // Asumo que tienes un controlador para agregar facultad
             AddFacultadController controller = loader.getController();
-            //controller.setParentController(this);
+            controller.setParentController(this);
 
             Stage modalStage = new Stage();
             modalStage.setTitle("Agregar");
@@ -100,11 +75,9 @@ public class ShowFacultadController extends SceneManager implements Initializabl
     public void actualizarTabla() {
         try {
             // Obtener todas las facultades de la base de datos
-            List<Map<String, Object>> listaFacultades = controller.obtenerListaFacultades();
-            ObservableList<Map<String, Object>> observableList = FXCollections.observableArrayList(listaFacultades);
+            List<FacultadDTO> listaFacultades = facultadController.getAll();
+            ObservableList<FacultadDTO> observableList = FXCollections.observableArrayList(listaFacultades);
             tablaFacultades.setItems(observableList);
-
-            System.out.println("Facultades cargadas: " + listaFacultades.size());
 
         } catch (Exception e) {
             mostrarError("Error", "No se pudieron cargar los datos de facultades: " + e.getMessage());

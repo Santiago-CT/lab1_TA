@@ -84,7 +84,7 @@
             </padding>
 
             <!-- Título de la sección actual -->
-            <Label fx:id="tituloSeccion" text="Dashboard"
+            <Label fx:id="tituloSeccion" text="Universidad De Los Llanos"
                    styleClass="title-medium">
                 <font>
                     <Font name="System Bold" size="24.0"/>
@@ -141,7 +141,7 @@
                             <HBox.hgrow>ALWAYS</HBox.hgrow>
                         </Region>
 
-                        <Button fx:id="btnAgregar" text="➕ Crear Facultad"
+                        <Button fx:id="btnAgregar" text="Agregar"
                                 styleClass="modern-button, button-success"/>
                     </HBox>
 

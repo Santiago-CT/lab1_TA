@@ -42,7 +42,7 @@
                         <Font name="System Bold" size="13.0"/>
                     </font>
                 </Label>
-                <TextField fx:id="txtId" prefHeight="35.0" promptText="ID del estudiante (ej: 20241001)"
+                <TextField fx:id="txtId" prefHeight="35.0" promptText="ID del programa (ej: 20241001)"
                            styleClass="form-field"/>
             </VBox>
 
@@ -53,7 +53,7 @@
                         <Font name="System Bold" size="13.0"/>
                     </font>
                 </Label>
-                <TextField fx:id="txtNombre" prefHeight="35.0" promptText="Nombre de la facultad"
+                <TextField fx:id="txtNombre" prefHeight="35.0" promptText="Nombre del programa"
                            styleClass="form-field"/>
             </VBox>
 
@@ -68,7 +68,6 @@
                            styleClass="form-field"/>
             </VBox>
 
-            <!-- Programa -->
             <VBox spacing="5.0">
                 <Label styleClass="form-label" text="Facultad *">
                     <font>

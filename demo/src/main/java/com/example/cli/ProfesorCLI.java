@@ -1,5 +1,6 @@
 package com.example.cli;
 
+import com.example.DTO.ProfesorDTO;
 import com.example.controller.ProfesorController;
 
 import java.util.InputMismatchException;
@@ -50,7 +51,7 @@ public class ProfesorCLI {
 
     private void listarProfesores() {
         try {
-            var lista = profesorController.obtenerListaProfesores();
+            var lista = profesorController.getAll();
             if (lista.isEmpty()) {
                 System.out.println("⚠️ No hay profesores registrados.");
             } else {
@@ -78,7 +79,9 @@ public class ProfesorCLI {
             System.out.print("Tipo de contrato: ");
             String tipoContrato = scanner.nextLine();
 
-            boolean insertado = profesorController.insertarProfesor(nombres, apellidos, email, tipoContrato);
+            boolean insertado = profesorController.insert(
+                    new ProfesorDTO(0.0,nombres, apellidos, email, tipoContrato)//TOCA CUADRAR LA LOGICA DEL ID QUE SE LE ENVIA
+            );
 
             if (insertado) {
                 System.out.println("✅ Profesor agregado exitosamente.");

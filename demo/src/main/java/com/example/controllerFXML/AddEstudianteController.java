@@ -1,44 +1,59 @@
 package com.example.controllerFXML;
 
+import com.example.DTO.EstudianteDTO;
+import com.example.DTO.ProgramaDTO;
 import com.example.controller.EstudianteController;
+import com.example.controller.ProgramaController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 public class AddEstudianteController implements Initializable {
-
-    @FXML private TextField txtCodigo;
-    @FXML private TextField txtNombres;
-    @FXML private TextField txtApellidos;
-    @FXML private TextField txtEmail;
-    @FXML private TextField txtTelefono; // Este campo no se usa en tu modelo, se puede quitar del FXML
-    @FXML private ComboBox<Object> cmbPrograma; // Cambiado a Object para usar con EstudianteController
-    @FXML private ComboBox<Integer> cmbSemestre; // Este campo no se usa en tu modelo, se puede quitar del FXML
-    @FXML private ComboBox<String> cmbEstado; // Mapearemos a boolean activo
-    @FXML private DatePicker dpFechaIngreso;
-    @FXML private TextField txtPromedio;
-    @FXML private Button btnGuardar;
-    @FXML private Button btnCancelar;
-    @FXML private Label lblMensaje;
-
-    private ShowEstudianteController parentController;
-    private EstudianteController estudianteController;
-
     // Patrón para validar email
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
             "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$"
     );
+    @FXML
+    private TextField txtID;
+    @FXML
+    private TextField txtCodigo;
+    @FXML
+    private TextField txtNombres;
+    @FXML
+    private TextField txtApellidos;
+    @FXML
+    private TextField txtEmail;
+    @FXML
+    private ComboBox<ProgramaDTO> cmbPrograma;
+    @FXML
+    private ComboBox<String> cmbEstado;
+    @FXML
+    private TextField txtPromedio;
+    @FXML
+    private Button btnGuardar;
+    @FXML
+    private Button btnCancelar;
+    @FXML
+    private Label lblMensaje;
+    private ShowEstudianteController parentController;
+    private EstudianteController estudianteController;
+    private ProgramaController programaController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         estudianteController = new EstudianteController();
+        programaController = new ProgramaController();
         inicializarComboBoxes();
         configurarValidaciones();
     }
@@ -48,29 +63,12 @@ public class AddEstudianteController implements Initializable {
      */
     private void inicializarComboBoxes() {
         try {
-            // Cargar programas usando EstudianteController
-            ObservableList<Object> listaProgramas = estudianteController.obtenerListaProgramas();
-            cmbPrograma.setItems(listaProgramas);
+            List<ProgramaDTO> listaProgramas = programaController.get();
+            ObservableList<ProgramaDTO> observableList = FXCollections.observableArrayList(
+                    listaProgramas
+            );
+            cmbPrograma.setItems(observableList);
 
-            // Configurar cómo se muestra el programa en el ComboBox
-            cmbPrograma.setConverter(new javafx.util.StringConverter<Object>() {
-                @Override
-                public String toString(Object programa) {
-                    if (programa != null) {
-                        // Usar método del controller para obtener nombre del programa
-                        return programa.toString(); // Asumiendo que Programa tiene toString() implementado
-                    }
-                    return "";
-                }
-
-                @Override
-                public Object fromString(String string) {
-                    return cmbPrograma.getItems().stream()
-                            .filter(programa -> programa.toString().equals(string))
-                            .findFirst()
-                            .orElse(null);
-                }
-            });
         } catch (Exception e) {
             System.err.println("Error al cargar programas: " + e.getMessage());
             mostrarMensajeError("Error al cargar los programas disponibles");
@@ -84,13 +82,6 @@ public class AddEstudianteController implements Initializable {
         cmbEstado.setItems(estados);
         cmbEstado.setValue("ACTIVO"); // Por defecto activo
 
-        // Semestres (si decides mantener este campo)
-        if (cmbSemestre != null) {
-            ObservableList<Integer> semestres = FXCollections.observableArrayList(
-                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10
-            );
-            cmbSemestre.setItems(semestres);
-        }
     }
 
     /**
@@ -113,15 +104,6 @@ public class AddEstudianteController implements Initializable {
             }
         });
 
-        // Validación para teléfono (si decides mantenerlo)
-        if (txtTelefono != null) {
-            txtTelefono.textProperty().addListener((observable, oldValue, newValue) -> {
-                if (!newValue.matches("[\\d\\s\\-\\+\\(\\)]*")) {
-                    txtTelefono.setText(oldValue);
-                }
-            });
-        }
-
         // Validación para nombres (solo letras y espacios)
         txtNombres.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]*")) {
@@ -142,13 +124,13 @@ public class AddEstudianteController implements Initializable {
      */
 
     @FXML
-    private void guardarEstudiante() {
+    private void save() {
         if (validarFormulario()) {
             try {
                 double codigo = Double.parseDouble(txtCodigo.getText().trim());
 
                 // Verificar si el código ya existe usando EstudianteController
-                if (estudianteController.existeCodigoEstudiante(codigo)) {
+                if (estudianteController.alreadyExist(codigo)) {
                     mostrarMensajeError("El código " + codigo + " ya está registrado para otro estudiante");
                     return;
                 }
@@ -156,18 +138,20 @@ public class AddEstudianteController implements Initializable {
                 // Convertir estado a boolean
                 boolean activo = "ACTIVO".equals(cmbEstado.getValue());
 
-
-                // Guardar usando EstudianteController
                 double promedio = Double.parseDouble(txtPromedio.getText().trim());
 
-                boolean resultado = estudianteController.insertarEstudiante(
-                        codigo,
-                        txtNombres.getText().trim(),
-                        txtApellidos.getText().trim(),
-                        txtEmail.getText().trim().toLowerCase(),
-                        cmbPrograma.getValue(),
-                        activo,
-                        promedio
+                boolean resultado = estudianteController.insert(
+                        new EstudianteDTO(
+                                Double.parseDouble(txtID.getText().trim()),
+                                txtNombres.getText().trim(),
+                                txtApellidos.getText().trim(),
+                                txtEmail.getText().trim().toLowerCase(),
+                                codigo,
+                                cmbPrograma.getValue().getID(),
+                                cmbPrograma.getValue().getNombre(),
+                                activo,
+                                promedio
+                        )
                 );
 
 
@@ -179,16 +163,7 @@ public class AddEstudianteController implements Initializable {
                         parentController.actualizarTabla();
                     }
 
-                    // Cerrar ventana después de un momento
-                    javafx.concurrent.Task<Void> task = new javafx.concurrent.Task<Void>() {
-                        @Override
-                        protected Void call() throws Exception {
-                            Thread.sleep(1500);
-                            return null;
-                        }
-                    };
-                    task.setOnSucceeded(e -> cerrarVentana());
-                    new Thread(task).start();
+                    cerrarVentana();
                 } else {
                     mostrarMensajeError("No se pudo guardar el estudiante");
                 }
@@ -241,8 +216,6 @@ public class AddEstudianteController implements Initializable {
             errores.append("• El campo Email es requerido\n");
         } else if (!estudianteController.validarFormatoEmailPublico(txtEmail.getText().trim())) {
             errores.append("• El formato del email no es válido\n");
-        } else if (estudianteController.existeEmail(txtEmail.getText().trim(),0)) {
-            errores.append("• El email ya está registrado para otra persona\n");
         }
 
         // Validar programa
@@ -303,11 +276,8 @@ public class AddEstudianteController implements Initializable {
         txtNombres.clear();
         txtApellidos.clear();
         txtEmail.clear();
-        if (txtTelefono != null) txtTelefono.clear();
         cmbPrograma.setValue(null);
-        if (cmbSemestre != null) cmbSemestre.setValue(null);
         cmbEstado.setValue("ACTIVO");
-        if (dpFechaIngreso != null) dpFechaIngreso.setValue(null);
         lblMensaje.setText("");
     }
 

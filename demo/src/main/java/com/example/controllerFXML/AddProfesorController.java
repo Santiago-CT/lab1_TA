@@ -1,11 +1,15 @@
 package com.example.controllerFXML;
 
+import com.example.DTO.ProfesorDTO;
 import com.example.controller.ProfesorController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -14,21 +18,28 @@ import java.util.regex.Pattern;
 
 public class AddProfesorController implements Initializable {
 
-    @FXML private TextField txtNombres;
-    @FXML private TextField txtApellidos;
-    @FXML private TextField txtEmail;
-    @FXML private ComboBox<String> cmbTipoContrato;
-    @FXML private Button btnGuardar;
-    @FXML private Button btnCancelar;
-    @FXML private Label lblMensaje;
-
-    private ShowProfesorController parentController;
-    private ProfesorController profesorController;
-
     // Patrón para validar email
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
             "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$"
     );
+    @FXML
+    private TextField txtID;
+    @FXML
+    private TextField txtNombres;
+    @FXML
+    private TextField txtApellidos;
+    @FXML
+    private TextField txtEmail;
+    @FXML
+    private ComboBox<String> cmbTipoContrato;
+    @FXML
+    private Button btnGuardar;
+    @FXML
+    private Button btnCancelar;
+    @FXML
+    private Label lblMensaje;
+    private ShowProfesorController parentController;
+    private ProfesorController profesorController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -43,12 +54,12 @@ public class AddProfesorController implements Initializable {
     private void inicializarComboBoxes() {
         // Tipos de contrato disponibles
         ObservableList<String> tiposContrato = FXCollections.observableArrayList(
-                "TIEMPO_COMPLETO",
-                "MEDIO_TIEMPO",
+                "TIEMPO COMPLETO",
+                "MEDIO TIEMPO",
                 "CATEDRA"
         );
         cmbTipoContrato.setItems(tiposContrato);
-        cmbTipoContrato.setValue("TIEMPO_COMPLETO"); // Por defecto
+        cmbTipoContrato.setValue("Seleccione el tipo"); // Por defecto
     }
 
     /**
@@ -87,11 +98,14 @@ public class AddProfesorController implements Initializable {
         if (validarFormulario()) {
             try {
                 // Guardar usando ProfesorController
-                boolean resultado = profesorController.insertarProfesor(
-                        txtNombres.getText().trim(),
-                        txtApellidos.getText().trim(),
-                        txtEmail.getText().trim().toLowerCase(),
-                        cmbTipoContrato.getValue()
+                boolean resultado = profesorController.insert(
+                        new ProfesorDTO(
+                                Double.parseDouble(txtID.getText().trim()),
+                                txtNombres.getText().trim(),
+                                txtApellidos.getText().trim(),
+                                txtEmail.getText().trim().toLowerCase(),
+                                cmbTipoContrato.getValue()
+                        )
                 );
 
                 if (resultado) {
@@ -102,16 +116,7 @@ public class AddProfesorController implements Initializable {
                         parentController.actualizarTabla();
                     }
 
-                    // Cerrar ventana después de un momento
-                    javafx.concurrent.Task<Void> task = new javafx.concurrent.Task<Void>() {
-                        @Override
-                        protected Void call() throws Exception {
-                            Thread.sleep(1500);
-                            return null;
-                        }
-                    };
-                    task.setOnSucceeded(e -> cerrarVentana());
-                    new Thread(task).start();
+                    cerrarVentana();
                 } else {
                     mostrarMensajeError("No se pudo guardar el profesor");
                 }
@@ -148,8 +153,6 @@ public class AddProfesorController implements Initializable {
             errores.append("• El campo Email es requerido\n");
         } else if (!profesorController.validarFormatoEmailPublico(txtEmail.getText().trim())) {
             errores.append("• El formato del email no es válido\n");
-        } else if (profesorController.existeEmailEnSistema(txtEmail.getText().trim())) {
-            errores.append("• El email ya está registrado para otra persona\n");
         }
 
 

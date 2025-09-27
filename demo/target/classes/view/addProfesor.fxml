@@ -45,7 +45,7 @@
                             <Font name="System Bold" size="13.0" />
                         </font>
                     </Label>
-                    <TextField fx:id="txtId" prefHeight="35.0" promptText="Ingrese el ID del profesor" styleClass="form-field" />
+                    <TextField fx:id="txtID" prefHeight="35.0" promptText="Ingrese el ID" styleClass="form-field" />
                 </VBox>
 
                 <!-- Nombres -->
@@ -76,16 +76,6 @@
                         </font>
                     </Label>
                     <TextField fx:id="txtEmail" prefHeight="35.0" promptText="ejemplo@unillanos.edu.co" styleClass="form-field" />
-                </VBox>
-
-                <!-- Teléfono -->
-                <VBox spacing="5.0">
-                    <Label styleClass="form-label" text="Teléfono">
-                        <font>
-                            <Font name="System Bold" size="13.0" />
-                        </font>
-                    </Label>
-                    <TextField fx:id="txtTelefono" prefHeight="35.0" promptText="Número de teléfono" styleClass="form-field" />
                 </VBox>
 
                 <!-- Tipo de Contrato -->

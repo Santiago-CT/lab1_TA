@@ -1,25 +1,19 @@
 package com.example;
 
-import com.example.controllerFXML.Automatizacion;
-import com.example.controllerFXML.SceneManager;
-import javafx.application.Application;
-import javafx.stage.Stage;
+import com.example.factory.ExternalFactory;
+import com.example.services.View;
 
-public class Main extends Application {
-    
-    @Override
-    public void init(){
-        Automatizacion.run();
-    }
-
-    @Override
-    public void start(Stage stage) throws Exception {
-        // Delegamos la carga de la vista a otra clase
-        SceneManager.showMainView(stage);
-    }
-
+public class Main {
 
     public static void main(String[] args) {
-        launch(args);
+        ExternalFactory eFactory = new ExternalFactory();
+
+        View cli = eFactory.createCliConsola();
+        View gui = eFactory.createGUI();
+
+        Thread hilo1 = new Thread(cli::iniciar);
+        hilo1.start();
+
+        gui.iniciar(); // Hilo 2
     }
 }

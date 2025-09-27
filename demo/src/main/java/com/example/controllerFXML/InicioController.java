@@ -6,7 +6,11 @@ package com.example.controllerFXML;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import com.example.services.DB_Services;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 
 /**
  *
@@ -14,8 +18,29 @@ import javafx.fxml.Initializable;
  */
 public class InicioController extends SceneManager implements Initializable {
 
+    public Label totalEstudiantes;
+    public Label totalProfesores;
+    public Label totalCursos;
+    public Label totalFacultades;
+    public Label totalProgramas;
+    public Label totalInscripciones;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        initVars();
+        try {
+            initVars();
+            getQuantities();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void getQuantities() throws Exception {
+        totalCursos.setText(String.valueOf(DB_Services.countCursos()));
+        totalFacultades.setText(String.valueOf(DB_Services.countFacultades()));
+        totalProgramas.setText(String.valueOf(DB_Services.countProgramas()));
+        totalProfesores.setText(String.valueOf(DB_Services.countProfesores()));
+        totalEstudiantes.setText(String.valueOf(DB_Services.countEstudiantes()));
+        totalInscripciones.setText(String.valueOf(DB_Services.countInscripciones()));
     }
 }

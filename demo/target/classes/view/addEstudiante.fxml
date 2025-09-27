@@ -38,6 +38,14 @@
             <!-- Formulario -->
             <VBox spacing="15.0" styleClass="form-container">
                 <VBox spacing="5.0">
+                    <Label styleClass="form-label" text="ID *">
+                        <font>
+                            <Font name="System Bold" size="13.0" />
+                        </font>
+                    </Label>
+                    <TextField fx:id="txtID" prefHeight="35.0" styleClass="form-field" />
+                </VBox>
+                <VBox spacing="5.0">
                     <Label styleClass="form-label" text="Código *">
                         <font>
                             <Font name="System Bold" size="13.0" />
@@ -76,16 +84,6 @@
                     <TextField fx:id="txtEmail" prefHeight="35.0" promptText="ejemplo@unillanos.edu.co" styleClass="form-field" />
                 </VBox>
 
-                <!-- Teléfono -->
-                <VBox spacing="5.0">
-                    <Label styleClass="form-label" text="Teléfono">
-                        <font>
-                            <Font name="System Bold" size="13.0" />
-                        </font>
-                    </Label>
-                    <TextField fx:id="txtTelefono" prefHeight="35.0" promptText="Número de teléfono" styleClass="form-field" />
-                </VBox>
-
                 <!-- Programa -->
                 <VBox spacing="5.0">
                     <Label styleClass="form-label" text="Programa *">
@@ -108,7 +106,14 @@
                     <ComboBox fx:id="cmbEstado" prefHeight="35.0" prefWidth="460.0" promptText="Seleccione el estado del estudiante" styleClass="form-field" />
                 </VBox>
 
-
+                <VBox spacing="5.0">
+                    <Label styleClass="form-label" text="Promedio *">
+                        <font>
+                            <Font name="System Bold" size="13.0" />
+                        </font>
+                    </Label>
+                    <TextField fx:id="txtPromedio" prefHeight="35.0" styleClass="form-field" />
+                </VBox>
 
                 <!-- Mensaje de campos requeridos -->
                 <Label styleClass="help-text" text="* Campos requeridos">
@@ -124,7 +129,7 @@
             <!-- Botones de acción -->
             <HBox alignment="CENTER_RIGHT" spacing="15.0">
                 <Button fx:id="btnCancelar" onAction="#cancelar" prefHeight="40.0" prefWidth="120.0" styleClass="modern-button, button-secondary" text="❌ Cancelar" />
-                <Button fx:id="btnGuardar" onAction="#guardarEstudiante" prefHeight="40.0" prefWidth="120.0" styleClass="modern-button, button-success" text="💾 Guardar" />
+                <Button fx:id="btnGuardar" onAction="#save" prefHeight="40.0" prefWidth="120.0" styleClass="modern-button, button-success" text="💾 Guardar" />
             </HBox>
 
             <!-- Mensaje de estado -->

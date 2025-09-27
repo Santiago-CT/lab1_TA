@@ -54,7 +54,7 @@
                     <Insets top="8" left="16" right="16" bottom="8" />
                 </padding>
 
-                <Label text="GESTIÓN ACADÉMICA" styleClass="nav-section-title">
+                <Label text="🏛️ GESTIÓN ACADÉMICA" styleClass="nav-section-title">
                     <font>
                         <Font size="11.0" />
                     </font>
@@ -95,7 +95,7 @@
             </padding>
 
             <!-- Título de la sección actual -->
-            <Label fx:id="tituloSeccion" text="Dashboard"
+            <Label fx:id="tituloSeccion" text="Universidad De Los Llanos"
                    styleClass="title-medium">
                 <font>
                     <Font name="System Bold" size="24.0" />
@@ -139,7 +139,7 @@
     
     <!-- Header con título y botón agregar -->
     <HBox alignment="CENTER_LEFT">
-        <Label text="Gestión de Programas Académicos" styleClass="title-medium">
+        <Label text="🏛️ Gestión de Programas Académicos" styleClass="title-medium">
             <font>
                 <Font name="System Bold" size="24.0" />
             </font>

@@ -1,15 +1,11 @@
 package com.example.controllerFXML;
 
-import com.example.dao.FacultadDao;
-import com.example.dao.ProfesorDAO;
-import com.example.dao.ProgramaDao;
-import com.example.model.Facultad;
-import com.example.model.Persona;
-import com.example.model.Profesor;
-import com.example.model.Programa;
+import com.example.DTO.FacultadDTO;
+import com.example.DTO.ProgramaDTO;
+import com.example.controller.FacultadController;
+import com.example.controller.ProgramaController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -17,11 +13,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 
 import java.net.URL;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class AddProgramaController implements Initializable {
@@ -31,7 +27,7 @@ public class AddProgramaController implements Initializable {
     @FXML
     private TextField txtNombre;
     @FXML
-    private ComboBox<Facultad> cmbFacultad;
+    private ComboBox<FacultadDTO> cmbFacultad;
     @FXML
     private TextField txtDuracion;
     @FXML
@@ -41,40 +37,34 @@ public class AddProgramaController implements Initializable {
     @FXML
     private Label lblMensaje;
 
+    private ProgramaController programaController;
+    private FacultadController facultadController;
+
     private ShowProgramaController parentController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        facultadController = new FacultadController();
+        programaController = new ProgramaController();
         inicializarComboBoxes();
         configurarValidaciones();
-
     }
 
     /**
      * Inicializa los datos de los ComboBox
      */
     private void inicializarComboBoxes() {
-        // Tipos de contrato basados en tu modelo
-        ObservableList<Facultad> facultades = FXCollections.observableArrayList(
-                FacultadDao.getAll()
-        );
+        try {
+            List<FacultadDTO> facultades = facultadController.getAll();
+            //System.out.println("____" + facultades);
+            ObservableList<FacultadDTO> observableList = FXCollections.observableArrayList(
+                    facultades
+            );
+            cmbFacultad.setItems(observableList);
 
-        cmbFacultad.setItems(facultades);
-
-        cmbFacultad.setConverter(new StringConverter<Facultad>() {
-            @Override
-            public String toString(Facultad facultad) {
-                return facultad != null ? facultad.getNombre() : "";
-            }
-
-            @Override
-            public Facultad fromString(String string) {
-                return cmbFacultad.getItems().stream()
-                        .filter(facultad -> facultad.getNombre().equals(string))
-                        .findFirst()
-                        .orElse(null);
-            }
-        });
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /**
@@ -110,23 +100,23 @@ public class AddProgramaController implements Initializable {
                     return;
                 }
 
-                ProgramaDao.insert(new Programa(id, txtNombre.getText().trim(), Double.parseDouble(txtDuracion.getText()), Date.valueOf(LocalDate.now()), new Facultad(cmbFacultad.getValue().getID(), null, null)));
+                programaController.insert(
+                        new ProgramaDTO(
+                                id,
+                                txtNombre.getText().trim(),
+                                Double.parseDouble(txtDuracion.getText()),
+                                Date.valueOf(LocalDate.now()),
+                                cmbFacultad.getValue().getID(),
+                                cmbFacultad.getValue().getNombre()
+                        )
+                );
 
                 // Actualizar la tabla en el controlador padre
                 if (parentController != null) {
                     parentController.actualizarTabla();
                 }
 
-                // Cerrar ventana después de un momento
-                Task<Void> task = new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        Thread.sleep(1500);
-                        return null;
-                    }
-                };
-                task.setOnSucceeded(e -> cerrarVentana());
-                new Thread(task).start();
+                cerrarVentana();
 
             } catch (NumberFormatException e) {
                 mostrarMensajeError("El ID debe ser un número válido");
@@ -142,8 +132,7 @@ public class AddProgramaController implements Initializable {
      */
     private boolean idExiste(double id) {
         try {
-            var programas = ProgramaDao.get();
-            return programas.stream().anyMatch(p -> p.getID() == id);
+            return programaController.existePrograma(id);
         } catch (Exception e) {
             System.err.println("Error al verificar ID existente: " + e.getMessage());
             return false;

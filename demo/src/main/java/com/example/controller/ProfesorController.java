@@ -1,144 +1,80 @@
 package com.example.controller;//package com.example.controller;
 
-import com.example.dao.ProfesorDAO;
+import com.example.DAO.DAO;
+import com.example.DTO.PersonaDTO;
+import com.example.DTO.ProfesorDTO;
+import com.example.factory.InternalFactory;
 import com.example.model.Profesor;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 
 public class ProfesorController {
-    public Object crearProfesor(String nombres, String apellidos, String email, String tipoContrato) {
-        // Generar un ID temporal (dependiendo de cómo manejes los IDs)
-        double id = System.currentTimeMillis(); // ID temporal basado en timestamp
-
-        return new Profesor(id, nombres, apellidos, email, tipoContrato);
-    }
-    public boolean existeEmailEnSistema(String email) {
-        try {
-            // Asumiendo que ConexionBD tiene un método similar para profesores
-            // Si no existe, necesitarías crearlo o usar ProfesorDAO
-            return ProfesorDAO.existeEmail(email, -1);
-        } catch (Exception e) {
-            System.err.println("Error al verificar email en sistema: " + e.getMessage());
-            return false;
-        }
+    private final DAO dao;
+    public ProfesorController(){
+        dao = InternalFactory.createProfesorDAO();
     }
 
-    public List<Map<String, Object>> obtenerListaProfesores() throws Exception {
+    public List<ProfesorDTO> getAll() throws Exception {
         try {
-            List<Profesor> profesores = ProfesorDAO.get();
-            List<Map<String, Object>> listaProfesores = profesores.stream()
-                    .map(facultad -> {
-                        Map<String, Object> fila = new HashMap<>();
-                        fila.put("id", facultad.getID());
-                        fila.put("nombres", facultad.getNombres());
-                        fila.put("apellidos", facultad.getApellidos());
-                        fila.put("tipoContrato", facultad.getTipoContrato());
-                        fila.put("email", facultad.getEmail());
-                        return fila;
-                    })
-                    .collect(Collectors.toList());
-            return listaProfesores;
+            List<Object> profesoresDAO = dao.getAll();
+            List<ProfesorDTO> profesores = new ArrayList<>();
+
+            for (Object obj : profesoresDAO){
+                Profesor profesor = (Profesor) obj;
+                profesores.add(
+                        new ProfesorDTO(
+                                profesor.getID(),
+                                profesor.getNombres(),
+                                profesor.getApellidos(),
+                                profesor.getEmail(),
+                                profesor.getTipoContrato()
+                        )
+                );
+            }
+            return profesores;
         } catch (Exception e) {
             throw new Exception("Error al obtener la lista de Profesores: " + e.getMessage(), e);
         }
     }
-    public boolean insertarProfesor(String nombres, String apellidos, String email, String tipoContrato) throws Exception {
 
-        // Crear el profesor usando el método crearProfesor
-        Object profesorObj = crearProfesor(nombres, apellidos, email, tipoContrato);
+    public List<PersonaDTO> getNombreProfesores() throws Exception {
+        try {
+            List<Object> profesoresDAO = dao.getAll();
+            List<PersonaDTO> profesores = new ArrayList<>();
 
-        if (profesorObj == null) {
-            throw new Exception("Error al crear el profesor");
+            for (Object obj : profesoresDAO){
+                Profesor p = (Profesor) obj;
+                profesores.add(
+                        new PersonaDTO(
+                                p.getID(),
+                                p.getNombres(),
+                                p.getApellidos()
+                        )
+                );
+            }
+            return profesores;
+        } catch (Exception e) {
+            throw new Exception("Error al obtener la lista de Profesores: " + e.getMessage(), e);
         }
-
-        // Usar el método insertar existente
-        return insertar(profesorObj);
     }
-    public boolean insertar(Object profesorObj) throws Exception {
-        if (!(profesorObj instanceof Profesor profesor)) {
-            throw new Exception("El objeto proporcionado no es válido");
-        }
 
+    public boolean insert(ProfesorDTO profesor) throws Exception {
         try {
             // Validar datos antes de insertar
             if (!datosValidos(profesor)) {
                 throw new Exception("Los datos del estudiante no son válidos");
             }
 
-
-            // Verificar que el email no esté en uso
-            if (ProfesorDAO.existeEmail(profesor.getEmail(), -1)) {
-                throw new Exception("El email ya está en uso por otra persona");
-            }
-
-            ProfesorDAO.insert(profesor);
+            dao.insert(profesor);
             return true;
         } catch (Exception e) {
             throw new Exception("Error al insertar el estudiante: " + e.getMessage(), e);
         }
     }
 
-
-    public double getId(Object profesorObj) {
-        if (profesorObj instanceof Profesor profesor) {
-            return profesor.getID();
-        }
-        return 0.0;
-    }
-
-    /**
-     * Obtiene el nombre completo
-     */
-    public String getFullName(Object profesorObj) {
-        if (profesorObj instanceof Profesor profesor) {
-            return profesor.getNombres() + " " + profesor.getApellidos();
-        }
-        return "";
-    }
-    public String getNombres(Object profesorObj) {
-        if (profesorObj instanceof Profesor profesor) {
-            return profesor.getNombres();
-        }
-        return "";
-    }
-    public String getTipoContrato(Object profesorObj) {
-        if (profesorObj instanceof Profesor profesor) {
-            return profesor.getTipoContrato();
-        }
-        return "";
-    }
-
-
-    /**
-     * Obtiene los apellidos de un profesor
-     */
-    public String getApellidos(Object profesorObj) {
-        if (profesorObj instanceof Profesor profesor) {
-            return profesor.getApellidos();
-        }
-        return "";
-    }
-
-    /**
-     * Obtiene el email de un estudiante
-     */
-    public String getEmail(Object profesorObj) {
-        if (profesorObj instanceof Profesor profesor) {
-            return profesor.getEmail();
-        }
-        return "";
-    }
-
-    public boolean datosValidos(Object profesorObj) {
-        if (!(profesorObj instanceof Profesor profesor)) {
-            return false;
-        }
+    public boolean datosValidos(ProfesorDTO profesor) {
 
         // Validar campos obligatorios
         if (profesor.getNombres() == null || profesor.getNombres().trim().isEmpty()) {
@@ -153,11 +89,7 @@ public class ProfesorController {
             return false;
         }
 
-        if (!formatoEmailValido(profesor.getEmail())) {
-            return false;
-        }
-
-        return true;
+        return formatoEmailValido(profesor.getEmail());
     }
 
     private boolean formatoEmailValido(String email) {
@@ -168,9 +100,9 @@ public class ProfesorController {
         return formatoEmailValido(email);
     }
 
-    public boolean existeProfesor(double id) {
+    public boolean alreadyExist(double id) {
         try {
-            return ProfesorDAO.existeProfesor(id);
+            return dao.alreadyExist(id);
         } catch (Exception e) {
             return false;
         }

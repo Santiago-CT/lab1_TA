@@ -1,9 +1,7 @@
 package com.example.controllerFXML;
 
-import com.example.dao.ProgramaDao;
-import com.example.model.Facultad;
-import com.example.model.Programa;
-import javafx.beans.property.SimpleStringProperty;
+import com.example.DTO.ProgramaDTO;
+import com.example.controller.ProgramaController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -18,19 +16,22 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class ShowProgramaController extends SceneManager implements Initializable {
 
-    @FXML private TableView<Programa> tablaProgramas;
-    @FXML private TableColumn<Programa, Double> colID;
-    @FXML private TableColumn<Programa, String> colNombre;
-    @FXML private TableColumn<Programa, Double> colDuracion;
-    @FXML private TableColumn<Programa, String> colRegistro;
-    @FXML private TableColumn<Programa, String> colFacultad;
+    @FXML private TableView<ProgramaDTO> tablaProgramas;
+    @FXML private TableColumn<ProgramaDTO, Double> colID;
+    @FXML private TableColumn<ProgramaDTO, String> colNombre;
+    @FXML private TableColumn<ProgramaDTO, Double> colDuracion;
+    @FXML private TableColumn<ProgramaDTO, Date> colRegistro;
+    @FXML private TableColumn<ProgramaDTO, String> colFacultad;
 
     @FXML private Button btnAgregar;
+
+    private final ProgramaController programaController = new ProgramaController();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -45,13 +46,8 @@ public class ShowProgramaController extends SceneManager implements Initializabl
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colDuracion.setCellValueFactory(new PropertyValueFactory<>("duracion"));
         colRegistro.setCellValueFactory(new PropertyValueFactory<>("registro"));
+        colFacultad.setCellValueFactory(new PropertyValueFactory<>("nombreFacultad"));
 
-        // Mostrar nombre completo del decano
-        colFacultad.setCellValueFactory(cellData -> {
-            Facultad facultad = cellData.getValue().getFacultad();
-            String nombreFacultad = facultad != null ? facultad.getNombre() : "Sin asignar";
-            return new SimpleStringProperty(nombreFacultad);
-        });
         tablaProgramas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
@@ -91,16 +87,12 @@ public class ShowProgramaController extends SceneManager implements Initializabl
     public void actualizarTabla() {
         try {
             // Obtener todas las facultades de la base de datos
-            List<Programa> listaProgramas = ProgramaDao.get();
-            ObservableList<Programa> observableList = FXCollections.observableArrayList(listaProgramas);
+            List<ProgramaDTO> listaProgramas = programaController.get();
+            ObservableList<ProgramaDTO> observableList = FXCollections.observableList(listaProgramas);
             tablaProgramas.setItems(observableList);
-
-            System.out.println("Programas cargados: " + listaProgramas.size());
-
         } catch (Exception e) {
             mostrarError("Error", "No se pudieron cargar los datos: " + e.getMessage());
             e.printStackTrace();
-
             // En caso de error, mostrar lista vacía
             tablaProgramas.setItems(FXCollections.observableArrayList());
         }

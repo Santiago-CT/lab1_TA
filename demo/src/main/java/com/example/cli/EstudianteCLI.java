@@ -1,11 +1,13 @@
 package com.example.cli;
 
 import com.example.controller.EstudianteController;
+import com.example.controller.ProgramaController;
 
 import java.util.Scanner;
 
 public class EstudianteCLI {
-    private final EstudianteController controller = new EstudianteController();
+    private final EstudianteController estudianteController = new EstudianteController();
+    private final ProgramaController programaController = new ProgramaController();
     private final Scanner scanner = new Scanner(System.in);
 
     public EstudianteCLI(EstudianteController estudianteController) {
@@ -33,12 +35,12 @@ public class EstudianteCLI {
 
     private void listarEstudiantes() {
         try {
-            var lista = controller.obtenerListaEstudiantes();
+            var lista = estudianteController.getAll();
             if (lista.isEmpty()) {
                 System.out.println("No hay estudiantes registrados.");
             } else {
                 lista.forEach(est ->
-                        System.out.println(controller.generarDetallesEstudiante(est))
+                        System.out.println(estudianteController.generarDetallesEstudiante(est))
                 );
             }
         } catch (Exception e) {
@@ -63,10 +65,10 @@ public class EstudianteCLI {
 
             // Listar programas disponibles
             System.out.println("\n--- Programas Disponibles ---");
-            var programas = controller.obtenerListaProgramas();
+            var programas = programaController.get();
             for (int i = 0; i < programas.size(); i++) {
                 Object prog = programas.get(i);
-                System.out.printf("%d. %s%n", i + 1, controller.obtenerNombrePrograma(prog));
+                //System.out.printf("%d. %s%n", i + 1, estudianteController.obtenerNombrePrograma(prog));
             }
             System.out.print("Elige el programa (número): ");
             int opcionPrograma = scanner.nextInt();
@@ -82,7 +84,7 @@ public class EstudianteCLI {
             double promedio = scanner.nextDouble();
 
             // Crear estudiante a través del controller
-            Object estudiante = controller.crearEstudiante(
+            /*Object estudiante = estudianteController.crearEstudiante(
                     codigo, nombres, apellidos, email, programaSeleccionado, activo, promedio
             );
 
@@ -92,13 +94,13 @@ public class EstudianteCLI {
             }
 
             // Insertar estudiante
-            boolean exito = controller.insertarEstudiante(estudiante);
+            boolean exito = estudianteController.insert(estudiante);
 
             if (exito) {
                 System.out.println("✅ Estudiante agregado con éxito.");
             } else {
                 System.out.println("❌ No se pudo agregar el estudiante.");
-            }
+            }*/
         } catch (Exception e) {
             System.out.println("❌ Error: " + e.getMessage());
         }
