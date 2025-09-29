@@ -14,6 +14,6 @@ public class Main {
         Thread hilo1 = new Thread(cli::iniciar);
         hilo1.start();
 
-        gui.iniciar(); // Hilo 2
+        gui.iniciar();
     }
 }
