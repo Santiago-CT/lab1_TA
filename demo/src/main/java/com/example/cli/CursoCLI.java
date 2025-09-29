@@ -1,16 +1,16 @@
 package com.example.cli;
 
-import com.example.DTO.FacultadDTO;
-import com.example.DTO.PersonaDTO;
-import com.example.controller.FacultadController;
-import com.example.controller.ProfesorController;
+import com.example.DTO.CursoDTO;
+import com.example.DTO.ProgramaDTO;
+import com.example.controller.CursoController;
+import com.example.controller.ProgramaController;
 import java.util.List;
 import java.util.Scanner;
 import java.util.InputMismatchException;
 
-public class FacultadCLI {
-    private final FacultadController facultadController = new FacultadController();
-    private final ProfesorController profesorController = new ProfesorController();
+public class CursoCLI {
+    private final CursoController cursoController = new CursoController();
+    private final ProgramaController programaController = new ProgramaController();
     private final Scanner scanner = new Scanner(System.in);
 
     public void menu() {
@@ -18,10 +18,10 @@ public class FacultadCLI {
         do {
             ConsolaUtils.limpiarPantalla();
             System.out.println("---------------------------------------------");
-            System.out.println("           🏛️ GESTIÓN DE FACULTADES          ");
+            System.out.println("             📖 GESTIÓN DE CURSOS             ");
             System.out.println("---------------------------------------------");
-            System.out.println("1. Listar facultades");
-            System.out.println("2. Agregar facultad");
+            System.out.println("1. Listar cursos");
+            System.out.println("2. Agregar curso");
             System.out.println("0. Volver al Menú Principal");
             System.out.println("---------------------------------------------");
             System.out.print("Seleccione una opción: ");
@@ -29,8 +29,8 @@ public class FacultadCLI {
                 opcion = scanner.nextInt();
                 scanner.nextLine();
                 switch (opcion) {
-                    case 1 -> listarFacultades();
-                    case 2 -> agregarFacultad();
+                    case 1 -> listarCursos();
+                    case 2 -> agregarCurso();
                     case 0 -> {}
                     default -> {
                         System.out.println("❌ Opción no válida.");
@@ -45,18 +45,18 @@ public class FacultadCLI {
         } while (opcion != 0);
     }
 
-    private void listarFacultades() {
+    private void listarCursos() {
         ConsolaUtils.limpiarPantalla();
         System.out.println("---------------------------------------------");
-        System.out.println("           📋 LISTA DE FACULTADES            ");
+        System.out.println("             📋 LISTA DE CURSOS              ");
         System.out.println("---------------------------------------------");
         try {
-            List<FacultadDTO> lista = facultadController.getAll();
+            List<CursoDTO> lista = cursoController.getAll();
             if (lista.isEmpty()) {
-                System.out.println("⚠️ No hay facultades registradas.");
+                System.out.println("⚠️ No hay cursos registrados.");
             } else {
-                for (FacultadDTO fac : lista) {
-                    System.out.println("ID: " + fac.getID() + ", Nombre: " + fac.getNombre() + ", Decano: " + fac.getNombreDecano());
+                for (CursoDTO curso : lista) {
+                    System.out.println("ID: " + curso.getID() + ", Nombre: " + curso.getNombre() + ", Programa: " + curso.getNombrePrograma());
                 }
             }
         } catch (Exception e) {
@@ -65,33 +65,36 @@ public class FacultadCLI {
         ConsolaUtils.presionarEnterParaContinuar(scanner);
     }
 
-    private void agregarFacultad() {
+    private void agregarCurso() {
         ConsolaUtils.limpiarPantalla();
         System.out.println("---------------------------------------------");
-        System.out.println("         ➕ AGREGAR NUEVA FACULTAD          ");
+        System.out.println("           ➕ AGREGAR NUEVO CURSO           ");
         System.out.println("---------------------------------------------");
         try {
-            System.out.print("ID: ");
-            double id = scanner.nextDouble();
+            System.out.print("ID del curso: ");
+            int id = scanner.nextInt();
             scanner.nextLine();
-            System.out.print("Nombre de la facultad: ");
+            System.out.print("Nombre del curso: ");
             String nombre = scanner.nextLine();
 
-            System.out.println("\n--- Profesores Disponibles para Decano ---");
-            List<PersonaDTO> profesores = profesorController.getNombreProfesores();
-            for (int i = 0; i < profesores.size(); i++) {
-                System.out.printf("%d. %s%n", i + 1, profesores.get(i).getNombres() + " " + profesores.get(i).getApellidos());
+            System.out.println("\n--- Programas Disponibles ---");
+            List<ProgramaDTO> programas = programaController.get();
+            for (int i = 0; i < programas.size(); i++) {
+                System.out.printf("%d. %s%n", i + 1, programas.get(i).getNombre());
             }
-            System.out.print("Elige el decano (número): ");
-            int opcionDecano = scanner.nextInt();
+            System.out.print("Elige el programa (número): ");
+            int opcionPrograma = scanner.nextInt();
             scanner.nextLine();
-            PersonaDTO decanoSel = profesores.get(opcionDecano - 1);
+            ProgramaDTO programaSel = programas.get(opcionPrograma - 1);
 
-            FacultadDTO facultad = new FacultadDTO(id, nombre, decanoSel.getID(), decanoSel.getNombres());
-            if (facultadController.insert(facultad)) {
-                System.out.println("\n✅ Facultad agregada con éxito.");
+            System.out.print("¿Está activo? (s/n): ");
+            boolean activo = scanner.nextLine().equalsIgnoreCase("s");
+
+            CursoDTO curso = new CursoDTO(id, nombre, programaSel.getID(), programaSel.getNombre(), activo);
+            if (cursoController.insert(curso)) {
+                System.out.println("\n✅ Curso agregado con éxito.");
             } else {
-                System.out.println("\n❌ No se pudo agregar la facultad.");
+                System.out.println("\n❌ No se pudo agregar el curso.");
             }
         } catch (Exception e) {
             System.out.println("❌ Error: " + e.getMessage());

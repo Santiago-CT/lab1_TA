@@ -1,9 +1,7 @@
-package com.example.controller;//package com.example.controller;
+package com.example.controller;
 
 import com.example.DAO.DAO;
-import com.example.DAO.InscripcionDAO;
 import com.example.DTO.ProgramaDTO;
-import com.example.DAO.ProgramaDAO;
 import com.example.factory.InternalFactory;
 import com.example.model.Programa;
 
@@ -58,5 +56,4 @@ public class ProgramaController {
             return false;
         }
     }
-
 }

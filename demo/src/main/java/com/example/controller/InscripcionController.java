@@ -51,4 +51,5 @@ public class InscripcionController {
             throw new Exception("Error al verificar existencia" + e.getMessage(), e);
         }
     }
+
 }

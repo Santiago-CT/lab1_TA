@@ -1,4 +1,4 @@
-package com.example.controller;//package com.example.controller;
+package com.example.controller;
 
 import com.example.DAO.DAO;
 import com.example.DTO.FacultadDTO;
@@ -53,5 +53,4 @@ public class FacultadController {
             throw new Exception("Error al verificar existencia" + e.getMessage(), e);
         }
     }
-
 }

@@ -2,97 +2,93 @@ package com.example.cli;
 
 import com.example.DTO.ProfesorDTO;
 import com.example.controller.ProfesorController;
-import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
+import java.util.InputMismatchException;
 
 public class ProfesorCLI {
-
-    private final ProfesorController profesorController;
-    private final Scanner scanner;
-    public ProfesorCLI(ProfesorController profesorController) {
-        this.profesorController = profesorController;
-        this.scanner = new Scanner(System.in);
-    }
-    public ProfesorCLI() {
-        this.profesorController = new ProfesorController();
-        this.scanner = new Scanner(System.in);
-    }
+    private final ProfesorController profesorController = new ProfesorController();
+    private final Scanner scanner = new Scanner(System.in);
 
     public void menu() {
         int opcion = -1;
-
         do {
-            System.out.println("\n=== GESTIÓN DE PROFESORES ===");
+            ConsolaUtils.limpiarPantalla();
+            System.out.println("---------------------------------------------");
+            System.out.println("           👨‍🏫 GESTIÓN DE PROFESORES          ");
+            System.out.println("---------------------------------------------");
             System.out.println("1. Listar profesores");
             System.out.println("2. Agregar profesor");
-            System.out.println("0. Volver");
-            System.out.print("Elige una opción: ");
-
+            System.out.println("0. Volver al Menú Principal");
+            System.out.println("---------------------------------------------");
+            System.out.print("Seleccione una opción: ");
             try {
                 opcion = scanner.nextInt();
-                scanner.nextLine(); // limpiar buffer
-
+                scanner.nextLine();
                 switch (opcion) {
                     case 1 -> listarProfesores();
-                    case 2-> agregarProfesor();
-                    case 0 -> System.out.println("🔙 Volviendo al menú principal...");
-                    default -> System.out.println("❌ Opción no válida");
+                    case 2 -> agregarProfesor();
+                    case 0 -> {}
+                    default -> {
+                        System.out.println("❌ Opción no válida.");
+                        ConsolaUtils.presionarEnterParaContinuar(scanner);
+                    }
                 }
             } catch (InputMismatchException e) {
-                System.out.println("❌ Error: Ingresa un número válido");
+                System.out.println("❌ Error: Ingresa un número válido.");
                 scanner.nextLine();
-            } catch (Exception e) {
-                System.out.println("❌ Error: " + e.getMessage());
+                ConsolaUtils.presionarEnterParaContinuar(scanner);
             }
-
         } while (opcion != 0);
     }
 
     private void listarProfesores() {
+        ConsolaUtils.limpiarPantalla();
+        System.out.println("---------------------------------------------");
+        System.out.println("           📋 LISTA DE PROFESORES           ");
+        System.out.println("---------------------------------------------");
         try {
-            var lista = profesorController.getAll();
+            List<ProfesorDTO> lista = profesorController.getAll();
             if (lista.isEmpty()) {
                 System.out.println("⚠️ No hay profesores registrados.");
             } else {
-                lista.forEach(prof ->
-                        System.out.println(profesorController.generarDetallesProfesor(prof))
-                );
+                for (ProfesorDTO prof : lista) {
+                    System.out.println("ID: " + prof.getID() + ", Nombre: " + prof.getNombres() + " " + prof.getApellidos() + ", Contrato: " + prof.getTipoContrato());
+                }
             }
         } catch (Exception e) {
-            System.out.println("❌ Error al listar profesores: " + e.getMessage());
+            System.out.println("❌ Error: " + e.getMessage());
         }
+        ConsolaUtils.presionarEnterParaContinuar(scanner);
     }
 
-
-
     private void agregarProfesor() {
+        ConsolaUtils.limpiarPantalla();
+        System.out.println("---------------------------------------------");
+        System.out.println("         ➕ AGREGAR NUEVO PROFESOR          ");
+        System.out.println("---------------------------------------------");
         try {
+            System.out.print("ID: ");
+            double id = scanner.nextDouble();
+            scanner.nextLine();
             System.out.print("Nombres: ");
             String nombres = scanner.nextLine();
-
             System.out.print("Apellidos: ");
             String apellidos = scanner.nextLine();
-
             System.out.print("Email: ");
             String email = scanner.nextLine();
-
             System.out.print("Tipo de contrato: ");
             String tipoContrato = scanner.nextLine();
 
-            boolean insertado = profesorController.insert(
-                    new ProfesorDTO(0.0,nombres, apellidos, email, tipoContrato)//TOCA CUADRAR LA LOGICA DEL ID QUE SE LE ENVIA
-            );
-
-            if (insertado) {
-                System.out.println("✅ Profesor agregado exitosamente.");
+            ProfesorDTO profesor = new ProfesorDTO(id, nombres, apellidos, email, tipoContrato);
+            if (profesorController.insert(profesor)) {
+                System.out.println("\n✅ Profesor agregado con éxito.");
             } else {
-                System.out.println("⚠️ No se pudo agregar al profesor.");
+                System.out.println("\n❌ No se pudo agregar al profesor.");
             }
-
         } catch (Exception e) {
-            System.out.println("❌ Error al agregar profesor: " + e.getMessage());
+            System.out.println("❌ Error en el ingreso de datos: " + e.getMessage());
         }
+        ConsolaUtils.presionarEnterParaContinuar(scanner);
     }
-
-
 }

@@ -1,4 +1,4 @@
-package com.example.controller;//package com.example.controller;
+package com.example.controller;
 
 import com.example.DAO.DAO;
 import com.example.DTO.PersonaDTO;
@@ -168,6 +168,4 @@ public class ProfesorController {
             default -> tipoContrato;
         };
     }
-
-
 }
