@@ -7,8 +7,8 @@ import java.util.List;
 public class Oracle implements DataBase{
     @Override
     public Connection getConnection() throws SQLException {
-        // Si usas un SERVICE_NAME (común en Oracle 12c+)
-        String URL = "jdbc:oracle:thin:@//localhost:1521/XEPDB1";
+        // If you use a SERVICE_NAME (common in Oracle 12c+)
+        String URL = "jdbc:oracle:thin:@//oracle-db:1521/XEPDB1";
         String USER = "root";
         String PASSWORD = "root";
 
@@ -100,7 +100,7 @@ public class Oracle implements DataBase{
                 } catch (SQLException e) {
                     // ORA-00955: name is already used by an existing object
                     if (e.getErrorCode() == 955) {
-                        // si la tabla ya existe se ignora
+                        // If the table already exists, ignore it
                     } else {
                         e.printStackTrace();
                     }

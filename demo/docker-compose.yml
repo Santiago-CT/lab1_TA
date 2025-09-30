@@ -1,40 +1,24 @@
-version: '3.8'
-
 services:
-  # --- SERVICIO DE LA APLICACIÓN (COMÚN A TODOS LOS PERFILES) ---
   app:
     build: .
     container_name: mi-app-universidad
-    # Las variables de entorno de la BD se pasarán por la línea de comandos
     environment:
       - DISPLAY=${DISPLAY}
     volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /tmp/.X11-unix:/tmp/.X-unix
     networks:
       - app-network
+    # --- LÍNEAS AÑADIDAS ---
+    stdin_open: true # Mantiene la entrada estándar abierta (permite escribir)
+    tty: true        # Asigna una pseudo-terminal
+    # -----------------------
+    depends_on:
+      oracle-db:
+        condition: service_healthy
 
-  # --- PERFIL: MYSQL ---
-  mysql-db:
-    image: mysql:8.0
-    container_name: mi-db-mysql
-    profiles: ["mysql"]
-    environment:
-      - MYSQL_ROOT_PASSWORD=rootpassword
-      - MYSQL_DATABASE=universidad
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=password
-    volumes:
-      - mysql_data:/var/lib/mysql
-    ports:
-      - "3306:3306"
-    networks:
-      - app-network
-
-  # --- PERFIL: ORACLE ---
   oracle-db:
     image: gvenzl/oracle-xe:21-slim-faststart
     container_name: mi-db-oracle
-    profiles: ["oracle"]
     environment:
       - ORACLE_PASSWORD=password
     volumes:
@@ -43,11 +27,15 @@ services:
       - "1521:1521"
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "tnsping localhost:1521/XEPDB1 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 networks:
   app-network:
     driver: bridge
 
 volumes:
-  mysql_data:
   oracle_data:
