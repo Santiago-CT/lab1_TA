@@ -12,30 +12,41 @@ public class InternalFactory {
     private static final String path_db_config = "/config/db_config";
 
     public static DataBase createDB() {
-        String db = readDBFromFile();
-        return switch (db) {
-            case "MySQL" -> new MySQL();
-            case "Oracle" -> new Oracle();
+        // Lee la Propiedad del Sistema establecida en la clase Main.
+        String dbType = System.getProperty("DB_TYPE");
+
+        // Si no se especifica ninguna propiedad, usa H2 por defecto.
+        if (dbType == null) {
+            System.out.println("INFO: Propiedad del sistema DB_TYPE no encontrada. Usando H2 por defecto.");
+            return new H2();
+        }
+
+        System.out.println("INFO: Usando la base de datos seleccionada: " + dbType);
+        return switch (dbType.toUpperCase()) {
+            case "MYSQL" -> new MySQL();
+            case "ORACLE" -> new Oracle();
+            // Por defecto, incluyendo la opción "H2", usa la base de datos en memoria.
             default -> new H2();
         };
     }
 
-    public static DAO createCursoDAO(){
+    // El resto de los métodos de la fábrica no necesitan cambios.
+    public static DAO createCursoDAO() {
         return new CursoDAO();
     }
-    public static DAO createEstudianteDAO(){
+    public static DAO createEstudianteDAO() {
         return new EstudianteDAO();
     }
-    public static DAO createProfesorDAO(){
+    public static DAO createProfesorDAO() {
         return new ProfesorDAO();
     }
-    public static DAO createProgramaDAO(){
+    public static DAO createProgramaDAO() {
         return new ProgramaDAO();
     }
-    public static DAO createFacultadDAO(){
+    public static DAO createFacultadDAO() {
         return new FacultadDAO();
     }
-    public static DAO createInscripcionDAO(){
+    public static DAO createInscripcionDAO() {
         return new InscripcionDAO();
     }
 
@@ -55,5 +66,4 @@ public class InternalFactory {
         }
         return "";
     }
-
 }
