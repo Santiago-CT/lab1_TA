@@ -1,33 +1,30 @@
 services:
-  app:
-    build: .
-    container_name: mi-app-universidad
-    # network_mode: "host" soluciona los problemas de conexión de la GUI en Linux
-    # al compartir la red de tu computadora con el contenedor.
-    network_mode: "host"
-    environment:
-      - DISPLAY=${DISPLAY}
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
-    depends_on:
-      oracle-db:
-        condition: service_healthy
-
   oracle-db:
     image: gvenzl/oracle-xe:21-slim-faststart
     container_name: mi-db-oracle
     environment:
       - ORACLE_PASSWORD=password
-    volumes:
-      - oracle_data:/opt/oracle/oradata
-    # El puerto se publica en el host, que es compartido por la app.
     ports:
       - "1521:1521"
+    volumes:
+      - oracle_data:/opt/oracle/oradata
     healthcheck:
       test: ["CMD-SHELL", "tnsping localhost:1521/XEPDB1 || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
 
+  mysql-db:
+    image: mysql:8.0
+    container_name: mi-db-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=testdb
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
 volumes:
   oracle_data:
+  mysql_data:

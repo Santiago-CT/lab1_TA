@@ -1,4 +1,4 @@
 # Descomente la base de datos que desea usar
 #H2
-#MySQL
-Oracle
+MySQL #docker-compose up -d mysql-db
+#Oracle #docker-compose up -d oracle-db
