@@ -12,20 +12,19 @@ public class InternalFactory {
     private static final String path_db_config = "/config/db_config";
 
     public static DataBase createDB() {
-        // Lee la Propiedad del Sistema establecida en la clase Main.
-        String dbType = System.getProperty("DB_TYPE");
+        // Lee la configuración desde el archivo db_config
+        String dbType = readDBFromFile();
 
-        // Si no se especifica ninguna propiedad, usa H2 por defecto.
-        if (dbType == null) {
-            System.out.println("INFO: Propiedad del sistema DB_TYPE no encontrada. Usando H2 por defecto.");
+        if (dbType == null || dbType.trim().isEmpty()) {
+            System.out.println("INFO: No se pudo leer la configuración de db_config. Usando H2 por defecto.");
             return new H2();
         }
 
-        System.out.println("INFO: Usando la base de datos seleccionada: " + dbType);
-        return switch (dbType.toUpperCase()) {
+        System.out.println("INFO: Usando la base de datos seleccionada desde db_config: " + dbType);
+        return switch (dbType.trim().toUpperCase()) {
             case "MYSQL" -> new MySQL();
             case "ORACLE" -> new Oracle();
-            // Por defecto, incluyendo la opción "H2", usa la base de datos en memoria.
+            // Por defecto, incluyendo H2, usa la base de datos en memoria.
             default -> new H2();
         };
     }
@@ -56,12 +55,12 @@ public class InternalFactory {
 
             String linea;
             while ((linea = reader.readLine()) != null) {
-                if (!linea.startsWith("#")) {
-                    return linea;
-                }
 
+                if (!linea.trim().startsWith("#") && !linea.trim().isEmpty()) {
+                    return linea.trim();
+                }
             }
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             e.printStackTrace();
         }
         return "";

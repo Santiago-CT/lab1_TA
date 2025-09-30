@@ -1,4 +1,4 @@
 # Descomente la base de datos que desea usar
-H2
+#H2
 #MySQL
-#Oracle
+Oracle

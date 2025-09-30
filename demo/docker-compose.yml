@@ -4,14 +4,12 @@ services:
     container_name: mi-app-universidad
     environment:
       - DISPLAY=${DISPLAY}
+      - XAUTHORITY=/tmp/.Xauthority
     volumes:
-      - /tmp/.X11-unix:/tmp/.X-unix
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ${HOME}/.Xauthority:/tmp/.Xauthority
     networks:
       - app-network
-    # --- LÍNEAS AÑADIDAS ---
-    stdin_open: true # Mantiene la entrada estándar abierta (permite escribir)
-    tty: true        # Asigna una pseudo-terminal
-    # -----------------------
     depends_on:
       oracle-db:
         condition: service_healthy
