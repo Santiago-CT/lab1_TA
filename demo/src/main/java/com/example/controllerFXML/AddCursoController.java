@@ -2,13 +2,17 @@ package com.example.controllerFXML;
 
 import com.example.dataTransfer.CursoDTO;
 import com.example.dataTransfer.ProgramaDTO;
+import com.example.InterfazObservador.ObserverView;
 import com.example.controller.CursoController;
 import com.example.controller.ProgramaController;
+import com.example.model.Curso;
+import com.example.model.Programa;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -26,13 +30,12 @@ public class AddCursoController implements Initializable {
     private ComboBox<ProgramaDTO> cmbPrograma;
     @FXML
     private ComboBox<String> cmbActivo;
-
     @FXML
     private javafx.scene.control.Button btnGuardar;
     @FXML
     private javafx.scene.control.Button btnCancelar;
     @FXML
-    private javafx.scene.control.Label lblMensaje;
+    private Label lblMensaje;
 
     private ShowCursoController showCursoController;
     private CursoController cursoController;
@@ -53,12 +56,9 @@ public class AddCursoController implements Initializable {
             ObservableList<ProgramaDTO> observableListProgramas = FXCollections.observableArrayList(programaDTOS);
             cmbPrograma.setItems(observableListProgramas);
 
-            ObservableList<String> observableListEstado = FXCollections.observableArrayList(
-                    "ACTIVO",
-                    "INACTIVO"
-            );
+            ObservableList<String> observableListEstado = FXCollections.observableArrayList("ACTIVO", "INACTIVO");
             cmbActivo.setItems(observableListEstado);
-        }  catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
@@ -72,11 +72,12 @@ public class AddCursoController implements Initializable {
         }
     }
 
-
     private void cerrarVentana() {
         Stage stage = (Stage) btnCancelar.getScene().getWindow();
         stage.close();
-        showCursoController.actualizarTabla();
+        if (showCursoController != null) {
+            showCursoController.actualizarTabla();
+        }
     }
 
     @FXML
@@ -118,6 +119,4 @@ public class AddCursoController implements Initializable {
     public void setParentController(ShowCursoController showCursoController) {
         this.showCursoController = showCursoController;
     }
-
-
 }

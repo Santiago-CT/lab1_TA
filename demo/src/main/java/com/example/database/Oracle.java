@@ -17,10 +17,16 @@ public class Oracle implements DataBase{
     }
     @Override
     public Connection getConnection() throws SQLException {
-        // Si usas un SERVICE_NAME (común en Oracle 12c+)
+        try {
+            Class.forName("oracle.jdbc.driver.OracleDriver");
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("Oracle JDBC driver not found.", e);
+        }
+
         String URL = "jdbc:oracle:thin:@//localhost:1521/XEPDB1";
-        String USER = "SYSTEM";
-        String PASSWORD = "root";
+        String USER = "system";
+        String PASSWORD = "password";
+
         if (driverManager == null) driverManager = DriverManager.getConnection(URL, USER, PASSWORD);
         return driverManager;
     }
@@ -108,7 +114,6 @@ public class Oracle implements DataBase{
                 try {
                     st.execute(ddl);
                 } catch (SQLException e) {
-                    // ORA-00955: name is already used by an existing object
                     if (e.getErrorCode() == 955) {
                         // si la tabla ya existe se ignora
                     } else {
@@ -123,12 +128,13 @@ public class Oracle implements DataBase{
 
     @Override
     public String getDate() {
-        String sql = "SELECT SYSDATE AS date FROM dual";
+
+        String sql = "SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS') AS current_date_time FROM dual";
         try (Connection cn = getConnection();
              PreparedStatement st = cn.prepareStatement(sql);
              ResultSet rs = st.executeQuery()) {
             if (rs.next()) {
-                return rs.getString("date");
+                return rs.getString("current_date_time");
             }
         } catch (Exception e) {
             e.printStackTrace();

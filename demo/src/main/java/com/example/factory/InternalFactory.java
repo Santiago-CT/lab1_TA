@@ -14,7 +14,6 @@ public class InternalFactory { //Singleton
     private InternalFactory(){}
 
     public static DataBase createDB() {
-        // Lee la configuración desde el archivo db_config
         String dbType = readDBFromFile();
 
         if (dbType == null || dbType.trim().isEmpty()) {
