@@ -1,246 +1,103 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.example.controllerFXML;
+
 import com.example.DTO.*;
 import com.example.controller.*;
 import com.example.database.DataBase;
 import com.example.factory.InternalFactory;
 import com.example.model.*;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-/**
- *
- * @author gon
- */
 public class Automatizacion {
 
-    private static final Map<Double, Profesor> profesores = new HashMap<>();
-    private static final Map<Double, Facultad> facultades = new HashMap<>();
-    private static final Map<Double, Programa> programas = new HashMap<>();
-    private static final Map<Double, Estudiante> estudiantes = new HashMap<>();
-    private static final Map<Integer, Curso> cursos = new HashMap<>();
-    private static final CursosInscritos cursosInscritos = new CursosInscritos();
-    private static final Map<Integer, CursoProfesor> cursoProfesor = new HashMap<>();
-    private static final CursosProfesores cursosProfesores = new CursosProfesores();
-    private static final InscripcionesPersonas inscripcionesPersonas = new InscripcionesPersonas();
+    public static final List<Curso> cursosObservables = new ArrayList<>();
 
-    private static final ProfesorController profesorController = new ProfesorController();
-    private static final FacultadController facultadController = new FacultadController();
-    private static final ProgramaController programaController = new ProgramaController();
-    private static final EstudianteController estudianteController = new EstudianteController();
-    private static final CursoController cursoController = new CursoController();
-    private static final InscripcionController inscripcionController = new InscripcionController();
+    private final Map<Double, Profesor> profesores = new HashMap<>();
+    private final Map<Double, Facultad> facultades = new HashMap<>();
+    private final Map<Double, Programa> programas = new HashMap<>();
+    private final Map<Double, Estudiante> estudiantes = new HashMap<>();
+    private final Map<Integer, Curso> cursos = new HashMap<>();
+    private final CursosInscritos cursosInscritos = new CursosInscritos();
 
-    private DataBase database;
+    private final ProfesorController profesorController = new ProfesorController();
+    private final FacultadController facultadController = new FacultadController();
+    private final ProgramaController programaController = new ProgramaController();
+    private final EstudianteController estudianteController = new EstudianteController();
+    private final CursoController cursoController = new CursoController();
+    private final InscripcionController inscripcionController = new InscripcionController();
+
+    private final DataBase database;
+
     public Automatizacion(){
         database = InternalFactory.createDB();
-    }
-    private void buildProfesores() {
-        //System.out.println("Creando profesores...");
-        Profesor p1 = new Profesor(153.0, "Elvis", "Cano", "ejemplo@unillanos.edu.co", "MEDIO TIEMPO");
-        Profesor p2 = new Profesor(154.0, "Roger", "Calderon", "ejemplo2@unillanos.edu.co", "MEDIO TIEMPO");
-        Profesor p3 = new Profesor(155.0, "Nestor", "Suat", "ejemplo3@unillanos.edu.co", "MEDIO TIEMPO");
-        /*System.out.println(p1);
-        System.out.println(p2);
-        System.out.println(p3);*/
-        profesores.put(p1.getID(), p1);
-        profesores.put(p2.getID(), p2);
-        profesores.put(p3.getID(), p3);
-    }
-
-    private void buildFacultad() {
-        //System.out.println("\nCreando facultad...");
-        Facultad fcbi = new Facultad(1.0, "FCBI", profesores.get(153.0));
-        //System.out.println(fcbi);
-        facultades.put(fcbi.getID(), fcbi);
-
-    }
-
-    private void buildPrograma() {
-        //System.out.println("\nCreando programa...");
-        java.sql.Date fechaCreacion = new java.sql.Date(System.currentTimeMillis());
-        Programa sistemas = new Programa(11.0, "Ing Sistemas", 10, fechaCreacion, facultades.get(1.0));
-        //System.out.println(sistemas);
-        programas.put(sistemas.getID(), sistemas);
-    }
-
-    private void buildEstudiantes() {
-        //System.out.println("\nCreando estudiantes...");
-
-        Estudiante e1 = new Estudiante(124.0, "Juan Esteban", "Aristizabal Sabogal", "jearistizabal@unillanos.edu.co", 160004903.0, programas.get(11.0), true, 4.2);
-        Estudiante e2 = new Estudiante(125.0, "Santiago", "Cardona", "scardona@unillanos.edu.co", 160004907.0, programas.get(11.0), true, 3.9);
-        Estudiante e3 = new Estudiante(126.0, "Camilo", "Acosta", "caacosta@unillanos.edu.co", 160004840.0, programas.get(11.0), true, 3.6);
-        /*System.out.println(e1);
-        System.out.println(e2);
-        System.out.println(e3);*/
-        estudiantes.put(e1.getID(), e1);
-        estudiantes.put(e2.getID(), e2);
-        estudiantes.put(e3.getID(), e3);
-
-    }
-
-    private void buildCursos() {
-        //System.out.println("\nCreando cursos...");
-        Curso c1 = new Curso(16, "Tecnologias Avanzadas", programas.get(11.0), true);
-        Curso c2 = new Curso(18, "Seguridad de la informacion", programas.get(11.0), true);
-        Curso c3 = new Curso(20, "Estructuras de Datos", programas.get(11.0), true);
-        /*System.out.println(c1);
-        System.out.println(c2);
-        System.out.println(c3);*/
-        cursos.put(c1.getID(), c1);
-        cursos.put(c2.getID(), c2);
-        cursos.put(c3.getID(), c3);
-    }
-
-    private void buildCursosInscritos() {
-        //System.out.println("\nCreando Inscripciones de cursos...");
-
-        Inscripcion ins1 = new Inscripcion(estudiantes.get(124.0), cursos.get(20), 2025, 1);
-        Inscripcion ins2 = new Inscripcion(estudiantes.get(125.0), cursos.get(20), 2025, 1);
-        Inscripcion ins3 = new Inscripcion(estudiantes.get(126.0), cursos.get(20), 2025, 1);
-        Inscripcion ins4 = new Inscripcion(estudiantes.get(124.0), cursos.get(16), 2024, 2);
-        Inscripcion ins5 = new Inscripcion(estudiantes.get(125.0), cursos.get(16), 2024, 2);
-        Inscripcion ins6 = new Inscripcion(estudiantes.get(124.0), cursos.get(18), 2024, 1);
-        /*System.out.println(ins1);
-        System.out.println(ins2);
-        System.out.println(ins3);
-        System.out.println(ins4);
-        System.out.println(ins5);
-        System.out.println(ins6);
-
-        System.out.println("\nInscribiendo cursos...");*/
-        cursosInscritos.inscribirCurso(ins1);
-        cursosInscritos.inscribirCurso(ins2);
-        cursosInscritos.inscribirCurso(ins3);
-        cursosInscritos.inscribirCurso(ins4);
-        cursosInscritos.inscribirCurso(ins5);
-        cursosInscritos.inscribirCurso(ins6);
-        //System.out.println(cursosInscritos.imprimirListado());
-    }
-
-    private void buildCursoProfesor() {
-        //System.out.println("\nCreando cursoProfesor...");
-        CursoProfesor cp1 = new CursoProfesor(cursos.get(16), profesores.get(154.0), 2025, 1);
-        CursoProfesor cp2 = new CursoProfesor(cursos.get(20), profesores.get(155.0), 2025, 1);
-        CursoProfesor cp3 = new CursoProfesor(cursos.get(18), profesores.get(154.0), 2025, 1);
-        /*System.out.println(cp1);
-        System.out.println(cp2);
-        System.out.println(cp3);*/
-        cursoProfesor.put(1, cp1);
-        cursoProfesor.put(2, cp2);
-        cursoProfesor.put(3, cp3);
-    }
-
-    private void buildCursosProfesores() {
-        //System.out.println("\nInscribiendo cursosProfesores...");
-        cursosProfesores.inscribir(cursoProfesor.get(1));
-        cursosProfesores.inscribir(cursoProfesor.get(2));
-        cursosProfesores.inscribir(cursoProfesor.get(3));
-        //System.out.println(cursosProfesores.imprimirListado());
-    }
-
-    private void buildInscripcionesPersonas() {
-        //System.out.println("\nInscribiendo en inscripcionesPersonas...");
-        inscripcionesPersonas.inscribir(profesores.get(153.0));
-        inscripcionesPersonas.inscribir(profesores.get(154.0));
-        inscripcionesPersonas.inscribir(profesores.get(155.0));
-        inscripcionesPersonas.inscribir(estudiantes.get(124.0));
-        inscripcionesPersonas.inscribir(estudiantes.get(125.0));
-        inscripcionesPersonas.inscribir(estudiantes.get(126.0));
     }
 
     public void run() {
         try {
-            buildProfesores();
-            buildFacultad();
-            buildPrograma();
-            buildEstudiantes();
-            buildCursos();
-            buildCursosInscritos();
-
-            //buildCursoProfesor();
-            //buildCursosProfesores();
-            //buildInscripcionesPersonas();
-
             database.crearTablas();
-            for (Profesor profesor : profesores.values()) {
-                profesorController.insert(
-                        new ProfesorDTO(
-                                profesor.getID(),
-                                profesor.getNombres(),
-                                profesor.getApellidos(),
-                                profesor.getEmail(),
-                                profesor.getTipoContrato()
-                        )
-                );
-            }
-            for (Facultad facultad : facultades.values()) {
-                facultadController.insert(
-                        new FacultadDTO(
-                                facultad.getID(),
-                                facultad.getNombre(),
-                                facultad.getDecano().getID(),
-                                facultad.getDecano().getNombres()
-                        )
-                );
-            }
-            for (Programa programa : programas.values()) {
-                programaController.insert(
-                        new ProgramaDTO(
-                                programa.getID(),
-                                programa.getNombre(),
-                                programa.getDuracion(),
-                                programa.getRegistro(),
-                                programa.getFacultad().getID(),
-                                programa.getFacultad().getNombre()
-                        )
-                );
-            }
-            for (Estudiante estudiante : estudiantes.values()) {
-                estudianteController.insert(
-                        new EstudianteDTO(
-                                estudiante.getID(),
-                                estudiante.getNombres(),
-                                estudiante.getApellidos(),
-                                estudiante.getEmail(),
-                                estudiante.getCodigo(),
-                                estudiante.getPrograma().getID(),
-                                estudiante.getPrograma().getNombre(),
-                                estudiante.isActivo(),
-                                estudiante.getPromedio()
-                        )
-                );
-            }
-            for (Curso curso : cursos.values()) {
-                cursoController.insert(
-                        new CursoDTO(
-                                curso.getID(),
-                                curso.getNombre(),
-                                curso.getPrograma().getID(),
-                                curso.getPrograma().getNombre(),
-                                curso.isActivo()
-                        )
-                );
-            }
-            for (Inscripcion inscripcion: cursosInscritos.getListado()){
-                inscripcionController.insert(
-                        new InscripcionDTO(
-                                inscripcion.getEstudiante().getID(),
-                                inscripcion.getEstudiante().getNombres(),
-                                inscripcion.getCurso().getID(),
-                                inscripcion.getCurso().getNombre(),
-                                inscripcion.getAnio(),
-                                inscripcion.getSemestre()
-                        )
-                );
-            }
+            buildData();
+            insertData();
         } catch (Exception e) {
-            System.out.println(e);
+            if (!e.getMessage().contains("restricción única") && !e.getMessage().contains("Duplicate entry")) {
+                System.out.println("Error durante la automatización: " + e.getMessage());
+            }
         }
+    }
 
+    private void buildData() {
+        profesores.put(153.0, new Profesor(153.0, "Elvis", "Cano", "elvis.cano@unillanos.edu.co", "TIEMPO COMPLETO"));
+        profesores.put(154.0, new Profesor(154.0, "Roger", "Calderon", "roger.calderon@unillanos.edu.co", "TIEMPO COMPLETO"));
+
+        facultades.put(1.0, new Facultad(1.0, "Facultad de Ciencias Básicas e Ingenierías", profesores.get(153.0)));
+
+        programas.put(11.0, new Programa(11.0, "Ingeniería de Sistemas", 10, Date.valueOf(LocalDate.now()), facultades.get(1.0)));
+
+        estudiantes.put(124.0, new Estudiante(124.0, "Juan", "Aristizabal", "jearistizabal@unillanos.edu.co", 160004903.0, programas.get(11.0), true, 4.2));
+        estudiantes.put(125.0, new Estudiante(125.0, "Santiago", "Cardona", "scardona@unillanos.edu.co", 160004907.0, programas.get(11.0), true, 3.9));
+
+        Curso c1 = new Curso(16, "Tecnologías Avanzadas", programas.get(11.0), true);
+        Curso c2 = new Curso(20, "Estructuras de Datos", programas.get(11.0), true);
+        cursos.put(c1.getID(), c1);
+        cursos.put(c2.getID(), c2);
+
+        cursosObservables.clear();
+        cursosObservables.add(c1);
+        cursosObservables.add(c2);
+
+        cursosInscritos.inscribirCurso(new Inscripcion(estudiantes.get(124.0), cursos.get(20), 2025, 1));
+        cursosInscritos.inscribirCurso(new Inscripcion(estudiantes.get(125.0), cursos.get(16), 2024, 2));
+    }
+
+    private void insertData() throws Exception {
+        for (Profesor p : profesores.values()) {
+            if (!profesorController.alreadyExist(p.getID()))
+                profesorController.insert(new ProfesorDTO(p.getID(), p.getNombres(), p.getApellidos(), p.getEmail(), p.getTipoContrato()));
+        }
+        for (Facultad f : facultades.values()) {
+            if (!facultadController.alreadyExist(f.getID()))
+                facultadController.insert(new FacultadDTO(f.getID(), f.getNombre(), f.getDecano().getID(), f.getDecano().getNombres()));
+        }
+        for (Programa p : programas.values()) {
+            if (!programaController.existePrograma(p.getID()))
+                programaController.insert(new ProgramaDTO(p.getID(), p.getNombre(), p.getDuracion(), p.getRegistro(), p.getFacultad().getID(), p.getFacultad().getNombre()));
+        }
+        for (Estudiante e : estudiantes.values()) {
+            if (!estudianteController.alreadyExist(e.getID()))
+                estudianteController.insert(new EstudianteDTO(e.getID(), e.getNombres(), e.getApellidos(), e.getEmail(), e.getCodigo(), e.getPrograma().getID(), e.getPrograma().getNombre(), e.isActivo(), e.getPromedio()));
+        }
+        for (Curso c : cursos.values()) {
+            if (!cursoController.existeCurso(c.getID()))
+                cursoController.insert(new CursoDTO(c.getID(), c.getNombre(), c.getPrograma().getID(), c.getPrograma().getNombre(), c.isActivo()));
+        }
+        for (Inscripcion i: cursosInscritos.getListado()){
+            InscripcionDTO dto = new InscripcionDTO(i.getEstudiante().getID(), i.getEstudiante().getNombres(), i.getCurso().getID(), i.getCurso().getNombre(), i.getAnio(), i.getSemestre());
+            if (!inscripcionController.alreadyExist(dto))
+                inscripcionController.insert(dto);
+        }
     }
 }

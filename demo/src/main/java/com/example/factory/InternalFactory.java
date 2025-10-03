@@ -12,7 +12,6 @@ public class InternalFactory {
     private static final String path_db_config = "/config/db_config";
 
     public static DataBase createDB() {
-        // Lee la configuración desde el archivo db_config
         String dbType = readDBFromFile();
 
         if (dbType == null || dbType.trim().isEmpty()) {
@@ -24,12 +23,10 @@ public class InternalFactory {
         return switch (dbType.trim().toUpperCase()) {
             case "MYSQL" -> new MySQL();
             case "ORACLE" -> new Oracle();
-            // Por defecto, incluyendo H2, usa la base de datos en memoria.
             default -> new H2();
         };
     }
 
-    // El resto de los métodos de la fábrica no necesitan cambios.
     public static DAO createCursoDAO() {
         return new CursoDAO();
     }
