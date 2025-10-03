@@ -1,6 +1,6 @@
-package com.example.DTO;
+package com.example.dataTransfer;
 
-public class ProfesorDTO extends PersonaDTO {
+public class ProfesorDTO extends PersonaDTO implements DataTransfer{
     private String tipoContrato;
     public ProfesorDTO(double ID, String nombres, String apellidos, String email, String tipoContrato){
         super(ID, nombres, apellidos, email);

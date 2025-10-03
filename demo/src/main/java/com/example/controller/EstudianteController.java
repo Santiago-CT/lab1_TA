@@ -1,7 +1,8 @@
 package com.example.controller;
 
-import com.example.DAO.DAO;
-import com.example.DTO.EstudianteDTO;
+import com.example.dataTransfer.DataTransfer;
+import com.example.persistence.Persistence;
+import com.example.dataTransfer.EstudianteDTO;
 import com.example.factory.InternalFactory;
 import com.example.model.Estudiante;
 
@@ -9,9 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EstudianteController {
-    private final DAO dao;
-    public EstudianteController(){
+    private static EstudianteController instance;
+    private final Persistence dao;
+    private EstudianteController(){
         dao = InternalFactory.createEstudianteDAO();
+    }
+
+    public static EstudianteController getInstance(){
+        if (instance == null) instance = new EstudianteController();
+        return instance;
     }
 
     public boolean validarFormatoEmailPublico(String email) {
@@ -20,24 +27,12 @@ public class EstudianteController {
 
     public List<EstudianteDTO> getAll() throws Exception {
         try {
-            List<Object> estudiantesDAO = dao.getAll();
+            List<DataTransfer> estudiantesDAO = dao.getAll();
             List<EstudianteDTO> estudiantes = new ArrayList<>();
 
-            for (Object e: estudiantesDAO){
-                Estudiante estudiante = (Estudiante) e;
-                estudiantes.add(
-                        new EstudianteDTO(
-                                estudiante.getID(),
-                                estudiante.getNombres(),
-                                estudiante.getApellidos(),
-                                estudiante.getEmail(),
-                                estudiante.getCodigo(),
-                                estudiante.getPrograma().getID(),
-                                estudiante.getPrograma().getNombre(),
-                                estudiante.isActivo(),
-                                estudiante.getPromedio()
-                        )
-                );
+            for (DataTransfer e: estudiantesDAO){
+                EstudianteDTO estudiante = (EstudianteDTO) e;
+                estudiantes.add(estudiante);
             }
             return estudiantes;
         } catch (Exception e) {
@@ -54,45 +49,14 @@ public class EstudianteController {
         }
     }
 
-    public String generarDetallesEstudiante(Object estudianteObj) {
-        if (!(estudianteObj instanceof Estudiante estudiante)) {
-            return "Error: Objeto no válido";
-        }
-
-        return String.format("""
-            Detalles del Estudiante:
-            
-            ID: %.0f
-            Código: %.0f
-            Nombres: %s
-            Apellidos: %s
-            Email: %s
-            Programa: %s
-            Facultad: %s
-            Promedio: %.2f
-            Estado: %s
-            """,
-                estudiante.getID(),
-                estudiante.getCodigo(),
-                estudiante.getNombres(),
-                estudiante.getApellidos(),
-                estudiante.getEmail(),
-                estudiante.getPrograma() != null ? estudiante.getPrograma().getNombre() : "Sin programa",
-                estudiante.getPrograma() != null && estudiante.getPrograma().getFacultad() != null ?
-                        estudiante.getPrograma().getFacultad().getNombre() : "Sin facultad",
-                estudiante.getPromedio(),
-                estudiante.isActivo() ? "Activo" : "Inactivo"
-        );
-    }
-
     private boolean validarFormatoEmail(String email) {
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
         return email.matches(emailRegex);
     }
 
-    public boolean alreadyExist(double id) {
+    public boolean alreadyExist(EstudianteDTO estudiante) {
         try {
-            return dao.alreadyExist(id);
+            return dao.alreadyExist(estudiante);
         } catch (Exception e) {
             return false;
         }

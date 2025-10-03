@@ -1,6 +1,6 @@
 package com.example.controllerFXML;
 
-import com.example.DTO.CursoDTO;
+import com.example.dataTransfer.CursoDTO;
 import com.example.controller.CursoController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -39,7 +39,7 @@ public class ShowCursoController extends SceneManager implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources){
-        cursoController = new CursoController();
+        cursoController = CursoController.getInstance();
 
         configurarColumnas();
         configurarEventosBotones();

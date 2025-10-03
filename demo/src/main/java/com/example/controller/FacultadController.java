@@ -1,7 +1,8 @@
 package com.example.controller;
 
-import com.example.DAO.DAO;
-import com.example.DTO.FacultadDTO;
+import com.example.dataTransfer.DataTransfer;
+import com.example.persistence.Persistence;
+import com.example.dataTransfer.FacultadDTO;
 import com.example.factory.InternalFactory;
 import com.example.model.Facultad;
 
@@ -10,25 +11,27 @@ import java.util.List;
 
 
 public class FacultadController {
-    private final DAO dao;
-    public FacultadController(){
+    private static FacultadController instance;
+    private final Persistence dao;
+
+    private FacultadController(){
         dao = InternalFactory.createFacultadDAO();
     }
+
+    public static FacultadController getInstance(){
+        if (instance == null) instance = new FacultadController();
+        return instance;
+    }
+
+
     public List<FacultadDTO> getAll() throws Exception {
         try {
-            List<Object> facultadesDAO = dao.getAll();
+            List<DataTransfer> facultadesDAO = dao.getAll();
             List<FacultadDTO> facultades = new ArrayList<>();
             
-            for (Object f: facultadesDAO){
-                Facultad facultad = (Facultad) f;
-                facultades.add(
-                        new FacultadDTO(
-                                facultad.getID(),
-                                facultad.getNombre(),
-                                facultad.getDecano().getID(),
-                                facultad.getDecano().getNombres() + " " + facultad.getDecano().getApellidos()
-                        )
-                );
+            for (DataTransfer f: facultadesDAO){
+                FacultadDTO facultad = (FacultadDTO) f;
+                facultades.add(facultad);
             }
             return facultades;
 
@@ -46,9 +49,9 @@ public class FacultadController {
         }
     }
 
-    public boolean alreadyExist(double id) throws Exception {
+    public boolean alreadyExist(FacultadDTO facultad) throws Exception {
         try {
-            return dao.alreadyExist(id);
+            return dao.alreadyExist(facultad);
         } catch (Exception e) {
             throw new Exception("Error al verificar existencia" + e.getMessage(), e);
         }

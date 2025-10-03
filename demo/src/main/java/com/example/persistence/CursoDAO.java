@@ -1,6 +1,8 @@
-package com.example.DAO;
+package com.example.persistence;
 
-import com.example.DTO.CursoDTO;
+import com.example.dataTransfer.CursoDTO;
+import com.example.dataTransfer.DataTransfer;
+import com.example.dataTransfer.ProfesorDTO;
 import com.example.database.DataBase;
 import com.example.factory.InternalFactory;
 
@@ -10,19 +12,28 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CursoDAO implements DAO{
+public class CursoDAO implements Persistence {
 
     private final DataBase database;
+    private static CursoDAO instance;
 
-    public CursoDAO(){
+    private CursoDAO(){
         database = InternalFactory.createDB();
     }
 
+    public static CursoDAO getInstance(){
+        if (instance == null) instance = new CursoDAO();
+        return instance;
+    }
+
     @Override
-    public void insert(Object obj) throws Exception {
+    public void insert(DataTransfer dataTransfer) throws Exception {
         String SQL_CURSO = "INSERT INTO curso (id, nombre, programa_id, activo) VALUES (?, ?, ?, ?)";
+        CursoDTO curso = (CursoDTO) dataTransfer;
+        if (alreadyExist(curso)){
+            return;
+        }
         try (Connection cn = database.getConnection()) {
-            CursoDTO curso = (CursoDTO) obj;
             cn.setAutoCommit(false); // para asegurar transacción
 
             PreparedStatement psCurso = cn.prepareStatement(SQL_CURSO);
@@ -38,13 +49,13 @@ public class CursoDAO implements DAO{
     }
 
     @Override
-    public List<Object> getAll() throws Exception {
+    public List<DataTransfer> getAll() throws Exception {
         String sql = """
                 SELECT c.id, c.nombre, c.programa_id, c.activo, p.nombre AS programa_nombre
                 FROM curso AS c
                 JOIN programa AS p ON p.id = c.programa_id
                 """;
-        List<Object> cursos = new ArrayList<>();
+        List<DataTransfer> cursos = new ArrayList<>();
         try (Connection cn = database.getConnection();
              PreparedStatement ps = cn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -63,7 +74,7 @@ public class CursoDAO implements DAO{
     }
 
     @Override
-    public boolean alreadyExist(Object obj) throws Exception{
+    public boolean alreadyExist(DataTransfer dataTransfer) throws Exception{
         String sql = """
                     SELECT COUNT(*)
                     FROM curso AS c
@@ -72,7 +83,8 @@ public class CursoDAO implements DAO{
         try (Connection cn = database.getConnection();
              PreparedStatement stmt = cn.prepareStatement(sql);
         ){
-            stmt.setInt(1, (Integer) obj);
+            CursoDTO curso = (CursoDTO) dataTransfer;
+            stmt.setInt(1, curso.getID());
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;

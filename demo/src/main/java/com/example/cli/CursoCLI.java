@@ -1,7 +1,7 @@
 package com.example.cli;
 
-import com.example.DTO.CursoDTO;
-import com.example.DTO.ProgramaDTO;
+import com.example.dataTransfer.CursoDTO;
+import com.example.dataTransfer.ProgramaDTO;
 import com.example.controller.CursoController;
 import com.example.controller.ProgramaController;
 import java.util.List;
@@ -9,8 +9,8 @@ import java.util.Scanner;
 import java.util.InputMismatchException;
 
 public class CursoCLI {
-    private final CursoController cursoController = new CursoController();
-    private final ProgramaController programaController = new ProgramaController();
+    private final CursoController cursoController = CursoController.getInstance();
+    private final ProgramaController programaController = ProgramaController.getInstance();
     private final Scanner scanner = new Scanner(System.in);
 
     public void menu() {

@@ -1,9 +1,6 @@
-package com.example.DTO;
+package com.example.dataTransfer;
 
-import com.example.model.Curso;
-import com.example.model.Estudiante;
-
-public class InscripcionDTO {
+public class InscripcionDTO implements DataTransfer{
     private double idEstudiante;
     private String nombreEstudiante;
     private int idCurso;

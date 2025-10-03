@@ -1,7 +1,7 @@
 package com.example.controllerFXML;
 
-import com.example.DTO.CursoDTO;
-import com.example.DTO.ProgramaDTO;
+import com.example.dataTransfer.CursoDTO;
+import com.example.dataTransfer.ProgramaDTO;
 import com.example.controller.CursoController;
 import com.example.controller.ProgramaController;
 import javafx.collections.FXCollections;
@@ -41,8 +41,8 @@ public class AddCursoController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         showCursoController = new ShowCursoController();
-        cursoController = new CursoController();
-        programaController = new ProgramaController();
+        cursoController = CursoController.getInstance();
+        programaController = ProgramaController.getInstance();
 
         inicializarComboBoxes();
     }
@@ -63,9 +63,9 @@ public class AddCursoController implements Initializable {
         }
     }
 
-    private boolean idExiste(int id) {
+    private boolean idExiste(CursoDTO curso) {
         try {
-            return cursoController.existeCurso(id);
+            return cursoController.existeCurso(curso);
         } catch (Exception e) {
             System.err.println("Error al verificar ID existente: " + e.getMessage());
             return false;
@@ -92,18 +92,17 @@ public class AddCursoController implements Initializable {
     @FXML
     private void save() {
         try {
-            if (idExiste(Integer.parseInt(txtId.getText().trim()))){
+            CursoDTO curso = new CursoDTO(
+                    Integer.parseInt(txtId.getText().trim()),
+                    txtNombre.getText().trim(),
+                    cmbPrograma.getValue().getID(),
+                    cmbPrograma.getValue().getNombre(),
+                    cmbActivo.getValue().equals("ACTIVO")
+            );
+            if (idExiste(curso)){
                 return;
             }
-            cursoController.insert(
-                    new CursoDTO(
-                            Integer.parseInt(txtId.getText().trim()),
-                            txtNombre.getText().trim(),
-                            cmbPrograma.getValue().getID(),
-                            cmbPrograma.getValue().getNombre(),
-                            cmbActivo.getValue().equals("ACTIVO")
-                    )
-            );
+            cursoController.insert(curso);
 
             if (showCursoController != null){
                 showCursoController.actualizarTabla();

@@ -1,7 +1,7 @@
 package com.example.controllerFXML;
 
-import com.example.DTO.FacultadDTO;
-import com.example.DTO.PersonaDTO;
+import com.example.dataTransfer.FacultadDTO;
+import com.example.dataTransfer.PersonaDTO;
 import com.example.controller.FacultadController;
 import com.example.controller.ProfesorController;
 import javafx.collections.FXCollections;
@@ -38,8 +38,8 @@ public class AddFacultadController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        facultadController = new FacultadController();
-        profesorController = new ProfesorController();
+        facultadController = FacultadController.getInstance();
+        profesorController = ProfesorController.getInstance();
         inicializarComboBoxes();
         configurarValidaciones();
     }
@@ -87,9 +87,14 @@ public class AddFacultadController implements Initializable {
         if (formularioValido()) {
             try {
                 double id = Double.parseDouble(txtId.getText().trim());
-
+                FacultadDTO facultad = new FacultadDTO(
+                        id,
+                        txtNombre.getText().trim(),
+                        (double) cmbDecano.getValue().getID(),
+                        null
+                );
                 // Verificar si el ID ya existe
-                if (idExiste(id)) {
+                if (idExiste(facultad)) {
                     mostrarMensajeError("El ID " + id + " ya está registrado");
                     return;
                 }
@@ -121,9 +126,9 @@ public class AddFacultadController implements Initializable {
     /**
      * Verifica si un ID ya existe en la base de datos
      */
-    private boolean idExiste(double id) {
+    private boolean idExiste(FacultadDTO facultad) {
         try {
-            return facultadController.alreadyExist(id);
+            return facultadController.alreadyExist(facultad);
         } catch (Exception e) {
             System.err.println("Error al verificar ID existente: " + e.getMessage());
             return false;

@@ -1,5 +1,5 @@
 package com.example.controllerFXML;
-import com.example.DTO.EstudianteDTO;
+import com.example.dataTransfer.EstudianteDTO;
 import com.example.controller.EstudianteController;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -33,7 +33,7 @@ public class ShowEstudianteController extends SceneManager implements Initializa
     @FXML private TableColumn<EstudianteDTO, Double> colPromedio;
     @FXML private Button btnAgregarEstudiante;
 
-    private final EstudianteController estudianteController = new EstudianteController();
+    private final EstudianteController estudianteController = EstudianteController.getInstance();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

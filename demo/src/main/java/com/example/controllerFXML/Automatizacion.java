@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.example.controllerFXML;
-import com.example.DTO.*;
+import com.example.dataTransfer.*;
 import com.example.controller.*;
 import com.example.database.DataBase;
 import com.example.factory.InternalFactory;
@@ -28,12 +28,12 @@ public class Automatizacion {
     private static final CursosProfesores cursosProfesores = new CursosProfesores();
     private static final InscripcionesPersonas inscripcionesPersonas = new InscripcionesPersonas();
 
-    private static final ProfesorController profesorController = new ProfesorController();
-    private static final FacultadController facultadController = new FacultadController();
-    private static final ProgramaController programaController = new ProgramaController();
-    private static final EstudianteController estudianteController = new EstudianteController();
-    private static final CursoController cursoController = new CursoController();
-    private static final InscripcionController inscripcionController = new InscripcionController();
+    private static final ProfesorController profesorController = ProfesorController.getInstance();
+    private static final FacultadController facultadController = FacultadController.getInstance();
+    private static final ProgramaController programaController = ProgramaController.getInstance();
+    private static final EstudianteController estudianteController = EstudianteController.getInstance();
+    private static final CursoController cursoController = CursoController.getInstance();
+    private static final InscripcionController inscripcionController = InscripcionController.getInstance();
 
     private DataBase database;
     public Automatizacion(){

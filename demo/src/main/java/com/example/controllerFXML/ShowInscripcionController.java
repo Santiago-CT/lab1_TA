@@ -1,6 +1,6 @@
 package com.example.controllerFXML;
 
-import com.example.DTO.InscripcionDTO;
+import com.example.dataTransfer.InscripcionDTO;
 import com.example.controller.InscripcionController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -40,7 +40,7 @@ public class ShowInscripcionController extends SceneManager implements Initializ
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        inscripcionController = new InscripcionController();
+        inscripcionController = InscripcionController.getInstance();
         configurarColumnas();
         actualizarTabla();
         configurarEventosBotones();

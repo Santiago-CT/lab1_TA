@@ -1,6 +1,6 @@
 package com.example.controllerFXML;
 
-import com.example.DTO.*;
+import com.example.dataTransfer.*;
 import com.example.controller.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -40,9 +40,9 @@ public class AddInscripcionController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        inscripcionController = new InscripcionController();
-        estudianteController = new EstudianteController();
-        cursoController = new CursoController();
+        inscripcionController = InscripcionController.getInstance();
+        estudianteController = EstudianteController.getInstance();
+        cursoController = CursoController.getInstance();
         inicializarComboBoxes();
         configurarValidaciones();
     }
@@ -92,28 +92,14 @@ public class AddInscripcionController implements Initializable {
     private void save() {
         if (formularioValido()) {
             try {
-                double idEstudiante = cmbEstudiante.getValue().getID();
-                String nombreEstudiante = cmbEstudiante.getValue().getNombres();
-                int idCurso = cmbCurso.getValue().getID();
-                String nombreCurso = cmbCurso.getValue().getNombre();
-                int anio = Integer.parseInt(txtAnio.getText().trim());
-                int semestre = cmbSemestre.getValue();
+                InscripcionDTO inscripcion = getInscripcionDTO();
 
                 // Verificar si el ID ya existe
-                if (idExiste(new InscripcionDTO(idEstudiante, nombreEstudiante, idCurso, nombreCurso, anio, semestre))) {
+                if (idExiste(inscripcion)) {
                     mostrarMensajeError("Ya ha sido registrado con anterioridad.");
                     return;
                 }
-                inscripcionController.insert(
-                        new InscripcionDTO(
-                                idEstudiante,
-                                nombreEstudiante,
-                                idCurso,
-                                nombreCurso,
-                                anio,
-                                semestre
-                        )
-                );
+                inscripcionController.insert(inscripcion);
 
                 // Actualizar la tabla en el controlador padre
                 if (parentController != null) {
@@ -129,6 +115,25 @@ public class AddInscripcionController implements Initializable {
                 e.printStackTrace();
             }
         }
+    }
+
+    private InscripcionDTO getInscripcionDTO() {
+        double idEstudiante = cmbEstudiante.getValue().getID();
+        String nombreEstudiante = cmbEstudiante.getValue().getNombres();
+        int idCurso = cmbCurso.getValue().getID();
+        String nombreCurso = cmbCurso.getValue().getNombre();
+        int anio = Integer.parseInt(txtAnio.getText().trim());
+        int semestre = cmbSemestre.getValue();
+
+        InscripcionDTO inscripcion = new InscripcionDTO(
+                idEstudiante, 
+                nombreEstudiante, 
+                idCurso, 
+                nombreCurso, 
+                anio, 
+                semestre
+        );
+        return inscripcion;
     }
 
     /**

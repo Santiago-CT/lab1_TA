@@ -1,5 +1,6 @@
-package com.example.DAO;
-import com.example.DTO.ProgramaDTO;
+package com.example.persistence;
+import com.example.dataTransfer.DataTransfer;
+import com.example.dataTransfer.ProgramaDTO;
 import com.example.database.DataBase;
 import com.example.factory.InternalFactory;
 import com.example.model.*;
@@ -10,21 +11,30 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProgramaDAO implements DAO{
+public class ProgramaDAO implements Persistence {
 
     private final DataBase database;
+    private static ProgramaDAO instance;
 
-    public ProgramaDAO(){
+    private ProgramaDAO(){
         database = InternalFactory.createDB();
     }
 
-    @Override
-    public void insert(Object obj) throws Exception {
-        String SQL_PROGRAMA="INSERT INTO programa (id, duracion, registro, nombre, facultad_id) VALUES (?, ?, ?, ?, ?)";
+    public static ProgramaDAO getInstance(){
+        if (instance == null) instance = new ProgramaDAO();
+        return instance;
+    }
 
+    @Override
+    public void insert(DataTransfer dataTransfer) throws Exception {
+        String SQL_PROGRAMA="INSERT INTO programa (id, duracion, registro, nombre, facultad_id) VALUES (?, ?, ?, ?, ?)";
+        ProgramaDTO programa = (ProgramaDTO) dataTransfer;
+        if (alreadyExist(programa)){
+            return;
+        }
         try (Connection cn = database.getConnection()) {
-            ProgramaDTO programa = (ProgramaDTO) obj;
             cn.setAutoCommit(false); // para asegurar transacción
+
             PreparedStatement psPrograma = cn.prepareStatement(SQL_PROGRAMA);
 
             psPrograma.setDouble(1, programa.getID());
@@ -41,7 +51,7 @@ public class ProgramaDAO implements DAO{
     }
 
     @Override
-    public List<Object> getAll() throws Exception {
+    public List<DataTransfer> getAll() throws Exception {
         String sql = """
                 SELECT p.id, p.nombre, p.duracion, p.registro,
                        f.id AS facultad_id, f.nombre AS facultad_nombre
@@ -50,41 +60,34 @@ public class ProgramaDAO implements DAO{
                 ORDER BY p.nombre
                 """;
 
-        List<Object> programas = new ArrayList<>();
+        List<DataTransfer> programas = new ArrayList<>();
         try (Connection cn = database.getConnection();
              PreparedStatement ps = cn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                // Crear Facultad
-                Facultad facultad = new Facultad(
-                        rs.getDouble("facultad_id"),
-                        rs.getString("facultad_nombre"),
-                        null // Lista de programas null para evitar referencia circular
+                programas.add(
+                        new ProgramaDTO(
+                                rs.getDouble("id"),
+                                rs.getString("nombre"),
+                                rs.getDouble("duracion"),
+                                rs.getDate("registro"),
+                                rs.getDouble("facultad_id"),
+                                rs.getString("facultad_nombre")
+                        )
                 );
-
-                // Crear Programa
-                Programa programa = new Programa(
-                        rs.getDouble("id"),
-                        rs.getString("nombre"),
-                        rs.getDouble("duracion"),
-                        rs.getDate("registro"),
-                        facultad
-                );
-
-                programas.add(programa);
             }
             return programas;
         }
     }
 
     @Override
-    public boolean alreadyExist(Object obj) {
+    public boolean alreadyExist(DataTransfer dataTransfer) {
         String sql = "SELECT COUNT(*) FROM programa WHERE id = ?";
         try (Connection conn = database.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setDouble(1, (double) obj);
+            ProgramaDTO programa = (ProgramaDTO) dataTransfer;
+            stmt.setDouble(1, programa.getID());
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;

@@ -1,7 +1,7 @@
 package com.example.cli;
 
-import com.example.DTO.FacultadDTO;
-import com.example.DTO.ProgramaDTO;
+import com.example.dataTransfer.FacultadDTO;
+import com.example.dataTransfer.ProgramaDTO;
 import com.example.controller.FacultadController;
 import com.example.controller.ProgramaController;
 import java.sql.Date;
@@ -11,8 +11,8 @@ import java.util.Scanner;
 import java.util.InputMismatchException;
 
 public class ProgramaCLI {
-    private final ProgramaController programaController = new ProgramaController();
-    private final FacultadController facultadController = new FacultadController();
+    private final ProgramaController programaController = ProgramaController.getInstance();
+    private final FacultadController facultadController = FacultadController.getInstance();
     private final Scanner scanner = new Scanner(System.in);
 
     public void menu() {
