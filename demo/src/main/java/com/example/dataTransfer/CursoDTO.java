@@ -1,7 +1,7 @@
-package com.example.DTO;
+package com.example.dataTransfer;
 
 
-public class CursoDTO {
+public class CursoDTO implements DataTransfer {
     private int ID;
     private String nombre;
     private double idPrograma;

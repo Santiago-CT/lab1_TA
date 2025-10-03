@@ -1,7 +1,7 @@
 package com.example.controllerFXML;
 
-import com.example.DTO.ProfesorDTO;
 import com.example.controller.ProfesorController;
+import com.example.dataTransfer.ProfesorDTO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -43,7 +43,7 @@ public class AddProfesorController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        profesorController = new ProfesorController();
+        profesorController = ProfesorController.getInstance();
         inicializarComboBoxes();
         configurarValidaciones();
     }
@@ -94,19 +94,23 @@ public class AddProfesorController implements Initializable {
      * Maneja el evento de guardar profesor
      */
     @FXML
-    private void guardarProfesor() {
+    private void save() {
         if (validarFormulario()) {
             try {
-                // Guardar usando ProfesorController
-                boolean resultado = profesorController.insert(
-                        new ProfesorDTO(
-                                Double.parseDouble(txtID.getText().trim()),
-                                txtNombres.getText().trim(),
-                                txtApellidos.getText().trim(),
-                                txtEmail.getText().trim().toLowerCase(),
-                                cmbTipoContrato.getValue()
-                        )
+
+                ProfesorDTO profesor = new ProfesorDTO(
+                        Double.parseDouble(txtID.getText().trim()),
+                        txtNombres.getText().trim(),
+                        txtApellidos.getText().trim(),
+                        txtEmail.getText().trim().toLowerCase(),
+                        cmbTipoContrato.getValue()
                 );
+
+                if (profesorController.alreadyExist(profesor)) {
+                    mostrarMensajeError("Ya existe el ID");
+                    return;
+                }
+                boolean resultado = profesorController.insert(profesor);
 
                 if (resultado) {
                     mostrarMensajeExito("Profesor guardado exitosamente");

@@ -38,14 +38,14 @@ public class MenuPrincipal implements View {
                     case 4: new FacultadCLI().menu(); break;
                     case 5: new CursoCLI().menu(); break;
                     case 6: new InscripcionCLI().menu(); break;
-                    case 0: System.out.println("\n✅ Saliendo del sistema. ¡Hasta pronto!"); break;
+                    case 0: System.out.println("\nSaliendo del sistema. ¡Hasta pronto!"); break;
                     default:
-                        System.out.println("\n❌ Opción no válida. Intente de nuevo.");
+                        System.out.println("\nOpción no válida. Intente de nuevo.");
                         ConsolaUtils.presionarEnterParaContinuar(scanner);
                         break;
                 }
             } catch (InputMismatchException e) {
-                System.out.println("\n❌ Error: Debe ingresar un número.");
+                System.out.println("\nError: Debe ingresar un número.");
                 scanner.nextLine();
                 ConsolaUtils.presionarEnterParaContinuar(scanner);
                 opcion = -1;

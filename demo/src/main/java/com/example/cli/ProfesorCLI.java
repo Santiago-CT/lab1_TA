@@ -1,13 +1,13 @@
 package com.example.cli;
 
-import com.example.DTO.ProfesorDTO;
+import com.example.dataTransfer.ProfesorDTO;
 import com.example.controller.ProfesorController;
 import java.util.List;
 import java.util.Scanner;
 import java.util.InputMismatchException;
 
 public class ProfesorCLI {
-    private final ProfesorController profesorController = new ProfesorController();
+    private final ProfesorController profesorController = ProfesorController.getInstance();
     private final Scanner scanner = new Scanner(System.in);
 
     public void menu() {

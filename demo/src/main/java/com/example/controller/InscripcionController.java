@@ -1,33 +1,32 @@
 package com.example.controller;
 
-import com.example.DAO.DAO;
-import com.example.DTO.InscripcionDTO;
+import com.example.dataTransfer.DataTransfer;
+import com.example.persistence.Persistence;
+import com.example.dataTransfer.InscripcionDTO;
 import com.example.factory.InternalFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class InscripcionController {
-    private final DAO dao;
-    public InscripcionController(){
+    private static InscripcionController instance;
+    private final Persistence dao;
+    private InscripcionController(){
         dao = InternalFactory.createInscripcionDAO();
     }
+
+    public static InscripcionController getInstance(){
+        if (instance == null) instance = new InscripcionController();
+        return instance;
+    }
+
     public List<InscripcionDTO> getAll() throws Exception{
         try {
-            List<Object> inscripcionesDAO = dao.getAll();
+            List<DataTransfer> inscripcionesDAO = dao.getAll();
             List<InscripcionDTO> inscripciones = new ArrayList<>();
-            for (Object obj: inscripcionesDAO){
+            for (DataTransfer obj: inscripcionesDAO){
                 InscripcionDTO inscripcion = (InscripcionDTO) obj;
-                inscripciones.add(
-                        new InscripcionDTO(
-                            inscripcion.getIdEstudiante(),
-                            inscripcion.getNombreEstudiante(),
-                            inscripcion.getIdCurso(),
-                            inscripcion.getNombreCurso(),
-                            inscripcion.getAnio(),
-                            inscripcion.getSemestre()
-                        )
-                );
+                inscripciones.add(inscripcion);
             }
             return inscripciones;
         } catch (Exception e) {
@@ -40,7 +39,7 @@ public class InscripcionController {
             dao.insert(inscripcion);
             return true;
         } catch (Exception e) {
-            throw new Exception("Error al insertar Facultad: " + e.getMessage(), e);
+            throw new Exception("Error al insertar Inscripcion: " + e.getMessage(), e);
         }
     }
 

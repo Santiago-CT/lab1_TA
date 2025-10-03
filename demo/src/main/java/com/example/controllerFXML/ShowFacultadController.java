@@ -1,6 +1,6 @@
 package com.example.controllerFXML;
 
-import com.example.DTO.FacultadDTO;
+import com.example.dataTransfer.FacultadDTO;
 import com.example.controller.FacultadController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,7 +30,7 @@ public class ShowFacultadController extends SceneManager implements Initializabl
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        facultadController = new FacultadController();
+        facultadController = FacultadController.getInstance();
         configurarColumnas();
         actualizarTabla();
         configurarEventosBotones();

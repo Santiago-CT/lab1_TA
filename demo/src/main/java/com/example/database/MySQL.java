@@ -4,13 +4,23 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class MySQL implements DataBase{
+    private static MySQL instance;
+    private static Connection driverManager;
+    private MySQL(){}
 
+    public static MySQL getInstance(){
+        //System.out.println(instance);
+        if (instance != null) instance = new MySQL();
+        //System.out.println(instance);
+        return instance;
+    }
     @Override
     public Connection getConnection() throws SQLException {
-        String URL = "jdbc:mysql://localhost:3306/testdb?useSSL=false&serverTimezone=UTC";
-        String USER = "root";
-        String PASSWORD = "root";
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        String URL = "jdbc:mysql://localhost:3306/testdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+        String USER = "app_user";
+        String PASSWORD = "App1234$";
+        if (driverManager == null) driverManager = DriverManager.getConnection(URL, USER, PASSWORD);
+        return driverManager;
     }
 
     @Override
@@ -85,7 +95,6 @@ public class MySQL implements DataBase{
             for (String ddl : ddls) {
                 st.execute(ddl);
             }
-            System.out.println("Tablas creadas con éxito en MySQL");
         } catch (Exception e) {
             e.printStackTrace();
         }

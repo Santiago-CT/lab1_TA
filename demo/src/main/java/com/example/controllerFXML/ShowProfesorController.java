@@ -1,6 +1,6 @@
 package com.example.controllerFXML;
 
-import com.example.DTO.ProfesorDTO;
+import com.example.dataTransfer.ProfesorDTO;
 import com.example.controller.ProfesorController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -40,7 +40,7 @@ public class ShowProfesorController extends SceneManager implements Initializabl
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        profesorController = new ProfesorController();
+        profesorController = ProfesorController.getInstance();
 
         configurarColumnas();
         actualizarTabla();

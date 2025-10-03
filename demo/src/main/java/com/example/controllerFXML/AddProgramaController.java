@@ -1,7 +1,7 @@
 package com.example.controllerFXML;
 
-import com.example.DTO.FacultadDTO;
-import com.example.DTO.ProgramaDTO;
+import com.example.dataTransfer.FacultadDTO;
+import com.example.dataTransfer.ProgramaDTO;
 import com.example.controller.FacultadController;
 import com.example.controller.ProgramaController;
 import javafx.collections.FXCollections;
@@ -44,8 +44,8 @@ public class AddProgramaController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        facultadController = new FacultadController();
-        programaController = new ProgramaController();
+        facultadController = FacultadController.getInstance();
+        programaController = ProgramaController.getInstance();
         inicializarComboBoxes();
         configurarValidaciones();
     }
@@ -56,7 +56,6 @@ public class AddProgramaController implements Initializable {
     private void inicializarComboBoxes() {
         try {
             List<FacultadDTO> facultades = facultadController.getAll();
-            //System.out.println("____" + facultades);
             ObservableList<FacultadDTO> observableList = FXCollections.observableArrayList(
                     facultades
             );
@@ -89,27 +88,26 @@ public class AddProgramaController implements Initializable {
     }
 
     @FXML
-    private void guardar() {
+    private void save() {
         if (formularioValido()) {
             try {
                 double id = Double.parseDouble(txtId.getText().trim());
+                ProgramaDTO programa = new ProgramaDTO(
+                        id,
+                        txtNombre.getText().trim(),
+                        Double.parseDouble(txtDuracion.getText()),
+                        Date.valueOf(LocalDate.now()),
+                        cmbFacultad.getValue().getID(),
+                        cmbFacultad.getValue().getNombre()
+                );
 
                 // Verificar si el ID ya existe
-                if (idExiste(id)) {
+                if (idExiste(programa)) {
                     mostrarMensajeError("El ID " + id + " ya está registrado");
                     return;
                 }
 
-                programaController.insert(
-                        new ProgramaDTO(
-                                id,
-                                txtNombre.getText().trim(),
-                                Double.parseDouble(txtDuracion.getText()),
-                                Date.valueOf(LocalDate.now()),
-                                cmbFacultad.getValue().getID(),
-                                cmbFacultad.getValue().getNombre()
-                        )
-                );
+                programaController.insert(programa);
 
                 // Actualizar la tabla en el controlador padre
                 if (parentController != null) {
@@ -130,9 +128,9 @@ public class AddProgramaController implements Initializable {
     /**
      * Verifica si un ID ya existe en la base de datos
      */
-    private boolean idExiste(double id) {
+    private boolean idExiste(ProgramaDTO programa) {
         try {
-            return programaController.existePrograma(id);
+            return programaController.existePrograma(programa);
         } catch (Exception e) {
             System.err.println("Error al verificar ID existente: " + e.getMessage());
             return false;

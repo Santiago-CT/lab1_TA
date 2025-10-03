@@ -1,8 +1,8 @@
-package com.example.DTO;
+package com.example.dataTransfer;
 
 import java.sql.Date;
 
-public class ProgramaDTO {
+public class ProgramaDTO implements DataTransfer{
         private double ID;
         private String nombre;
         private double duracion;

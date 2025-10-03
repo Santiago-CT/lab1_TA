@@ -1,7 +1,7 @@
 package com.example.controllerFXML;
 
-import com.example.DTO.CursoDTO;
-import com.example.DTO.ProgramaDTO;
+import com.example.dataTransfer.CursoDTO;
+import com.example.dataTransfer.ProgramaDTO;
 import com.example.InterfazObservador.ObserverView;
 import com.example.controller.CursoController;
 import com.example.controller.ProgramaController;
@@ -43,8 +43,10 @@ public class AddCursoController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        cursoController = new CursoController();
-        programaController = new ProgramaController();
+        showCursoController = new ShowCursoController();
+        cursoController = CursoController.getInstance();
+        programaController = ProgramaController.getInstance();
+
         inicializarComboBoxes();
     }
 
@@ -61,49 +63,9 @@ public class AddCursoController implements Initializable {
         }
     }
 
-    @FXML
-    private void save() {
+    private boolean idExiste(CursoDTO curso) {
         try {
-            if (idExiste(Integer.parseInt(txtId.getText().trim()))) {
-                mostrarMensajeError("El ID del curso ya existe.");
-                return;
-            }
-
-            CursoDTO nuevoCursoDTO = new CursoDTO(
-                    Integer.parseInt(txtId.getText().trim()),
-                    txtNombre.getText().trim(),
-                    cmbPrograma.getValue().getID(),
-                    cmbPrograma.getValue().getNombre(),
-                    cmbActivo.getValue().equals("ACTIVO")
-            );
-
-            cursoController.insert(nuevoCursoDTO);
-
-            ProgramaDTO progDTO = cmbPrograma.getValue();
-            Programa prog = new Programa(progDTO.getID(), progDTO.getNombre(), progDTO.getDuracion(), progDTO.getRegistro(), null);
-            Curso nuevoCursoObservable = new Curso(nuevoCursoDTO.getID(), nuevoCursoDTO.getNombre(), prog, nuevoCursoDTO.isActivo());
-
-            Automatizacion.cursosObservables.add(nuevoCursoObservable);
-
-            if (ObserverView.notificadorGlobal != null) {
-                nuevoCursoObservable.agregarObservador(ObserverView.notificadorGlobal);
-                ObserverView.notificadorGlobal.actualizar(nuevoCursoObservable);
-            }
-
-            if (showCursoController != null) {
-                showCursoController.actualizarTabla();
-            }
-
-            cerrarVentana();
-        } catch (Exception e) {
-            mostrarMensajeError("Error al guardar: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private boolean idExiste(int id) {
-        try {
-            return cursoController.existeCurso(id);
+            return cursoController.existeCurso(curso);
         } catch (Exception e) {
             System.err.println("Error al verificar ID existente: " + e.getMessage());
             return false;
@@ -126,6 +88,32 @@ public class AddCursoController implements Initializable {
     private void mostrarMensajeError(String mensaje) {
         lblMensaje.setText("❌ " + mensaje);
         lblMensaje.setStyle("-fx-text-fill: #e74c3c; -fx-font-weight: bold;");
+    }
+
+    @FXML
+    private void save() {
+        try {
+            CursoDTO curso = new CursoDTO(
+                    Integer.parseInt(txtId.getText().trim()),
+                    txtNombre.getText().trim(),
+                    cmbPrograma.getValue().getID(),
+                    cmbPrograma.getValue().getNombre(),
+                    cmbActivo.getValue().equals("ACTIVO")
+            );
+            if (idExiste(curso)){
+                return;
+            }
+            cursoController.insert(curso);
+
+            if (showCursoController != null){
+                showCursoController.actualizarTabla();
+            }
+
+            cerrarVentana();
+        } catch (Exception e){
+            mostrarMensajeError("Error al guardar: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public void setParentController(ShowCursoController showCursoController) {

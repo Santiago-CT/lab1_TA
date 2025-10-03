@@ -1,6 +1,6 @@
-package com.example.DTO;
+package com.example.dataTransfer;
 
-public class PersonaDTO {
+public class PersonaDTO implements DataTransfer{
     private double ID;
     private String nombres;
     private String apellidos;

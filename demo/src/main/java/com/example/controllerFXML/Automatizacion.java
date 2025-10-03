@@ -1,6 +1,5 @@
 package com.example.controllerFXML;
-
-import com.example.DTO.*;
+import com.example.dataTransfer.*;
 import com.example.controller.*;
 import com.example.database.DataBase;
 import com.example.factory.InternalFactory;
@@ -15,24 +14,25 @@ import java.util.Map;
 
 public class Automatizacion {
 
-    public static final List<Curso> cursosObservables = new ArrayList<>();
+  public static final List<Curso> cursosObservables = new ArrayList<>();
+    private static final Map<Double, Profesor> profesores = new HashMap<>();
+    private static final Map<Double, Facultad> facultades = new HashMap<>();
+    private static final Map<Double, Programa> programas = new HashMap<>();
+    private static final Map<Double, Estudiante> estudiantes = new HashMap<>();
+    private static final Map<Integer, Curso> cursos = new HashMap<>();
+    private static final CursosInscritos cursosInscritos = new CursosInscritos();
+    private static final Map<Integer, CursoProfesor> cursoProfesor = new HashMap<>();
+    private static final CursosProfesores cursosProfesores = new CursosProfesores();
+    private static final InscripcionesPersonas inscripcionesPersonas = new InscripcionesPersonas();
 
-    private final Map<Double, Profesor> profesores = new HashMap<>();
-    private final Map<Double, Facultad> facultades = new HashMap<>();
-    private final Map<Double, Programa> programas = new HashMap<>();
-    private final Map<Double, Estudiante> estudiantes = new HashMap<>();
-    private final Map<Integer, Curso> cursos = new HashMap<>();
-    private final CursosInscritos cursosInscritos = new CursosInscritos();
+    private static final ProfesorController profesorController = ProfesorController.getInstance();
+    private static final FacultadController facultadController = FacultadController.getInstance();
+    private static final ProgramaController programaController = ProgramaController.getInstance();
+    private static final EstudianteController estudianteController = EstudianteController.getInstance();
+    private static final CursoController cursoController = CursoController.getInstance();
+    private static final InscripcionController inscripcionController = InscripcionController.getInstance();
 
-    private final ProfesorController profesorController = new ProfesorController();
-    private final FacultadController facultadController = new FacultadController();
-    private final ProgramaController programaController = new ProgramaController();
-    private final EstudianteController estudianteController = new EstudianteController();
-    private final CursoController cursoController = new CursoController();
-    private final InscripcionController inscripcionController = new InscripcionController();
-
-    private final DataBase database;
-
+    private DataBase database;
     public Automatizacion(){
         database = InternalFactory.createDB();
     }

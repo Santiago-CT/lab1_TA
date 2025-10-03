@@ -5,6 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Oracle implements DataBase{
+    private static Oracle instance;
+    private static Connection driverManager;
+    private Oracle(){}
+
+    public static Oracle getInstance(){
+        //System.out.println(instance);
+        if (instance != null) instance = new Oracle();
+        //System.out.println(instance);
+        return instance;
+    }
     @Override
     public Connection getConnection() throws SQLException {
         try {
@@ -17,7 +27,8 @@ public class Oracle implements DataBase{
         String USER = "system";
         String PASSWORD = "password";
 
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        if (driverManager == null) driverManager = DriverManager.getConnection(URL, USER, PASSWORD);
+        return driverManager;
     }
 
 

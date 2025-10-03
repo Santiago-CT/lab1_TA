@@ -1,6 +1,6 @@
 package com.example.controllerFXML;
 
-import com.example.DTO.ProgramaDTO;
+import com.example.dataTransfer.ProgramaDTO;
 import com.example.controller.ProgramaController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -31,7 +31,7 @@ public class ShowProgramaController extends SceneManager implements Initializabl
 
     @FXML private Button btnAgregar;
 
-    private final ProgramaController programaController = new ProgramaController();
+    private final ProgramaController programaController = ProgramaController.getInstance();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

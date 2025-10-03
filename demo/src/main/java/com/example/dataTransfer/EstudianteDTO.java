@@ -1,8 +1,6 @@
-package com.example.DTO;
+package com.example.dataTransfer;
 
-import com.example.model.Programa;
-
-public class EstudianteDTO extends PersonaDTO{
+public class EstudianteDTO extends PersonaDTO implements DataTransfer {
     private double codigo;
     private double idPrograma;
     private String nombrePrograma;

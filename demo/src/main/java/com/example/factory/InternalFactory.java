@@ -1,6 +1,6 @@
 package com.example.factory;
 
-import com.example.DAO.*;
+import com.example.persistence.*;
 import com.example.database.*;
 
 import java.io.BufferedReader;
@@ -8,42 +8,45 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class InternalFactory {
+public class InternalFactory { //Singleton
     private static final String path_db_config = "/config/db_config";
+
+    private InternalFactory(){}
 
     public static DataBase createDB() {
         String dbType = readDBFromFile();
 
         if (dbType == null || dbType.trim().isEmpty()) {
             System.out.println("INFO: No se pudo leer la configuración de db_config. Usando H2 por defecto.");
-            return new H2();
+            return H2.getInstance();
         }
 
-        System.out.println("INFO: Usando la base de datos seleccionada desde db_config: " + dbType);
         return switch (dbType.trim().toUpperCase()) {
-            case "MYSQL" -> new MySQL();
-            case "ORACLE" -> new Oracle();
-            default -> new H2();
+            case "MYSQL" -> MySQL.getInstance();
+            case "ORACLE" -> Oracle.getInstance();
+            // Por defecto usa la base de datos en memoria.
+            default -> H2.getInstance();
         };
     }
 
-    public static DAO createCursoDAO() {
-        return new CursoDAO();
+    // El resto de los métodos de la fábrica no necesitan cambios.
+    public static Persistence createCursoDAO() {
+        return CursoDAO.getInstance();
     }
-    public static DAO createEstudianteDAO() {
-        return new EstudianteDAO();
+    public static Persistence createEstudianteDAO() {
+        return EstudianteDAO.getInstance();
     }
-    public static DAO createProfesorDAO() {
-        return new ProfesorDAO();
+    public static Persistence createProfesorDAO() {
+        return ProfesorDAO.getInstance();
     }
-    public static DAO createProgramaDAO() {
-        return new ProgramaDAO();
+    public static Persistence createProgramaDAO() {
+        return ProgramaDAO.getInstance();
     }
-    public static DAO createFacultadDAO() {
-        return new FacultadDAO();
+    public static Persistence createFacultadDAO() {
+        return FacultadDAO.getInstance();
     }
-    public static DAO createInscripcionDAO() {
-        return new InscripcionDAO();
+    public static Persistence createInscripcionDAO() {
+        return InscripcionDAO.getInstance();
     }
 
     private static String readDBFromFile() {

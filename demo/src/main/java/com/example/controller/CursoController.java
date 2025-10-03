@@ -1,32 +1,32 @@
 package com.example.controller;
 
-import com.example.DAO.DAO;
-import com.example.DTO.CursoDTO;
+import com.example.dataTransfer.DataTransfer;
+import com.example.persistence.Persistence;
+import com.example.dataTransfer.CursoDTO;
 import com.example.factory.InternalFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CursoController {
-    private final DAO dao;
-    public CursoController(){
+    private static CursoController instance;
+    private final Persistence dao;
+    private CursoController(){
         dao = InternalFactory.createCursoDAO();
     }
+
+    public static CursoController getInstance(){
+        if (instance == null) instance = new CursoController();
+        return instance;
+    }
+
     public List<CursoDTO> getAll() throws Exception {
         try{
-            List<Object> cursosDAO = dao.getAll();
+            List<DataTransfer> cursosDAO = dao.getAll();
             List<CursoDTO> cursos = new ArrayList<>();
-            for (Object c : cursosDAO){
+            for (DataTransfer c : cursosDAO){
                 CursoDTO curso = (CursoDTO) c;
-                cursos.add(
-                        new CursoDTO(
-                                curso.getID(),
-                                curso.getNombre(),
-                                curso.getIdPrograma(),
-                                curso.getNombrePrograma(),
-                                curso.isActivo()
-                        )
-                );
+                cursos.add(curso);
             }
             return  cursos;
         } catch (Exception e) {
@@ -39,13 +39,13 @@ public class CursoController {
             dao.insert(curso);
             return true;
         } catch (Exception e) {
-            throw new Exception("Error al insertar Facultad: " + e.getMessage(), e);
+            throw new Exception("Error al insertar Curso: " + e.getMessage(), e);
         }
     }
 
-    public boolean existeCurso(int id) throws Exception{
+    public boolean existeCurso(CursoDTO curso) throws Exception{
         try {
-            return dao.alreadyExist(id);
+            return dao.alreadyExist(curso);
         } catch (Exception e){
             throw new Exception("Error al verificar existencia" + e.getMessage(), e);
         }

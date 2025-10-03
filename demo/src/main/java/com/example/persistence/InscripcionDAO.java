@@ -1,6 +1,7 @@
-package com.example.DAO;
+package com.example.persistence;
 
-import com.example.DTO.InscripcionDTO;
+import com.example.dataTransfer.DataTransfer;
+import com.example.dataTransfer.InscripcionDTO;
 import com.example.database.DataBase;
 import com.example.factory.InternalFactory;
 
@@ -10,20 +11,29 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InscripcionDAO implements DAO{
+public class InscripcionDAO implements Persistence {
     private final DataBase database;
+    private static InscripcionDAO instance;
 
-    public InscripcionDAO(){
+    private InscripcionDAO(){
         database = InternalFactory.createDB();
     }
 
+    public static InscripcionDAO getInstance(){
+        if (instance == null) instance = new InscripcionDAO();
+        return instance;
+    }
+
     @Override
-    public void insert(Object obj) throws Exception {
+    public void insert(DataTransfer dataTransfer) throws Exception {
+        String sqlInscripcion = "INSERT INTO inscripcion (estudiante_id, curso_id, anio, semestre) VALUES (?, ?, ?, ?)";
+        InscripcionDTO inscripcion = (InscripcionDTO) dataTransfer;
+        if (alreadyExist(inscripcion)){
+            return;
+        }
         try (Connection cn = database.getConnection()) {
-            InscripcionDTO inscripcion = (InscripcionDTO) obj;
             cn.setAutoCommit(false); // para asegurar transacción
 
-            String sqlInscripcion = "INSERT INTO inscripcion (estudiante_id, curso_id, anio, semestre) VALUES (?, ?, ?, ?)";
             PreparedStatement psInscripcion = cn.prepareStatement(sqlInscripcion);
 
             psInscripcion.setDouble(1, inscripcion.getIdEstudiante());
@@ -37,14 +47,14 @@ public class InscripcionDAO implements DAO{
     }
 
     @Override
-    public List<Object> getAll() throws Exception {
+    public List<DataTransfer> getAll() throws Exception {
         String sql = """
                 SELECT i.estudiante_id, p.nombres, p.apellidos, i.curso_id, c.nombre, i.anio, i.semestre
                 FROM inscripcion AS i
                 JOIN persona AS p ON i.estudiante_id = p.id
                 JOIN curso AS c ON i.curso_id = c.id
                 """;
-        List<Object> inscripciones = new ArrayList<>();
+        List<DataTransfer> inscripciones = new ArrayList<>();
 
         try (Connection cn = database.getConnection();
              PreparedStatement ps = cn.prepareStatement(sql);
@@ -76,7 +86,7 @@ public class InscripcionDAO implements DAO{
     }
 
     @Override
-    public boolean alreadyExist(Object obj) {
+    public boolean alreadyExist(DataTransfer dataTransfer) {
         String sql = """
                 SELECT COUNT(*)
                 FROM inscripcion
@@ -84,7 +94,7 @@ public class InscripcionDAO implements DAO{
                 """;
         try (Connection conn = database.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            InscripcionDTO inscripcion = (InscripcionDTO) obj;
+            InscripcionDTO inscripcion = (InscripcionDTO) dataTransfer;
 
             stmt.setDouble(1, inscripcion.getIdEstudiante());
             stmt.setDouble(2, inscripcion.getIdCurso());

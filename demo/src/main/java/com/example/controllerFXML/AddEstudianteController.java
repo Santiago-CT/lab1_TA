@@ -1,7 +1,7 @@
 package com.example.controllerFXML;
 
-import com.example.DTO.EstudianteDTO;
-import com.example.DTO.ProgramaDTO;
+import com.example.dataTransfer.EstudianteDTO;
+import com.example.dataTransfer.ProgramaDTO;
 import com.example.controller.EstudianteController;
 import com.example.controller.ProgramaController;
 import javafx.collections.FXCollections;
@@ -52,8 +52,8 @@ public class AddEstudianteController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        estudianteController = new EstudianteController();
-        programaController = new ProgramaController();
+        estudianteController = EstudianteController.getInstance();
+        programaController = ProgramaController.getInstance();
         inicializarComboBoxes();
         configurarValidaciones();
     }
@@ -127,33 +127,25 @@ public class AddEstudianteController implements Initializable {
     private void save() {
         if (validarFormulario()) {
             try {
-                double codigo = Double.parseDouble(txtCodigo.getText().trim());
+                EstudianteDTO estudiante = new EstudianteDTO(
+                        Double.parseDouble(txtID.getText().trim()),
+                        txtNombres.getText().trim(),
+                        txtApellidos.getText().trim(),
+                        txtEmail.getText().trim().toLowerCase(),
+                        Double.parseDouble(txtCodigo.getText().trim()),
+                        cmbPrograma.getValue().getID(),
+                        cmbPrograma.getValue().getNombre(),
+                        cmbEstado.getValue().equals("ACTIVO"),
+                        Double.parseDouble(txtPromedio.getText().trim())
+                );
 
                 // Verificar si el código ya existe usando EstudianteController
-                if (estudianteController.alreadyExist(codigo)) {
-                    mostrarMensajeError("El código " + codigo + " ya está registrado para otro estudiante");
+                if (estudianteController.alreadyExist(estudiante)) {
+                    mostrarMensajeError("El código " + estudiante.getCodigo() + " ya está registrado para otro estudiante");
                     return;
                 }
 
-                // Convertir estado a boolean
-                boolean activo = "ACTIVO".equals(cmbEstado.getValue());
-
-                double promedio = Double.parseDouble(txtPromedio.getText().trim());
-
-                boolean resultado = estudianteController.insert(
-                        new EstudianteDTO(
-                                Double.parseDouble(txtID.getText().trim()),
-                                txtNombres.getText().trim(),
-                                txtApellidos.getText().trim(),
-                                txtEmail.getText().trim().toLowerCase(),
-                                codigo,
-                                cmbPrograma.getValue().getID(),
-                                cmbPrograma.getValue().getNombre(),
-                                activo,
-                                promedio
-                        )
-                );
-
+                boolean resultado = estudianteController.insert(estudiante);
 
                 if (resultado) {
                     mostrarMensajeExito("Estudiante guardado exitosamente");

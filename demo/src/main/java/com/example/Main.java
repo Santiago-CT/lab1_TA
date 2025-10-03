@@ -1,28 +1,21 @@
 package com.example;
 
-import com.example.controllerFXML.SceneManager;
 import com.example.factory.ExternalFactory;
 import com.example.services.View;
-import javafx.application.Application;
-import javafx.stage.Stage;
 
-public class Main extends Application {
+public class Main {
 
     public static void main(String[] args) {
-        launch(args);
-    }
+        ExternalFactory eFactory = ExternalFactory.getInstance();
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        ExternalFactory eFactory = new ExternalFactory();
-
-        View consola = eFactory.createCliConsola();
-        new Thread(consola::iniciar).start();
-
+        View gui = eFactory.createGUI();
+        View cli = eFactory.createCliConsola();
         View observador = eFactory.createObserverGUI();
-        observador.iniciar();
 
-        SceneManager gui = eFactory.createGUI();
-        gui.start(primaryStage);
+        Thread hilo1 = new Thread(cli::iniciar);
+      
+        hilo1.start();
+        observador.iniciar();
+        gui.iniciar();
     }
 }

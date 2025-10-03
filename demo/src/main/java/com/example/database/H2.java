@@ -5,13 +5,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class H2 implements DataBase {
+    private static H2 instance;
+    private static Connection driverManager;
+    private H2(){}
+
+    public static H2 getInstance(){
+        //System.out.println(instance);
+        if (instance == null) instance = new H2();
+        //System.out.println(instance);
+        return instance;
+    }
 
     @Override
     public Connection getConnection() throws SQLException {
         String URL = "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1";
         String USER = "sa";
         String PASSWORD = "";
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        if (driverManager == null || driverManager.isClosed()) driverManager = DriverManager.getConnection(URL, USER, PASSWORD);
+        return driverManager;
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.example.cli;
 
-import com.example.DTO.CursoDTO;
-import com.example.DTO.EstudianteDTO;
-import com.example.DTO.InscripcionDTO;
+import com.example.dataTransfer.CursoDTO;
+import com.example.dataTransfer.EstudianteDTO;
+import com.example.dataTransfer.InscripcionDTO;
 import com.example.controller.CursoController;
 import com.example.controller.EstudianteController;
 import com.example.controller.InscripcionController;
@@ -11,9 +11,9 @@ import java.util.Scanner;
 import java.util.InputMismatchException;
 
 public class InscripcionCLI {
-    private final InscripcionController inscripcionController = new InscripcionController();
-    private final EstudianteController estudianteController = new EstudianteController();
-    private final CursoController cursoController = new CursoController();
+    private final InscripcionController inscripcionController = InscripcionController.getInstance();;
+    private final EstudianteController estudianteController = EstudianteController.getInstance();
+    private final CursoController cursoController = CursoController.getInstance();
     private final Scanner scanner = new Scanner(System.in);
 
     public void menu() {

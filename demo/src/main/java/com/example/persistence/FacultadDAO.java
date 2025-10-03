@@ -1,5 +1,7 @@
-package com.example.DAO;
-import com.example.DTO.FacultadDTO;
+package com.example.persistence;
+import com.example.dataTransfer.DataTransfer;
+import com.example.dataTransfer.EstudianteDTO;
+import com.example.dataTransfer.FacultadDTO;
 import com.example.database.DataBase;
 import com.example.factory.InternalFactory;
 import com.example.model.Facultad;
@@ -12,20 +14,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class FacultadDAO implements DAO{
+public class FacultadDAO implements Persistence {
 
     private final DataBase database;
+    private static FacultadDAO instance;
 
-    public FacultadDAO(){
+    private FacultadDAO(){
         database = InternalFactory.createDB();
     }
 
-    @Override
-    public void insert(Object obj) throws Exception {
-        String SQL_INSERT = "INSERT INTO facultad (id, nombre, decano) VALUES (?, ?, ?)";
+    public static FacultadDAO getInstance(){
+        if (instance == null) instance = new FacultadDAO();
+        return instance;
+    }
 
+    @Override
+    public void insert(DataTransfer dataTransfer) throws Exception {
+        String SQL_INSERT = "INSERT INTO facultad (id, nombre, decano) VALUES (?, ?, ?)";
+        FacultadDTO facultad = (FacultadDTO) dataTransfer;
+        if (alreadyExist(facultad)){
+            return;
+        }
         try (Connection cn = database.getConnection()) {
-            FacultadDTO facultad = (FacultadDTO) obj;
             cn.setAutoCommit(false); // para asegurar transacción
 
             PreparedStatement psFacultad = cn.prepareStatement(SQL_INSERT);
@@ -40,14 +50,14 @@ public class FacultadDAO implements DAO{
     }
 
     @Override
-    public List<Object> getAll() throws Exception{
+    public List<DataTransfer> getAll() throws Exception{
         String SQL_SELECT_ALL = """
             SELECT f.id, f.nombre, f.decano, 
                    p.nombres, p.apellidos
             FROM facultad f 
             LEFT JOIN persona p ON f.decano = p.id
             """;
-        List<Object> facultades = new ArrayList<>();
+        List<DataTransfer> facultades = new ArrayList<>();
 
         try (Connection cn = database.getConnection();
              PreparedStatement ps = cn.prepareStatement(SQL_SELECT_ALL);
@@ -56,20 +66,18 @@ public class FacultadDAO implements DAO{
             while (rs.next()) {
                 double id = rs.getDouble("id");
                 String nombre = rs.getString("nombre");
+                double decanoId = rs.getDouble("decano");
+                String decanoNombres = rs.getString("nombres");
+                String decanoApellidos = rs.getString("apellidos");
 
-                Persona decano = null;
-                if (rs.getObject("decano") != null) {
-                    double decanoId = rs.getDouble("decano");
-                    String nombres = rs.getString("nombres");
-                    String apellidos = rs.getString("apellidos");
-
-                    if (nombres != null && apellidos != null) {
-                        decano = new Persona(decanoId, nombres, apellidos, null);
-                    }
-                }
-
-                Facultad facultad = new Facultad(id, nombre, decano);
-                facultades.add(facultad);
+                facultades.add(
+                        new FacultadDTO(
+                                id,
+                                nombre,
+                                decanoId,
+                                decanoNombres + " " + decanoApellidos
+                        )
+                );
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -79,12 +87,12 @@ public class FacultadDAO implements DAO{
     }
 
     @Override
-    public boolean alreadyExist(Object obj) {
+    public boolean alreadyExist(DataTransfer dataTransfer) {
         String sql = "SELECT COUNT(*) FROM facultad WHERE id = ?";
         try (Connection conn = database.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setDouble(1, (double) obj);
+            FacultadDTO facultad = (FacultadDTO) dataTransfer;
+            stmt.setDouble(1, facultad.getID());
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;

@@ -1,8 +1,9 @@
 package com.example.controller;
 
-import com.example.DAO.DAO;
-import com.example.DTO.PersonaDTO;
-import com.example.DTO.ProfesorDTO;
+import com.example.dataTransfer.DataTransfer;
+import com.example.persistence.Persistence;
+import com.example.dataTransfer.PersonaDTO;
+import com.example.dataTransfer.ProfesorDTO;
 import com.example.factory.InternalFactory;
 import com.example.model.Profesor;
 
@@ -11,27 +12,25 @@ import java.util.List;
 
 
 public class ProfesorController {
-    private final DAO dao;
-    public ProfesorController(){
+    private static ProfesorController instance;
+    private final Persistence dao;
+    private ProfesorController(){
         dao = InternalFactory.createProfesorDAO();
+    }
+
+    public static ProfesorController getInstance(){
+        if (instance == null) instance = new ProfesorController();
+        return instance;
     }
 
     public List<ProfesorDTO> getAll() throws Exception {
         try {
-            List<Object> profesoresDAO = dao.getAll();
+            List<DataTransfer> profesoresDAO = dao.getAll();
             List<ProfesorDTO> profesores = new ArrayList<>();
 
-            for (Object obj : profesoresDAO){
-                Profesor profesor = (Profesor) obj;
-                profesores.add(
-                        new ProfesorDTO(
-                                profesor.getID(),
-                                profesor.getNombres(),
-                                profesor.getApellidos(),
-                                profesor.getEmail(),
-                                profesor.getTipoContrato()
-                        )
-                );
+            for (DataTransfer obj : profesoresDAO){
+                ProfesorDTO profesor = (ProfesorDTO) obj;
+                profesores.add(profesor);
             }
             return profesores;
         } catch (Exception e) {
@@ -41,11 +40,11 @@ public class ProfesorController {
 
     public List<PersonaDTO> getNombreProfesores() throws Exception {
         try {
-            List<Object> profesoresDAO = dao.getAll();
+            List<DataTransfer> profesoresDAO = dao.getAll();
             List<PersonaDTO> profesores = new ArrayList<>();
 
-            for (Object obj : profesoresDAO){
-                Profesor p = (Profesor) obj;
+            for (DataTransfer obj : profesoresDAO){
+                PersonaDTO p = (PersonaDTO) obj;
                 profesores.add(
                         new PersonaDTO(
                                 p.getID(),
@@ -56,7 +55,7 @@ public class ProfesorController {
             }
             return profesores;
         } catch (Exception e) {
-            throw new Exception("Error al obtener la lista de Profesores: " + e.getMessage(), e);
+            throw new Exception("Error al obtener la lista de nombres de Profesores: " + e.getMessage(), e);
         }
     }
 
@@ -64,13 +63,12 @@ public class ProfesorController {
         try {
             // Validar datos antes de insertar
             if (!datosValidos(profesor)) {
-                throw new Exception("Los datos del estudiante no son válidos");
+                throw new Exception("Los datos del profesor no son válidos");
             }
-
             dao.insert(profesor);
             return true;
         } catch (Exception e) {
-            throw new Exception("Error al insertar el estudiante: " + e.getMessage(), e);
+            throw new Exception("Error al insertar el profesor: " + e.getMessage(), e);
         }
     }
 
@@ -100,9 +98,9 @@ public class ProfesorController {
         return formatoEmailValido(email);
     }
 
-    public boolean alreadyExist(double id) {
+    public boolean alreadyExist(ProfesorDTO profesor) {
         try {
-            return dao.alreadyExist(id);
+            return dao.alreadyExist(profesor);
         } catch (Exception e) {
             return false;
         }

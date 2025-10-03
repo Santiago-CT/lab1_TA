@@ -1,7 +1,8 @@
 package com.example.controller;
 
-import com.example.DAO.DAO;
-import com.example.DTO.ProgramaDTO;
+import com.example.dataTransfer.DataTransfer;
+import com.example.persistence.Persistence;
+import com.example.dataTransfer.ProgramaDTO;
 import com.example.factory.InternalFactory;
 import com.example.model.Programa;
 
@@ -10,28 +11,25 @@ import java.util.List;
 
 
 public class ProgramaController {
-    private final DAO dao;
-    public ProgramaController(){
+    private static ProgramaController instance;
+    private final Persistence dao;
+    private ProgramaController(){
         dao = InternalFactory.createProgramaDAO();
+    }
+
+    public static ProgramaController getInstance(){
+        if (instance == null) instance = new ProgramaController();
+        return instance;
     }
 
     public List<ProgramaDTO> get() throws Exception {
         try {
-            List<Object> programasDAO = dao.getAll();
+            List<DataTransfer> programasDAO = dao.getAll();
             List<ProgramaDTO> programas = new ArrayList<>();
 
-            for (Object obj: programasDAO){
-                Programa p = (Programa) obj;
-                programas.add(
-                        new ProgramaDTO(
-                                p.getID(),
-                                p.getNombre(),
-                                p.getDuracion(),
-                                p.getRegistro(),
-                                p.getFacultad().getID(),
-                                p.getFacultad().getNombre()
-                        )
-                );
+            for (DataTransfer obj: programasDAO){
+                ProgramaDTO programa = (ProgramaDTO) obj;
+                programas.add(programa);
             }
 
             return programas;
@@ -49,9 +47,9 @@ public class ProgramaController {
         }
     }
 
-    public boolean existePrograma(double id) {
+    public boolean existePrograma(ProgramaDTO programa) {
         try {
-            return dao.alreadyExist(id);
+            return dao.alreadyExist(programa);
         } catch (Exception e) {
             return false;
         }
