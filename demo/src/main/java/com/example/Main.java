@@ -15,7 +15,8 @@ public class Main {
         Thread hilo1 = new Thread(cli::iniciar);
       
         hilo1.start();
-        observador.iniciar();
         gui.iniciar();
+        observador.iniciar();
+
     }
 }

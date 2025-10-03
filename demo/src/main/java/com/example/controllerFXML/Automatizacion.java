@@ -75,27 +75,73 @@ public class Automatizacion {
 
     private void insertData() throws Exception {
         for (Profesor p : profesores.values()) {
-            if (!profesorController.alreadyExist(p.getID()))
-                profesorController.insert(new ProfesorDTO(p.getID(), p.getNombres(), p.getApellidos(), p.getEmail(), p.getTipoContrato()));
+            ProfesorDTO profesorDTO = new ProfesorDTO(
+                    p.getID(),
+                    p.getNombres(),
+                    p.getApellidos(),
+                    p.getEmail(),
+                    p.getTipoContrato()
+            );
+            if (!profesorController.alreadyExist(profesorDTO))
+                profesorController.insert(profesorDTO);
         }
         for (Facultad f : facultades.values()) {
-            if (!facultadController.alreadyExist(f.getID()))
-                facultadController.insert(new FacultadDTO(f.getID(), f.getNombre(), f.getDecano().getID(), f.getDecano().getNombres()));
+            FacultadDTO facultadDTO = new FacultadDTO(
+                    f.getID(),
+                    f.getNombre(),
+                    f.getDecano().getID(),
+                    f.getDecano().getNombres()
+            );
+            if (!facultadController.alreadyExist(facultadDTO))
+                facultadController.insert(facultadDTO);
         }
         for (Programa p : programas.values()) {
-            if (!programaController.existePrograma(p.getID()))
-                programaController.insert(new ProgramaDTO(p.getID(), p.getNombre(), p.getDuracion(), p.getRegistro(), p.getFacultad().getID(), p.getFacultad().getNombre()));
+            ProgramaDTO programaDTO = new ProgramaDTO(
+                    p.getID(),
+                    p.getNombre(),
+                    p.getDuracion(),
+                    p.getRegistro(),
+                    p.getFacultad().getID(),
+                    p.getFacultad().getNombre()
+            );
+            if (!programaController.existePrograma(programaDTO))
+                programaController.insert(programaDTO);
         }
         for (Estudiante e : estudiantes.values()) {
-            if (!estudianteController.alreadyExist(e.getID()))
-                estudianteController.insert(new EstudianteDTO(e.getID(), e.getNombres(), e.getApellidos(), e.getEmail(), e.getCodigo(), e.getPrograma().getID(), e.getPrograma().getNombre(), e.isActivo(), e.getPromedio()));
+            EstudianteDTO estudianteDTO = new EstudianteDTO(
+                    e.getID(),
+                    e.getNombres(),
+                    e.getApellidos(),
+                    e.getEmail(),
+                    e.getCodigo(),
+                    e.getPrograma().getID(),
+                    e.getPrograma().getNombre(),
+                    e.isActivo(),
+                    e.getPromedio()
+            );
+            if (!estudianteController.alreadyExist(estudianteDTO))
+                estudianteController.insert(estudianteDTO);
         }
         for (Curso c : cursos.values()) {
-            if (!cursoController.existeCurso(c.getID()))
-                cursoController.insert(new CursoDTO(c.getID(), c.getNombre(), c.getPrograma().getID(), c.getPrograma().getNombre(), c.isActivo()));
+            CursoDTO cursoDTO = new CursoDTO(
+                    c.getID(),
+                    c.getNombre(),
+                    c.getPrograma().getID(),
+                    c.getPrograma().getNombre(),
+                    c.isActivo()
+            );
+            if (!cursoController.existeCurso(cursoDTO))
+                cursoController.insert(cursoDTO);
         }
         for (Inscripcion i: cursosInscritos.getListado()){
-            InscripcionDTO dto = new InscripcionDTO(i.getEstudiante().getID(), i.getEstudiante().getNombres(), i.getCurso().getID(), i.getCurso().getNombre(), i.getAnio(), i.getSemestre());
+            InscripcionDTO dto = new InscripcionDTO(
+                    i.getEstudiante().getID(),
+                    i.getEstudiante().getNombres(),
+                    i.getCurso().getID(),
+                    i.getCurso().getNombre(),
+                    i.getAnio(),
+                    i.getSemestre()
+            );
             if (!inscripcionController.alreadyExist(dto))
                 inscripcionController.insert(dto);
         }

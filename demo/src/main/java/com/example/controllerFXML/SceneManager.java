@@ -1,6 +1,8 @@
 package com.example.controllerFXML;
 
 import com.example.services.DB_Services;
+import com.example.services.View;
+import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,7 +15,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class SceneManager {
+public class SceneManager extends Application implements View {
 
     private static Scene scene;
 
@@ -24,6 +26,12 @@ public class SceneManager {
     @FXML
     public Button btnAgregar;
 
+    @Override
+    public void iniciar(){
+        launch();
+    }
+
+    @Override
     public void start(Stage stage) throws Exception {
         new Automatizacion().run();
         SceneManager.showMainView(stage);
