@@ -5,15 +5,16 @@ import com.example.database.DataBase;
 import com.example.factory.InternalFactory;
 
 public class DB_Services {
-    private final static DataBase database = InternalFactory.createDB();
-    private final static Persistence profesorDAO = InternalFactory.createProfesorDAO();
-    private final static Persistence estudianteDAO = InternalFactory.createEstudianteDAO();
-    private final static Persistence facultadDAO = InternalFactory.createFacultadDAO();
-    private final static Persistence programaDAO = InternalFactory.createProgramaDAO();
-    private final static Persistence cursoDAO = InternalFactory.createCursoDAO();
-    private final static Persistence inscripcionDAO = InternalFactory.createInscripcionDAO();
+    private static DataBase database = InternalFactory.createDB();
+    private static Persistence profesorDAO = InternalFactory.createProfesorDAO();
+    private static Persistence estudianteDAO = InternalFactory.createEstudianteDAO();
+    private static Persistence facultadDAO = InternalFactory.createFacultadDAO();
+    private static Persistence programaDAO = InternalFactory.createProgramaDAO();
+    private static Persistence cursoDAO = InternalFactory.createCursoDAO();
+    private static Persistence inscripcionDAO = InternalFactory.createInscripcionDAO();
 
     public static String getDate(){
+        if (database == null) return "";
         return database.getDate();
     }
 
@@ -34,5 +35,8 @@ public class DB_Services {
     }
     public static int countInscripciones() throws Exception {
         return inscripcionDAO.count();
+    }
+    public static String getDB_Name(){
+        return database.getDb_name();
     }
 }

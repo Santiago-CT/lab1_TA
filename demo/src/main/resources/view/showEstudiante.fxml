@@ -1,82 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Priority?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <BorderPane prefHeight="800" prefWidth="1200" stylesheets="@../styles/profesor.css"
             xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.example.controllerFXML.ShowEstudianteController">
 
     <!-- MENÚ LATERAL -->
     <left>
-        <VBox styleClass="sidebar" maxWidth="280.0" minWidth="280.0" prefWidth="280.0">
-                <!-- Navegación Principal -->
-                <VBox styleClass="nav-section" spacing="4">
-                    <Label text="MENÚ PRINCIPAL" styleClass="nav-section-title">
-                        <font>
-                            <Font size="11.0" />
-                        </font>
-                    </Label>
+        <VBox styleClass="sidebar" minWidth="50.0" prefWidth="80.0" maxWidth="100.0">
+            <Separator styleClass="sidebar-separator" />
 
-                    <Button onAction="#mostrarInicio" prefWidth="248" text="🏠 Inicio"
-                            styleClass="nav-button" />
-                    <Button onAction="#mostrarProfesores" prefWidth="248" text="👨‍🏫 Profesores"
-                            styleClass="nav-button" />
-                    <Button onAction="#mostrarEstudiantes" prefWidth="248" text="👨‍🎓 Estudiantes"
-                            styleClass="nav-button" />
-                </VBox>
+            <!-- Navegación Principal -->
+            <VBox styleClass="nav-section" spacing="4">
+                <padding>
+                    <Insets top="6.0" left="6.0" right="6.0" bottom="6.0" />
+                </padding>
 
-                <Separator styleClass="nav-separator" />
+                <Label text="MENÚ PRINCIPAL" styleClass="nav-section-title">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Label>
 
-                <!-- Navegación Académica -->
-                <VBox styleClass="nav-section" spacing="4">
-                    <padding>
-                        <Insets top="8" left="16" right="16" bottom="8" />
-                    </padding>
+                <Button fx:id="btnInicio" onAction="#mostrarInicio" text="Inicio"
+                        styleClass="nav-button" />
+                <Button fx:id="btnProfesores" onAction="#mostrarProfesores" text="Profesores"
+                        styleClass="nav-button" />
+                <Button fx:id="btnEstudiantes" onAction="#mostrarEstudiantes" text="Estudiantes"
+                        styleClass="nav-button" />
+            </VBox>
 
-                    <Label text="GESTIÓN ACADÉMICA" styleClass="nav-section-title">
-                        <font>
-                            <Font size="11.0" />
-                        </font>
-                    </Label>
+            <Separator styleClass="nav-separator" />
 
-                    <Button onAction="#mostrarFacultades" prefWidth="248" text="🏛️ Facultades"
-                            styleClass="nav-button" />
-                    <Button onAction="#mostrarProgramas" prefWidth="248" text="📚 Programas"
-                            styleClass="nav-button" />
-                    <Button onAction="#mostrarCursos" prefWidth="248" text="📖 Cursos"
-                            styleClass="nav-button" />
-                    <Button onAction="#mostrarInscripciones" prefWidth="248" text="📝 Inscripciones"
-                            styleClass="nav-button" />
-                </VBox>
+            <!-- Navegación Académica -->
+            <VBox styleClass="nav-section" spacing="4">
+                <padding>
+                    <Insets top="6.0" left="6.0" right="6.0" bottom="6.0" />
+                </padding>
 
-                <!-- Espaciador para empujar el contenido inferior -->
-                <Region VBox.vgrow="ALWAYS" />
+                <Label text="GESTIÓN ACADÉMICA" styleClass="nav-section-title">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Label>
 
-                <!-- Footer del Sidebar -->
-                <VBox styleClass="sidebar-footer" spacing="8">
-                    <padding>
-                        <Insets top="16" left="16" right="16" bottom="16" />
-                    </padding>
+                <Button fx:id="btnFacultades" onAction="#mostrarFacultades" text="Facultades"
+                        styleClass="nav-button" />
+                <Button fx:id="btnProgramas" onAction="#mostrarProgramas" text="Programas"
+                        styleClass="nav-button" />
+                <Button fx:id="btnCursos" onAction="#mostrarCursos" text="Cursos"
+                        styleClass="nav-button" />
+                <Button fx:id="btnInscripciones" onAction="#mostrarInscripciones" text="Inscripciones"
+                        styleClass="nav-button" />
+            </VBox>
 
-                    <Separator />
+            <!-- Espaciador responsive -->
+            <Region VBox.vgrow="ALWAYS" />
 
-                    <Button onAction="#cerrarSesion" prefWidth="248" text="🚪 Cerrar Sesión"
-                            styleClass="nav-button-danger" />
-                </VBox>
+            <!-- Footer del Sidebar responsive -->
+            <VBox styleClass="nav-section" spacing="6">
+                <Label fx:id="db_name" styleClass="subtitle" text="Database">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+                </Label>
+                <Label text="Usuario: Administrador"
+                       styleClass="subtitle">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+                </Label>
+
+                <Separator />
+
+                <Button onAction="#cerrarSesion" text="Cerrar Sesión"
+                        styleClass="nav-button-danger" />
+            </VBox>
         </VBox>
     </left>
 
@@ -84,33 +86,28 @@
     <top>
         <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="16">
             <padding>
-                <Insets top="20" left="32" right="32" bottom="20" />
+                <Insets top="20" left="32" right="32" bottom="20"/>
             </padding>
 
             <!-- Título de la sección actual -->
             <Label fx:id="tituloSeccion" text="Universidad De Los Llanos"
                    styleClass="title-medium">
                 <font>
-                    <Font name="System Bold" size="24.0" />
+                    <Font name="System Bold" size="24.0"/>
                 </font>
             </Label>
 
             <!-- Espaciador -->
-            <Region HBox.hgrow="ALWAYS" />
+            <Region HBox.hgrow="ALWAYS"/>
 
             <!-- Información del usuario (opcional) -->
             <HBox alignment="CENTER_RIGHT" spacing="12">
-                <Label fx:id="usuarioActual" text="Usuario: Administrador"
-                       styleClass="subtitle">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                </Label>
+
 
                 <Label fx:id="fechaActual" text="30 Ago 2025"
                        styleClass="body-text">
                     <font>
-                        <Font size="12.0" />
+                        <Font size="12.0"/>
                     </font>
                 </Label>
             </HBox>
@@ -121,20 +118,19 @@
     <center>
         <StackPane fx:id="contenidoPrincipal" styleClass="content-area">
             <padding>
-                <Insets top="32" left="32" right="32" bottom="32" />
+                <Insets top="32" left="32" right="32" bottom="32"/>
             </padding>
 
-            <VBox styleClass="form-container" spacing="20">
-
+            <VBox styleClass="dashboard-container" spacing="24" alignment="TOP_CENTER">
                 <padding>
-                    <Insets top="30" left="30" right="30" bottom="30" />
+                    <Insets top="30" left="30" right="30" bottom="30"/>
                 </padding>
 
                 <!-- Header con título y botón agregar -->
                 <HBox alignment="CENTER_LEFT">
                     <Label text="🏛️ Gestión de Estudiantes" styleClass="title-medium">
                         <font>
-                            <Font name="System Bold" size="24.0" />
+                            <Font name="System Bold" size="24.0"/>
                         </font>
                     </Label>
 
@@ -143,18 +139,18 @@
                     </Region>
 
                     <Button fx:id="btnAgregarEstudiante" text="Agregar"
-                            styleClass="modern-button, button-success" />
+                            styleClass="modern-button, button-success"/>
                 </HBox>
 
                 <!-- Tabla de estudiantes -->
                 <TableView fx:id="tablaEstudiantes" styleClass="table-view" prefHeight="400">
                     <columns>
-                        <TableColumn fx:id="colCodigo" prefWidth="100" text="CÓDIGO" />
-                        <TableColumn fx:id="colNombre" prefWidth="200" text="NOMBRE COMPLETO" />
-                        <TableColumn fx:id="colEmail" prefWidth="200" text="EMAIL" />
-                        <TableColumn fx:id="colPrograma" prefWidth="180" text="PROGRAMA" />
-                        <TableColumn fx:id="colEstado" prefWidth="180" text="ACTIVO" />
-                        <TableColumn fx:id="colPromedio" prefWidth="180" text="PROMEDIO" />
+                        <TableColumn fx:id="colCodigo" prefWidth="100" text="CÓDIGO"/>
+                        <TableColumn fx:id="colNombre" prefWidth="200" text="NOMBRE COMPLETO"/>
+                        <TableColumn fx:id="colEmail" prefWidth="200" text="EMAIL"/>
+                        <TableColumn fx:id="colPrograma" prefWidth="180" text="PROGRAMA"/>
+                        <TableColumn fx:id="colEstado" prefWidth="180" text="ACTIVO"/>
+                        <TableColumn fx:id="colPromedio" prefWidth="180" text="PROMEDIO"/>
                     </columns>
                 </TableView>
 

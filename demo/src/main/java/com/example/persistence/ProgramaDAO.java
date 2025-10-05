@@ -2,8 +2,10 @@ package com.example.persistence;
 import com.example.dataTransfer.DataTransfer;
 import com.example.dataTransfer.ProgramaDTO;
 import com.example.database.DataBase;
+import com.example.database.Oracle;
 import com.example.factory.InternalFactory;
 import com.example.model.*;
+import com.example.observer.Observer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,8 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProgramaDAO implements Persistence {
-
-    private final DataBase database;
+    private DataBase database;
     private static ProgramaDAO instance;
 
     private ProgramaDAO(){
@@ -52,13 +53,7 @@ public class ProgramaDAO implements Persistence {
 
     @Override
     public List<DataTransfer> getAll() throws Exception {
-        String sql = """
-                SELECT p.id, p.nombre, p.duracion, p.registro,
-                       f.id AS facultad_id, f.nombre AS facultad_nombre
-                FROM programa p
-                JOIN facultad f ON p.facultad_id = f.id
-                ORDER BY p.nombre
-                """;
+        String sql = getSQL();
 
         List<DataTransfer> programas = new ArrayList<>();
         try (Connection cn = database.getConnection();
@@ -79,6 +74,28 @@ public class ProgramaDAO implements Persistence {
             }
             return programas;
         }
+    }
+
+    private String getSQL() {
+        String sql;
+        if (database instanceof Oracle){
+            sql = """
+                SELECT p.id, p.nombre, p.duracion, p.registro,
+                       f.id facultad_id, f.nombre facultad_nombre
+                FROM programa p
+                JOIN facultad f ON p.facultad_id = f.id
+                ORDER BY p.nombre
+                """;
+        } else {
+            sql = """
+                SELECT p.id, p.nombre, p.duracion, p.registro,
+                       f.id AS facultad_id, f.nombre AS facultad_nombre
+                FROM programa AS p
+                JOIN facultad AS f ON p.facultad_id = f.id
+                ORDER BY p.nombre
+                """;
+        }
+        return sql;
     }
 
     @Override

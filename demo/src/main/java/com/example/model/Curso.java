@@ -1,6 +1,8 @@
 package com.example.model;
 
-public class Curso extends Observable {
+import com.example.observer.Observable;
+
+public class Curso {
     private int ID;
     private String nombre;
     private Programa programa;
@@ -19,25 +21,20 @@ public class Curso extends Observable {
     public boolean isActivo() { return activo; }
     public Programa getPrograma() { return programa; }
 
-    // --- Setters que notifican cambios ---
     public void setID(int ID) {
         this.ID = ID;
-        notificarObservadores(this);
     }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-        notificarObservadores(this);
     }
 
     public void setPrograma(Programa programa) {
         this.programa = programa;
-        notificarObservadores(this);
     }
 
     public void setActivo(boolean activo) {
         this.activo = activo;
-        notificarObservadores(this);
     }
 
     @Override

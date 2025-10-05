@@ -85,6 +85,13 @@ public class AddProgramaController implements Initializable {
             }
         });
 
+        // Validación para solo números en Duracion
+        txtDuracion.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*\\.?\\d*")) {
+                txtDuracion.setText(oldValue);
+            }
+        });
+
     }
 
     @FXML
@@ -162,6 +169,24 @@ public class AddProgramaController implements Initializable {
             errores.append("• El campo Nombres es requerido\n");
         } else if (txtNombre.getText().trim().length() < 2) {
             errores.append("• Los nombres deben tener al menos 2 caracteres\n");
+        }
+
+        // Validar Duracion
+        if (txtDuracion.getText() == null || txtDuracion.getText().trim().isEmpty()) {
+            errores.append("• El campo Duracion es requerido\n");
+        } else {
+            try {
+                double duracion = Double.parseDouble(txtDuracion.getText().trim());
+                if (duracion <= 0) {
+                    errores.append("• El ID debe ser un número positivo\n");
+                }
+            } catch (NumberFormatException e) {
+                errores.append("• El ID debe ser un número válido\n");
+            }
+        }
+
+        if (cmbFacultad.getValue() == null) {
+            errores.append("• El campo Facultad es requerido\n");
         }
 
         if (!errores.isEmpty()) {

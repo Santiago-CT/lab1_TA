@@ -35,6 +35,7 @@ public class ShowProgramaController extends SceneManager implements Initializabl
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        setBotonActivo(btnProgramas);
         configurarColumnas();
         actualizarTabla();
         configurarEventosBotones();

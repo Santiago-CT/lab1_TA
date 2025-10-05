@@ -3,7 +3,9 @@ package com.example.persistence;
 import com.example.dataTransfer.DataTransfer;
 import com.example.dataTransfer.InscripcionDTO;
 import com.example.database.DataBase;
+import com.example.database.Oracle;
 import com.example.factory.InternalFactory;
+import com.example.observer.Observer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InscripcionDAO implements Persistence {
-    private final DataBase database;
+    private DataBase database;
     private static InscripcionDAO instance;
 
     private InscripcionDAO(){
@@ -48,12 +50,8 @@ public class InscripcionDAO implements Persistence {
 
     @Override
     public List<DataTransfer> getAll() throws Exception {
-        String sql = """
-                SELECT i.estudiante_id, p.nombres, p.apellidos, i.curso_id, c.nombre, i.anio, i.semestre
-                FROM inscripcion AS i
-                JOIN persona AS p ON i.estudiante_id = p.id
-                JOIN curso AS c ON i.curso_id = c.id
-                """;
+        String sql = getSQL();
+
         List<DataTransfer> inscripciones = new ArrayList<>();
 
         try (Connection cn = database.getConnection();
@@ -83,6 +81,26 @@ public class InscripcionDAO implements Persistence {
             return inscripciones;
         }
 
+    }
+
+    private String getSQL() {
+        String sql;
+        if (database instanceof Oracle){
+            sql = """
+                SELECT i.estudiante_id, p.nombres, p.apellidos, i.curso_id, c.nombre, i.anio, i.semestre
+                FROM inscripcion i
+                JOIN persona p ON i.estudiante_id = p.id
+                JOIN curso c ON i.curso_id = c.id
+                """;
+        } else {
+            sql = """
+                SELECT i.estudiante_id, p.nombres, p.apellidos, i.curso_id, c.nombre, i.anio, i.semestre
+                FROM inscripcion AS i
+                JOIN persona AS p ON i.estudiante_id = p.id
+                JOIN curso AS c ON i.curso_id = c.id
+                """;
+        }
+        return sql;
     }
 
     @Override

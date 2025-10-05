@@ -41,6 +41,7 @@ public class ShowInscripcionController extends SceneManager implements Initializ
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         inscripcionController = InscripcionController.getInstance();
+        setBotonActivo(btnInscripciones);
         configurarColumnas();
         actualizarTabla();
         configurarEventosBotones();

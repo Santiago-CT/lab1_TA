@@ -154,7 +154,17 @@ public class AddInscripcionController implements Initializable {
     private boolean formularioValido() {
         StringBuilder errores = new StringBuilder();
 
-        // Validar ID
+        // Validar Curso
+        if (cmbCurso.getValue() == null) {
+            errores.append("• Debe seleccionar un Curso\n");
+        }
+
+        // Validar Estudiante
+        if (cmbEstudiante.getValue() == null) {
+            errores.append("• Debe seleccionar un Estudiante\n");
+        }
+
+        // Validar Año
         if (txtAnio.getText() == null || txtAnio.getText().trim().isEmpty()) {
             errores.append("• El campo AÑO es requerido\n");
         } else {
@@ -166,6 +176,11 @@ public class AddInscripcionController implements Initializable {
             } catch (NumberFormatException e) {
                 errores.append("• El AÑO debe ser un número válido\n");
             }
+        }
+
+        // Validar Semestre
+        if (cmbSemestre.getValue() == null) {
+            errores.append("• Debe seleccionar un Semestre\n");
         }
 
         if (!errores.isEmpty()) {
@@ -193,7 +208,7 @@ public class AddInscripcionController implements Initializable {
     }
 
     private void mostrarMensajeError(String mensaje) {
-        lblMensaje.setText("❌ " + mensaje);
+        lblMensaje.setText("- " + mensaje);
         lblMensaje.setStyle("-fx-text-fill: #e74c3c; -fx-font-weight: bold;");
     }
 

@@ -7,10 +7,14 @@ import java.util.List;
 public class H2 implements DataBase {
     private static H2 instance;
     private static Connection driverManager;
-    private H2(){}
+    private String db_name;
+
+    private H2(){
+        setDb_name("H2");
+    }
 
     public static H2 getInstance(){
-        //System.out.println(instance);
+        //System.out.println("H2: " + instance);
         if (instance == null) instance = new H2();
         //System.out.println(instance);
         return instance;
@@ -116,5 +120,13 @@ public class H2 implements DataBase {
             e.printStackTrace();
         }
         return "";
+    }
+    @Override
+    public String getDb_name() {
+        return db_name;
+    }
+    @Override
+    public void setDb_name(String db_name) {
+        this.db_name = db_name;
     }
 }

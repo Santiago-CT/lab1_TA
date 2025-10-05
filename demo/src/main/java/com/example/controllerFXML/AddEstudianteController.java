@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
@@ -97,7 +98,14 @@ public class AddEstudianteController implements Initializable {
             }
         });
 
-        // Validación para solo números en código (tu modelo usa double)
+        // Validación para solo números en ID
+        txtID.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*\\.?\\d*")) {
+                txtID.setText(oldValue);
+            }
+        });
+
+        // Validación para solo números en código
         txtCodigo.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*\\.?\\d*")) {
                 txtCodigo.setText(oldValue);
@@ -120,9 +128,94 @@ public class AddEstudianteController implements Initializable {
     }
 
     /**
+     * Valida todos los campos del formulario
+     */
+    private boolean validarFormulario() {
+        StringBuilder errores = new StringBuilder();
+
+        // Validar ID
+        if (txtID.getText() == null || txtID.getText().trim().isEmpty()) {
+            errores.append("• El campo ID es requerido\n");
+        } else {
+            try {
+                double id = Double.parseDouble(txtID.getText().trim());
+                if (id <= 0) {
+                    errores.append("• El ID debe ser un número positivo\n");
+                }
+            } catch (NumberFormatException e) {
+                errores.append("• El ID debe ser un número válido\n");
+            }
+        }
+
+        // Validar código
+        if (txtCodigo.getText() == null || txtCodigo.getText().trim().isEmpty()) {
+            errores.append("• El campo Código es requerido\n");
+        } else {
+            try {
+                double codigo = Double.parseDouble(txtCodigo.getText().trim());
+                if (codigo <= 0) {
+                    errores.append("• El código debe ser un número positivo\n");
+                }
+            } catch (NumberFormatException e) {
+                errores.append("• El código debe ser un número válido\n");
+            }
+        }
+
+        if (Objects.equals(txtCodigo.getText(), txtID.getText())){
+            errores.append("• El campo Código debe ser diferente al campo ID\n");
+        }
+
+        // Validar nombres
+        if (txtNombres.getText() == null || txtNombres.getText().trim().isEmpty()) {
+            errores.append("• El campo Nombres es requerido\n");
+        } else if (txtNombres.getText().trim().length() < 2) {
+            errores.append("• Los nombres deben tener al menos 2 caracteres\n");
+        }
+
+        // Validar apellidos
+        if (txtApellidos.getText() == null || txtApellidos.getText().trim().isEmpty()) {
+            errores.append("• El campo Apellidos es requerido\n");
+        } else if (txtApellidos.getText().trim().length() < 2) {
+            errores.append("• Los apellidos deben tener al menos 2 caracteres\n");
+        }
+
+        // Validar email
+        if (txtEmail.getText() == null || txtEmail.getText().trim().isEmpty()) {
+            errores.append("• El campo Email es requerido\n");
+        } else if (!estudianteController.validarFormatoEmailPublico(txtEmail.getText().trim())) {
+            errores.append("• El formato del email no es válido\n");
+        }
+
+        // Validar programa
+        if (cmbPrograma.getValue() == null) {
+            errores.append("• Debe seleccionar un programa académico\n");
+        }
+
+        // Validar promedio
+        if (txtPromedio.getText() == null || txtPromedio.getText().trim().isEmpty()) {
+            errores.append("• El campo Promedio es requerido\n");
+        } else {
+            try {
+                double promedio = Double.parseDouble(txtPromedio.getText().trim());
+                if (promedio <= 0) {
+                    errores.append("• El Promedio debe ser un número positivo\n");
+                }
+            } catch (NumberFormatException e) {
+                errores.append("• El Promedio debe ser un número válido\n");
+            }
+        }
+
+        if (!errores.isEmpty()) {
+            mostrarMensajeError("Por favor corrija los siguientes errores:\n" + errores.toString());
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Maneja el evento de guardar estudiante
      */
-
     @FXML
     private void save() {
         if (validarFormulario()) {
@@ -167,65 +260,6 @@ public class AddEstudianteController implements Initializable {
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * Valida todos los campos del formulario
-     */
-    private boolean validarFormulario() {
-        StringBuilder errores = new StringBuilder();
-
-        // Validar código
-        if (txtCodigo.getText() == null || txtCodigo.getText().trim().isEmpty()) {
-            errores.append("• El campo Código es requerido\n");
-        } else {
-            try {
-                double codigo = Double.parseDouble(txtCodigo.getText().trim());
-                if (codigo <= 0) {
-                    errores.append("• El código debe ser un número positivo\n");
-                }
-            } catch (NumberFormatException e) {
-                errores.append("• El código debe ser un número válido\n");
-            }
-        }
-
-        // Validar nombres
-        if (txtNombres.getText() == null || txtNombres.getText().trim().isEmpty()) {
-            errores.append("• El campo Nombres es requerido\n");
-        } else if (txtNombres.getText().trim().length() < 2) {
-            errores.append("• Los nombres deben tener al menos 2 caracteres\n");
-        }
-
-        // Validar apellidos
-        if (txtApellidos.getText() == null || txtApellidos.getText().trim().isEmpty()) {
-            errores.append("• El campo Apellidos es requerido\n");
-        } else if (txtApellidos.getText().trim().length() < 2) {
-            errores.append("• Los apellidos deben tener al menos 2 caracteres\n");
-        }
-
-        // Validar email
-        if (txtEmail.getText() == null || txtEmail.getText().trim().isEmpty()) {
-            errores.append("• El campo Email es requerido\n");
-        } else if (!estudianteController.validarFormatoEmailPublico(txtEmail.getText().trim())) {
-            errores.append("• El formato del email no es válido\n");
-        }
-
-        // Validar programa
-        if (cmbPrograma.getValue() == null) {
-            errores.append("• Debe seleccionar un programa académico\n");
-        }
-
-        // Validar estado
-        if (cmbEstado.getValue() == null) {
-            errores.append("• Debe seleccionar un estado\n");
-        }
-
-        if (errores.length() > 0) {
-            mostrarMensajeError("Por favor corrija los siguientes errores:\n" + errores.toString());
-            return false;
-        }
-
-        return true;
     }
 
     /**

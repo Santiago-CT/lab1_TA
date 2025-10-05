@@ -2,9 +2,10 @@ package com.example.persistence;
 
 import com.example.dataTransfer.CursoDTO;
 import com.example.dataTransfer.DataTransfer;
-import com.example.dataTransfer.ProfesorDTO;
 import com.example.database.DataBase;
+import com.example.database.Oracle;
 import com.example.factory.InternalFactory;
+import com.example.observer.Observer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,7 +15,7 @@ import java.util.List;
 
 public class CursoDAO implements Persistence {
 
-    private final DataBase database;
+    private DataBase database;
     private static CursoDAO instance;
 
     private CursoDAO(){
@@ -50,11 +51,8 @@ public class CursoDAO implements Persistence {
 
     @Override
     public List<DataTransfer> getAll() throws Exception {
-        String sql = """
-                SELECT c.id, c.nombre, c.programa_id, c.activo, p.nombre AS programa_nombre
-                FROM curso AS c
-                JOIN programa AS p ON p.id = c.programa_id
-                """;
+        String sql = getSQL();
+
         List<DataTransfer> cursos = new ArrayList<>();
         try (Connection cn = database.getConnection();
              PreparedStatement ps = cn.prepareStatement(sql);
@@ -73,12 +71,30 @@ public class CursoDAO implements Persistence {
         return cursos;
     }
 
+    private String getSQL() {
+        String sql;
+        if (database instanceof Oracle) {
+            sql = """
+                SELECT c.id, c.nombre, c.programa_id, c.activo, p.nombre programa_nombre
+                FROM curso c
+                JOIN programa p ON p.id = c.programa_id
+                """;
+        } else {
+            sql = """
+                SELECT c.id, c.nombre, c.programa_id, c.activo, p.nombre AS programa_nombre
+                FROM curso AS c
+                JOIN programa AS p ON p.id = c.programa_id
+                """;
+        }
+        return sql;
+    }
+
     @Override
     public boolean alreadyExist(DataTransfer dataTransfer) throws Exception{
         String sql = """
                     SELECT COUNT(*)
-                    FROM curso AS c
-                    WHERE c.id = ?
+                    FROM curso
+                    WHERE id = ?
                     """;
         try (Connection cn = database.getConnection();
              PreparedStatement stmt = cn.prepareStatement(sql);
@@ -113,4 +129,5 @@ public class CursoDAO implements Persistence {
         }
         return 0;
     }
+
 }

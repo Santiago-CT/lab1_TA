@@ -92,9 +92,10 @@
         <!-- Botones de acción -->
         <HBox alignment="CENTER_RIGHT" spacing="15.0">
             <Button fx:id="btnCancelar" onAction="#cancelar" prefHeight="40.0" prefWidth="120.0"
-                    styleClass="modern-button, button-secondary" text="❌ Cancelar"/>
+                    styleClass="modern-button, button-danger" text="Cancelar" />
+
             <Button fx:id="btnGuardar" onAction="#save" prefHeight="40.0" prefWidth="120.0"
-                    styleClass="modern-button, button-success" text="💾 Guardar"/>
+                    styleClass="modern-button, button-success" text="Guardar" />
         </HBox>
 
         <!-- Mensaje de estado -->

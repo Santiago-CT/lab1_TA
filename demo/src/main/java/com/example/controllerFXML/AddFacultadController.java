@@ -162,7 +162,7 @@ public class AddFacultadController implements Initializable {
             errores.append("• Los nombres deben tener al menos 2 caracteres\n");
         }
 
-        // Validar tipo de contrato
+        // Validar decano
         if (cmbDecano.getValue() == null) {
             errores.append("• Debe seleccionar un decano\n");
         }

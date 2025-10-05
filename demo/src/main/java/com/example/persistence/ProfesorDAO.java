@@ -3,15 +3,17 @@ package com.example.persistence;
 import com.example.dataTransfer.DataTransfer;
 import com.example.dataTransfer.ProfesorDTO;
 import com.example.database.DataBase;
+import com.example.database.Oracle;
 import com.example.factory.InternalFactory;
 import com.example.model.Profesor;
+import com.example.observer.Observer;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProfesorDAO implements Persistence {
-    private final DataBase database;
+    private DataBase database;
     private static ProfesorDAO instance;
 
     private ProfesorDAO(){
@@ -58,11 +60,8 @@ public class ProfesorDAO implements Persistence {
     @Override
     public List<DataTransfer> getAll() throws Exception{
         List<DataTransfer> profesores = new ArrayList<>();
-        String sql = """
-            SELECT p.id, p.nombres, p.apellidos, p.email, pr.tipoContrato 
-            FROM persona p
-            JOIN profesor pr ON p.id = pr.persona_id
-        """;
+        String sql = getSQL();
+
 
         try (Connection cn = database.getConnection();
              PreparedStatement ps = cn.prepareStatement(sql);
@@ -84,6 +83,24 @@ public class ProfesorDAO implements Persistence {
             throw e;
         }
         return profesores;
+    }
+
+    private String getSQL() {
+        String sql;
+        if (database instanceof Oracle){
+            sql = """
+            SELECT p.id, p.nombres, p.apellidos, p.email, pr.tipoContrato 
+            FROM persona p
+            JOIN profesor pr ON p.id = pr.persona_id
+        """;
+        } else {
+            sql = """
+            SELECT p.id, p.nombres, p.apellidos, p.email, pr.tipoContrato 
+            FROM persona AS p
+            JOIN profesor AS pr ON p.id = pr.persona_id
+        """;
+        }
+        return sql;
     }
 
     @Override
@@ -121,5 +138,4 @@ public class ProfesorDAO implements Persistence {
         }
         return 0;
     }
-
 }

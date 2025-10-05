@@ -3,9 +3,11 @@ import com.example.dataTransfer.DataTransfer;
 import com.example.dataTransfer.EstudianteDTO;
 import com.example.dataTransfer.FacultadDTO;
 import com.example.database.DataBase;
+import com.example.database.Oracle;
 import com.example.factory.InternalFactory;
 import com.example.model.Facultad;
 import com.example.model.Persona;
+import com.example.observer.Observer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,7 +18,7 @@ import java.util.List;
 
 public class FacultadDAO implements Persistence {
 
-    private final DataBase database;
+    private DataBase database;
     private static FacultadDAO instance;
 
     private FacultadDAO(){
@@ -51,12 +53,9 @@ public class FacultadDAO implements Persistence {
 
     @Override
     public List<DataTransfer> getAll() throws Exception{
-        String SQL_SELECT_ALL = """
-            SELECT f.id, f.nombre, f.decano, 
-                   p.nombres, p.apellidos
-            FROM facultad f 
-            LEFT JOIN persona p ON f.decano = p.id
-            """;
+
+        String SQL_SELECT_ALL = getSQL();
+
         List<DataTransfer> facultades = new ArrayList<>();
 
         try (Connection cn = database.getConnection();
@@ -84,6 +83,24 @@ public class FacultadDAO implements Persistence {
         }
 
         return facultades;
+    }
+
+    private String getSQL() {
+        String SQL_SELECT_ALL;
+        if (database instanceof Oracle){
+            SQL_SELECT_ALL= """
+            SELECT f.id, f.nombre, f.decano, p.nombres, p.apellidos
+            FROM facultad f 
+            LEFT JOIN persona p ON f.decano = p.id
+            """;
+        } else {
+            SQL_SELECT_ALL= """
+            SELECT f.id, f.nombre, f.decano, p.nombres, p.apellidos
+            FROM facultad AS f 
+            LEFT JOIN persona p ON f.decano = p.id
+            """;
+        }
+        return SQL_SELECT_ALL;
     }
 
     @Override
@@ -120,5 +137,4 @@ public class FacultadDAO implements Persistence {
         }
         return 0;
     }
-
 }

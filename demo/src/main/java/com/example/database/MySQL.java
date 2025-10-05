@@ -6,21 +6,35 @@ import java.util.ArrayList;
 public class MySQL implements DataBase{
     private static MySQL instance;
     private static Connection driverManager;
-    private MySQL(){}
+    private String db_name;
+    private MySQL(){
+        setDb_name("MYSQL");
+    }
 
     public static MySQL getInstance(){
-        //System.out.println(instance);
-        if (instance != null) instance = new MySQL();
+        //System.out.println("MYSQL: " + instance);
+        if (instance == null) instance = new MySQL();
         //System.out.println(instance);
         return instance;
     }
     @Override
     public Connection getConnection() throws SQLException {
-        String URL = "jdbc:mysql://localhost:3306/testdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
-        String USER = "app_user";
-        String PASSWORD = "App1234$";
-        if (driverManager == null) driverManager = DriverManager.getConnection(URL, USER, PASSWORD);
-        return driverManager;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("MySQL JDBC driver not found.", e);
+        }
+        String URL = "jdbc:mysql://localhost:3307/testdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+        String USER = "root";
+        String PASSWORD = "root";
+        try {
+            if (driverManager == null || driverManager.isClosed()) {
+                driverManager = DriverManager.getConnection(URL, USER, PASSWORD);
+            }
+            return driverManager;
+        } catch (SQLException e){
+            throw new SQLException("Failed to connect to MySQL database: " + e.getMessage(), e);
+        }
     }
 
     @Override
@@ -113,5 +127,14 @@ public class MySQL implements DataBase{
             e.printStackTrace();
         }
         return "";
+    }
+
+    @Override
+    public String getDb_name() {
+        return db_name;
+    }
+    @Override
+    public void setDb_name(String db_name) {
+        this.db_name = db_name;
     }
 }

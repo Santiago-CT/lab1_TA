@@ -25,9 +25,11 @@ public class InicioController extends SceneManager implements Initializable {
     public Label totalProgramas;
     public Label totalInscripciones;
 
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
+            setBotonActivo(btnInicio);
             initVars();
             getQuantities();
         } catch (Exception e) {

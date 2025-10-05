@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
@@ -75,6 +76,13 @@ public class AddProfesorController implements Initializable {
             }
         });
 
+        // Validación para solo números en ID
+        txtID.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*\\.?\\d*")) {
+                txtID.setText(oldValue);
+            }
+        });
+
         // Validación para nombres (solo letras y espacios)
         txtNombres.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]*")) {
@@ -88,6 +96,60 @@ public class AddProfesorController implements Initializable {
                 txtApellidos.setText(oldValue);
             }
         });
+    }
+
+    /**
+     * Valida todos los campos del formulario
+     */
+    private boolean validarFormulario() {
+        StringBuilder errores = new StringBuilder();
+
+        // Validar ID
+        if (txtID.getText() == null || txtID.getText().trim().isEmpty()) {
+            errores.append("• El campo ID es requerido\n");
+        } else {
+            try {
+                double codigo = Double.parseDouble(txtID.getText().trim());
+                if (codigo <= 0) {
+                    errores.append("• El ID debe ser un número positivo\n");
+                }
+            } catch (NumberFormatException e) {
+                errores.append("• El ID debe ser un número válido\n");
+            }
+        }
+
+        // Validar nombres
+        if (txtNombres.getText() == null || txtNombres.getText().trim().isEmpty()) {
+            errores.append("• El campo Nombres es requerido\n");
+        } else if (txtNombres.getText().trim().length() < 2) {
+            errores.append("• Los nombres deben tener al menos 2 caracteres\n");
+        }
+
+        // Validar apellidos
+        if (txtApellidos.getText() == null || txtApellidos.getText().trim().isEmpty()) {
+            errores.append("• El campo Apellidos es requerido\n");
+        } else if (txtApellidos.getText().trim().length() < 2) {
+            errores.append("• Los apellidos deben tener al menos 2 caracteres\n");
+        }
+
+        // Validar email
+        if (txtEmail.getText() == null || txtEmail.getText().trim().isEmpty()) {
+            errores.append("• El campo Email es requerido\n");
+        } else if (!profesorController.validarFormatoEmailPublico(txtEmail.getText().trim())) {
+            errores.append("• El formato del email no es válido\n");
+        }
+
+        // Validar tipo de contrato
+        if (cmbTipoContrato.getValue() == null || cmbTipoContrato.getValue().equals("Seleccione el tipo")) {
+            errores.append("• Debe seleccionar un tipo de contrato\n");
+        }
+
+        if (errores.length() > 0) {
+            mostrarMensajeError("Por favor corrija los siguientes errores:\n" + errores.toString());
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -132,46 +194,7 @@ public class AddProfesorController implements Initializable {
         }
     }
 
-    /**
-     * Valida todos los campos del formulario
-     */
-    private boolean validarFormulario() {
-        StringBuilder errores = new StringBuilder();
 
-        // Validar nombres
-        if (txtNombres.getText() == null || txtNombres.getText().trim().isEmpty()) {
-            errores.append("• El campo Nombres es requerido\n");
-        } else if (txtNombres.getText().trim().length() < 2) {
-            errores.append("• Los nombres deben tener al menos 2 caracteres\n");
-        }
-
-        // Validar apellidos
-        if (txtApellidos.getText() == null || txtApellidos.getText().trim().isEmpty()) {
-            errores.append("• El campo Apellidos es requerido\n");
-        } else if (txtApellidos.getText().trim().length() < 2) {
-            errores.append("• Los apellidos deben tener al menos 2 caracteres\n");
-        }
-
-        // Validar email
-        if (txtEmail.getText() == null || txtEmail.getText().trim().isEmpty()) {
-            errores.append("• El campo Email es requerido\n");
-        } else if (!profesorController.validarFormatoEmailPublico(txtEmail.getText().trim())) {
-            errores.append("• El formato del email no es válido\n");
-        }
-
-
-        // Validar tipo de contrato
-        if (cmbTipoContrato.getValue() == null) {
-            errores.append("• Debe seleccionar un tipo de contrato\n");
-        }
-
-        if (errores.length() > 0) {
-            mostrarMensajeError("Por favor corrija los siguientes errores:\n" + errores.toString());
-            return false;
-        }
-
-        return true;
-    }
 
     /**
      * Maneja el evento de cancelar

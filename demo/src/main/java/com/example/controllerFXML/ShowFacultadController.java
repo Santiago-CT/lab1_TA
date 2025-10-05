@@ -31,6 +31,7 @@ public class ShowFacultadController extends SceneManager implements Initializabl
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         facultadController = FacultadController.getInstance();
+        setBotonActivo(btnFacultades);
         configurarColumnas();
         actualizarTabla();
         configurarEventosBotones();

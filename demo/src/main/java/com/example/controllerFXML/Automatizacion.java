@@ -4,6 +4,7 @@ import com.example.controller.*;
 import com.example.database.DataBase;
 import com.example.factory.InternalFactory;
 import com.example.model.*;
+import com.example.observer.Observer;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -14,16 +15,12 @@ import java.util.Map;
 
 public class Automatizacion {
 
-  public static final List<Curso> cursosObservables = new ArrayList<>();
     private static final Map<Double, Profesor> profesores = new HashMap<>();
     private static final Map<Double, Facultad> facultades = new HashMap<>();
     private static final Map<Double, Programa> programas = new HashMap<>();
     private static final Map<Double, Estudiante> estudiantes = new HashMap<>();
     private static final Map<Integer, Curso> cursos = new HashMap<>();
     private static final CursosInscritos cursosInscritos = new CursosInscritos();
-    private static final Map<Integer, CursoProfesor> cursoProfesor = new HashMap<>();
-    private static final CursosProfesores cursosProfesores = new CursosProfesores();
-    private static final InscripcionesPersonas inscripcionesPersonas = new InscripcionesPersonas();
 
     private static final ProfesorController profesorController = ProfesorController.getInstance();
     private static final FacultadController facultadController = FacultadController.getInstance();
@@ -44,7 +41,7 @@ public class Automatizacion {
             insertData();
         } catch (Exception e) {
             if (!e.getMessage().contains("restricción única") && !e.getMessage().contains("Duplicate entry")) {
-                System.out.println("Error durante la automatización: " + e.getMessage());
+                System.out.println("Error durante la automatización: " + e);
             }
         }
     }
@@ -64,10 +61,6 @@ public class Automatizacion {
         Curso c2 = new Curso(20, "Estructuras de Datos", programas.get(11.0), true);
         cursos.put(c1.getID(), c1);
         cursos.put(c2.getID(), c2);
-
-        cursosObservables.clear();
-        cursosObservables.add(c1);
-        cursosObservables.add(c2);
 
         cursosInscritos.inscribirCurso(new Inscripcion(estudiantes.get(124.0), cursos.get(20), 2025, 1));
         cursosInscritos.inscribirCurso(new Inscripcion(estudiantes.get(125.0), cursos.get(16), 2024, 2));
@@ -130,7 +123,7 @@ public class Automatizacion {
                     c.getPrograma().getNombre(),
                     c.isActivo()
             );
-            if (!cursoController.existeCurso(cursoDTO))
+            if (!cursoController.alreadyExist(cursoDTO))
                 cursoController.insert(cursoDTO);
         }
         for (Inscripcion i: cursosInscritos.getListado()){
@@ -146,4 +139,5 @@ public class Automatizacion {
                 inscripcionController.insert(dto);
         }
     }
+
 }

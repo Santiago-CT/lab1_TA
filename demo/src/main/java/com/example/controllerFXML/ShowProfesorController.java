@@ -34,14 +34,14 @@ public class ShowProfesorController extends SceneManager implements Initializabl
     @FXML
     private TableColumn<ProfesorDTO, String> colTipoContrato;
     @FXML
-    private Button btnAgregarProfesor;
+    private Button btnAgregar;
 
     private ProfesorController profesorController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         profesorController = ProfesorController.getInstance();
-
+        setBotonActivo(btnProfesores);
         configurarColumnas();
         actualizarTabla();
         configurarEventosBotones();
@@ -71,7 +71,7 @@ public class ShowProfesorController extends SceneManager implements Initializabl
     }
 
     private void configurarEventosBotones() {
-        btnAgregarProfesor.setOnAction(event -> mostrarVentanaAgregarProfesor());
+        btnAgregar.setOnAction(event -> mostrarVentanaAgregarProfesor());
 
         // Habilitar botones cuando se seleccione una fila
         tablaProfesores.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
@@ -93,7 +93,7 @@ public class ShowProfesorController extends SceneManager implements Initializabl
             Stage modalStage = new Stage();
             modalStage.setTitle("Agregar Nuevo Profesor");
             modalStage.initModality(Modality.APPLICATION_MODAL);
-            modalStage.initOwner(btnAgregarProfesor.getScene().getWindow());
+            modalStage.initOwner(btnAgregar.getScene().getWindow());
             modalStage.setResizable(false);
 
             Scene scene = new Scene(root);

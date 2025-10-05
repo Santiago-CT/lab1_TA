@@ -1,47 +1,53 @@
 package com.example.controllerFXML;
 
+import com.example.controller.CursoController;
+import com.example.observer.Observable;
+import com.example.observer.Observer;
+import com.example.persistence.*;
 import com.example.services.DB_Services;
 import com.example.services.View;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class SceneManager extends Application implements View {
+public class SceneManager extends Application implements View{
 
     private static Scene scene;
-
     @FXML
-    private Label usuarioActual;
+    public Label usuarioActual;
     @FXML
-    private Label fechaActual;
+    public Label db_name;
+    @FXML
+    public Label fechaActual;
     @FXML
     public Button btnAgregar;
+    @FXML
+    public Button btnInicio, btnProfesores, btnEstudiantes, btnFacultades,
+            btnProgramas, btnCursos, btnInscripciones;
+    private Button botonActivo;
 
-    @Override
-    public void iniciar(){
-        launch();
-    }
+    @FXML
+    private static void showObserverView() throws IOException {
+        FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/view/NotificadorView.fxml"));
 
-    @Override
-    public void start(Stage stage) throws Exception {
-        new Automatizacion().run();
-        SceneManager.showMainView(stage);
-    }
+        Parent root = loader.load();
 
-    public static void showMainView(Stage primaryStage) throws IOException {
-        scene = new Scene(loadFXML("inicio"), 900, 600);
-        primaryStage.setTitle("SGA");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        ObserverController observerController = loader.getController();
+        CursoController.getInstance().addObserver(observerController);
+
+        Stage stage = new Stage();
+        stage.setTitle("Observador de Cursos");
+        stage.setScene(new Scene(root));
+        stage.show();
     }
 
     private static void setRoot(String fxml) throws IOException {
@@ -51,6 +57,24 @@ public class SceneManager extends Application implements View {
     private static Parent loadFXML(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(SceneManager.class.getResource("/view/" + fxml + ".fxml"));
         return fxmlLoader.load();
+    }
+
+    @Override
+    public void iniciar() {
+        launch();
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        showMainView(stage);
+        showObserverView();
+    }
+
+    private void showMainView(Stage primaryStage) throws IOException {
+        scene = new Scene(loadFXML("inicio"), 900, 600);
+        primaryStage.setTitle("SGA");
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
     @FXML
@@ -97,6 +121,10 @@ public class SceneManager extends Application implements View {
         if (usuarioActual != null) {
             usuarioActual.setText("Usuario: Administrador");
         }
+
+        if (db_name != null) {
+            db_name.setText("Database: " + DB_Services.getDB_Name());
+        }
     }
 
     @FXML
@@ -130,4 +158,13 @@ public class SceneManager extends Application implements View {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
+
+    public void setBotonActivo(Button boton) {
+        if (botonActivo != null) {
+            botonActivo.getStyleClass().remove("active");
+        }
+        boton.getStyleClass().add("active");
+        botonActivo = boton;
+    }
+
 }

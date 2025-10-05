@@ -6,13 +6,13 @@
 <?import javafx.scene.text.Font?>
 
 <VBox xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.example.controllerFXML.NotificadorController"
+      fx:controller="com.example.controllerFXML.ObserverController"
       spacing="10" prefWidth="500" prefHeight="300">
     <padding>
         <Insets top="15" right="15" bottom="15" left="15"/>
     </padding>
 
-    <Label text="🔔 Monitor de Actividad de Cursos">
+    <Label text="Observador de Cursos">
         <font>
             <Font name="System Bold" size="18.0"/>
         </font>

@@ -12,21 +12,21 @@
 <?import javafx.scene.text.Font?>
 
 <?import javafx.scene.layout.TilePane?>
-<BorderPane prefHeight="800" prefWidth="1200" stylesheets="@../styles/profesor.css"
+<?import javafx.scene.control.ComboBox?>
+<BorderPane prefHeight="800.0" prefWidth="1200.0"
+            stylesheets="@../styles/profesor.css"
             xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.example.controllerFXML.InicioController">
 
-    <!-- MENÚ LATERAL -->
+    <!-- MENÚ LATERAL RESPONSIVE -->
     <left>
-        <VBox styleClass="sidebar" maxWidth="280.0" minWidth="280.0" prefWidth="280.0">
-
-
+        <VBox styleClass="sidebar" minWidth="50.0" prefWidth="80.0" maxWidth="100.0">
             <Separator styleClass="sidebar-separator" />
 
             <!-- Navegación Principal -->
             <VBox styleClass="nav-section" spacing="4">
                 <padding>
-                    <Insets top="16" left="16" right="16" bottom="8" />
+                    <Insets top="6.0" left="6.0" right="6.0" bottom="6.0" />
                 </padding>
 
                 <Label text="MENÚ PRINCIPAL" styleClass="nav-section-title">
@@ -35,11 +35,11 @@
                     </font>
                 </Label>
 
-                <Button onAction="#mostrarInicio" prefWidth="248" text="🏠 Inicio"
+                <Button fx:id="btnInicio" onAction="#mostrarInicio" text="Inicio"
                         styleClass="nav-button" />
-                <Button onAction="#mostrarProfesores" prefWidth="248" text="👨‍🏫 Profesores"
+                <Button fx:id="btnProfesores" onAction="#mostrarProfesores" text="Profesores"
                         styleClass="nav-button" />
-                <Button onAction="#mostrarEstudiantes" prefWidth="248" text="👨‍🎓 Estudiantes"
+                <Button fx:id="btnEstudiantes" onAction="#mostrarEstudiantes" text="Estudiantes"
                         styleClass="nav-button" />
             </VBox>
 
@@ -48,7 +48,7 @@
             <!-- Navegación Académica -->
             <VBox styleClass="nav-section" spacing="4">
                 <padding>
-                    <Insets top="8" left="16" right="16" bottom="8" />
+                    <Insets top="6.0" left="6.0" right="6.0" bottom="6.0" />
                 </padding>
 
                 <Label text="GESTIÓN ACADÉMICA" styleClass="nav-section-title">
@@ -57,212 +57,156 @@
                     </font>
                 </Label>
 
-                <Button onAction="#mostrarFacultades" prefWidth="248" text="🏛️ Facultades"
+                <Button fx:id="btnFacultades" onAction="#mostrarFacultades" text="Facultades"
                         styleClass="nav-button" />
-                <Button onAction="#mostrarProgramas" prefWidth="248" text="📚 Programas"
+                <Button fx:id="btnProgramas" onAction="#mostrarProgramas" text="Programas"
                         styleClass="nav-button" />
-                <Button onAction="#mostrarCursos" prefWidth="248" text="📖 Cursos"
+                <Button fx:id="btnCursos" onAction="#mostrarCursos" text="Cursos"
                         styleClass="nav-button" />
-                <Button onAction="#mostrarInscripciones" prefWidth="248" text="📝 Inscripciones"
+                <Button fx:id="btnInscripciones" onAction="#mostrarInscripciones" text="Inscripciones"
                         styleClass="nav-button" />
             </VBox>
 
-            <!-- Espaciador para empujar el contenido inferior -->
+            <!-- Espaciador responsive -->
             <Region VBox.vgrow="ALWAYS" />
 
-            <!-- Footer del Sidebar -->
-            <VBox styleClass="sidebar-footer" spacing="8">
-                <padding>
-                    <Insets top="16" left="16" right="16" bottom="16" />
-                </padding>
+            <!-- Footer del Sidebar responsive -->
+            <VBox styleClass="nav-section" spacing="6">
+                <Label fx:id="db_name" styleClass="subtitle" text="Database">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+                </Label>
 
-                <Label fx:id="usuarioActual" text="  Usuario: Administrador"
+                <Label fx:id="usuarioActual" text="Usuario: Administrador"
                        styleClass="subtitle">
                     <font>
-                        <Font size="14.0" />
+                        <Font size="12.0" />
                     </font>
                 </Label>
 
                 <Separator />
 
-                <Button onAction="#cerrarSesion" prefWidth="248" text="🚪 Cerrar Sesión"
+                <Button onAction="#cerrarSesion" text="Cerrar Sesión"
                         styleClass="nav-button-danger" />
             </VBox>
         </VBox>
     </left>
 
-    <!-- ENCABEZADO SUPERIOR -->
+    <!-- ENCABEZADO SUPERIOR RESPONSIVE -->
     <top>
-        <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="16">
+        <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="12.0">
             <padding>
-                <Insets top="20" left="32" right="32" bottom="20" />
+                <Insets top="12.0" left="16.0" right="16.0" bottom="12.0" />
             </padding>
 
             <!-- Título de la sección actual -->
             <Label fx:id="tituloSeccion" text="Universidad De Los Llanos"
                    styleClass="title-medium">
                 <font>
-                    <Font name="System Bold" size="24.0" />
+                    <Font name="System Bold" size="20.0" />
                 </font>
             </Label>
 
-            <!-- Espaciador -->
+            <!-- Espaciador responsive -->
             <Region HBox.hgrow="ALWAYS" />
 
-            <!-- Información del usuario (opcional) -->
-            <HBox alignment="CENTER_RIGHT" spacing="12">
-
-
-                <Label fx:id="fechaActual"
-                       styleClass="body-text">
+            <!-- Información responsive -->
+            <HBox alignment="CENTER_RIGHT" spacing="8.0">
+                <Label fx:id="fechaActual" styleClass="body-text">
                     <font>
-                        <Font size="12.0" />
+                        <Font size="11.0" />
                     </font>
                 </Label>
             </HBox>
         </HBox>
     </top>
 
-    <!-- CONTENIDO CENTRAL -->
+    <!-- CONTENIDO CENTRAL RESPONSIVE -->
     <center>
         <StackPane fx:id="contenidoPrincipal" styleClass="content-area">
             <padding>
-                <Insets top="32" left="32" right="32" bottom="32" />
+                <Insets top="16.0" left="16.0" right="16.0" bottom="16.0" />
             </padding>
 
             <!-- Contenido por defecto (Dashboard) -->
-            <VBox styleClass="dashboard-container" spacing="24" alignment="TOP_CENTER">
-                <!-- Card de bienvenida -->
-                <VBox styleClass="card welcome-card" spacing="16" maxWidth="800">
+            <VBox styleClass="dashboard-container" spacing="16.0" alignment="TOP_CENTER">
+                <!-- Card de bienvenida responsive -->
+                <VBox styleClass="card welcome-card" spacing="12.0" maxWidth="800.0" minWidth="300.0">
                     <padding>
-                        <Insets top="32" left="32" right="32" bottom="32" />
+                        <Insets top="20.0" left="20.0" right="20.0" bottom="20.0" />
                     </padding>
 
                     <Label text="🎓 Bienvenido al Sistema" styleClass="title-large">
                         <font>
-                            <Font name="System Bold" size="32.0" />
+                            <Font name="System Bold" size="28.0" />
                         </font>
                     </Label>
 
                     <Label text="Gestiona eficientemente estudiantes, profesores, facultades, programas académicos, cursos e incripciones a cursos desde una sola plataforma."
                            styleClass="subtitle" wrapText="true">
                         <font>
-                            <Font size="16.0" />
+                            <Font size="14.0" />
                         </font>
                     </Label>
-
                 </VBox>
 
-                <!-- Cards de estadísticas rápidas -->
-                <TilePane hgap="24" vgap="24" prefColumns="2" alignment="CENTER">
+                <!-- Cards de estadísticas responsive -->
+                <TilePane styleClass="tile-pane-responsive" hgap="16.0" vgap="16.0" prefTileWidth="180.0"
+                          prefTileHeight="120.0" prefColumns="2">
                     <!-- Card Estudiantes -->
-                    <VBox styleClass="card stat-card" spacing="8" prefWidth="200" alignment="CENTER">
+                    <VBox styleClass="card stat-card" spacing="6.0" alignment="CENTER">
                         <padding>
-                            <Insets top="24" left="24" right="24" bottom="24" />
+                            <Insets top="16.0" left="16.0" right="16.0" bottom="16.0" />
                         </padding>
-
-                        <Label fx:id="totalEstudiantes" styleClass="stat-number">
-                            <font>
-                                <Font name="System Bold" size="28.0" />
-                            </font>
-                        </Label>
-                        <Label text="Estudiantes" styleClass="stat-label">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
+                        <Label fx:id="totalEstudiantes" styleClass="stat-number" />
+                        <Label text="Estudiantes" styleClass="stat-label" />
                     </VBox>
 
                     <!-- Card Profesores -->
-                    <VBox styleClass="card stat-card" spacing="8" prefWidth="200"  alignment="CENTER">
+                    <VBox styleClass="card stat-card" spacing="6.0" alignment="CENTER">
                         <padding>
-                            <Insets top="24" left="24" right="24" bottom="24" />
+                            <Insets top="16.0" left="16.0" right="16.0" bottom="16.0" />
                         </padding>
-
-                        <Label fx:id="totalProfesores" styleClass="stat-number">
-                            <font>
-                                <Font name="System Bold" size="28.0" />
-                            </font>
-                        </Label>
-                        <Label text="Profesores" styleClass="stat-label">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
+                        <Label fx:id="totalProfesores" styleClass="stat-number" />
+                        <Label text="Profesores" styleClass="stat-label" />
                     </VBox>
 
                     <!-- Card Facultades -->
-                    <VBox styleClass="card stat-card" spacing="8" prefWidth="200" alignment="CENTER">
+                    <VBox styleClass="card stat-card" spacing="6.0" alignment="CENTER">
                         <padding>
-                            <Insets top="24" left="24" right="24" bottom="24" />
+                            <Insets top="16.0" left="16.0" right="16.0" bottom="16.0" />
                         </padding>
-
-                        <Label fx:id="totalFacultades" styleClass="stat-number">
-                            <font>
-                                <Font name="System Bold" size="28.0" />
-                            </font>
-                        </Label>
-                        <Label text="Facultades" styleClass="stat-label">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
+                        <Label fx:id="totalFacultades" styleClass="stat-number" />
+                        <Label text="Facultades" styleClass="stat-label" />
                     </VBox>
 
                     <!-- Card Programas -->
-                    <VBox styleClass="card stat-card" spacing="8" prefWidth="200" alignment="CENTER">
+                    <VBox styleClass="card stat-card" spacing="6.0" alignment="CENTER">
                         <padding>
-                            <Insets top="24" left="24" right="24" bottom="24" />
+                            <Insets top="16.0" left="16.0" right="16.0" bottom="16.0" />
                         </padding>
-
-                        <Label fx:id="totalProgramas" styleClass="stat-number">
-                            <font>
-                                <Font name="System Bold" size="28.0" />
-                            </font>
-                        </Label>
-                        <Label text="Cursos" styleClass="stat-label">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
+                        <Label fx:id="totalProgramas" styleClass="stat-number" />
+                        <Label text="Programas" styleClass="stat-label" />
                     </VBox>
 
                     <!-- Card Cursos -->
-                    <VBox styleClass="card stat-card" spacing="8" prefWidth="200" alignment="CENTER">
+                    <VBox styleClass="card stat-card" spacing="6.0" alignment="CENTER">
                         <padding>
-                            <Insets top="24" left="24" right="24" bottom="24" />
+                            <Insets top="16.0" left="16.0" right="16.0" bottom="16.0" />
                         </padding>
-
-                        <Label fx:id="totalCursos" text="156" styleClass="stat-number">
-                            <font>
-                                <Font name="System Bold" size="28.0" />
-                            </font>
-                        </Label>
-                        <Label text="Cursos" styleClass="stat-label">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
+                        <Label fx:id="totalCursos" text="0" styleClass="stat-number" />
+                        <Label text="Cursos" styleClass="stat-label" />
                     </VBox>
 
                     <!-- Card Inscripciones -->
-                    <VBox styleClass="card stat-card" spacing="8" prefWidth="200" alignment="CENTER">
+                    <VBox styleClass="card stat-card" spacing="6.0" alignment="CENTER">
                         <padding>
-                            <Insets top="24" left="24" right="24" bottom="24" />
+                            <Insets top="16.0" left="16.0" right="16.0" bottom="16.0" />
                         </padding>
-
-                        <Label fx:id="totalInscripciones" text="156" styleClass="stat-number">
-                            <font>
-                                <Font name="System Bold" size="28.0" />
-                            </font>
-                        </Label>
-                        <Label text="Inscripciones a Cursos" styleClass="stat-label">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
+                        <Label fx:id="totalInscripciones" text="0" styleClass="stat-number" />
+                        <Label text="Inscripciones" styleClass="stat-label" />
                     </VBox>
-
                 </TilePane>
             </VBox>
         </StackPane>

@@ -37,7 +37,7 @@ public class ShowEstudianteController extends SceneManager implements Initializa
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        setBotonActivo(btnEstudiantes);
         configurarColumnasTabla();
         actualizarTabla();
         configurarEventosBotones();

@@ -7,11 +7,14 @@ import java.util.List;
 public class Oracle implements DataBase{
     private static Oracle instance;
     private static Connection driverManager;
-    private Oracle(){}
+    private String db_name;
+    private Oracle(){
+        setDb_name("ORACLE");
+    }
 
     public static Oracle getInstance(){
-        //System.out.println(instance);
-        if (instance != null) instance = new Oracle();
+        //System.out.println("ORACLE: " + instance);
+        if (instance == null) instance = new Oracle();
         //System.out.println(instance);
         return instance;
     }
@@ -23,12 +26,17 @@ public class Oracle implements DataBase{
             throw new SQLException("Oracle JDBC driver not found.", e);
         }
 
-        String URL = "jdbc:oracle:thin:@//localhost:1521/XEPDB1";
+        String URL = "jdbc:oracle:thin:@localhost:1521/XEPDB1";
         String USER = "system";
         String PASSWORD = "password";
-
-        if (driverManager == null) driverManager = DriverManager.getConnection(URL, USER, PASSWORD);
-        return driverManager;
+        try {
+            if (driverManager == null || driverManager.isClosed()) {
+                driverManager = DriverManager.getConnection(URL, USER, PASSWORD);
+            }
+            return driverManager;
+        } catch (SQLException e) {
+            throw new SQLException("Failed to connect to Oracle database: " + e.getMessage(), e);
+        }
     }
 
 
@@ -129,7 +137,7 @@ public class Oracle implements DataBase{
     @Override
     public String getDate() {
 
-        String sql = "SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS') AS current_date_time FROM dual";
+        String sql = "SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS') current_date_time FROM dual";
         try (Connection cn = getConnection();
              PreparedStatement st = cn.prepareStatement(sql);
              ResultSet rs = st.executeQuery()) {
@@ -140,5 +148,14 @@ public class Oracle implements DataBase{
             e.printStackTrace();
         }
         return "";
+    }
+
+    @Override
+    public String getDb_name() {
+        return db_name;
+    }
+    @Override
+    public void setDb_name(String db_name) {
+        this.db_name = db_name;
     }
 }

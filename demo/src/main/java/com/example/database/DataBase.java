@@ -7,4 +7,6 @@ public interface DataBase {
     Connection getConnection() throws SQLException;
     void crearTablas();
     String getDate();
+    String getDb_name();
+    void setDb_name(String db_name);
 }

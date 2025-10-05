@@ -48,7 +48,7 @@ public class ShowCursoController extends SceneManager implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources){
         cursoController = CursoController.getInstance();
-
+        setBotonActivo(btnCursos);
         configurarColumnas();
         configurarEventosBotones();
         actualizarTabla();
@@ -77,28 +77,6 @@ public class ShowCursoController extends SceneManager implements Initializable {
             mostrarError("Error", "No se pudieron cargar los datos de cursos: " + e.getMessage());
             e.printStackTrace();
             tablaCursos.setItems(FXCollections.observableArrayList());
-        }
-    }
-
-    @FXML
-    private void handleModificarCurso() {
-        CursoDTO seleccionado = tablaCursos.getSelectionModel().getSelectedItem();
-        if (seleccionado == null) {
-            mostrarError("Sin Selección", "Por favor, seleccione un curso de la tabla para modificarlo.");
-            return;
-        }
-
-        Optional<Curso> cursoObservableOpt = Automatizacion.cursosObservables.stream()
-                .filter(c -> c.getID() == seleccionado.getID())
-                .findFirst();
-
-        if (cursoObservableOpt.isPresent()) {
-            Curso cursoObservable = cursoObservableOpt.get();
-            String nuevoNombre = "Modificado a las " + LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-            cursoObservable.setNombre(nuevoNombre);
-            actualizarTabla();
-        } else {
-            mostrarError("Error", "No se encontró el curso observable correspondiente.");
         }
     }
 

@@ -4,8 +4,10 @@ import com.example.dataTransfer.CursoDTO;
 import com.example.dataTransfer.DataTransfer;
 import com.example.dataTransfer.EstudianteDTO;
 import com.example.database.DataBase;
+import com.example.database.Oracle;
 import com.example.factory.InternalFactory;
 import com.example.model.*;
+import com.example.observer.Observer;
 
 
 import java.sql.*;
@@ -14,7 +16,7 @@ import java.util.List;
 
 public class EstudianteDAO implements Persistence {
 
-    private final DataBase database;
+    private DataBase database;
     private static EstudianteDAO instance;
 
     private EstudianteDAO(){
@@ -66,14 +68,7 @@ public class EstudianteDAO implements Persistence {
 
     @Override
     public List<DataTransfer> getAll() throws Exception {
-        String sql = """
-                SELECT p.id, p.nombres, p.apellidos, p.email,
-                       e.codigo, e.activo, e.promedio,
-                       prog.id AS programa_id, prog.nombre AS programa_nombre
-                FROM persona p
-                JOIN estudiante e ON p.id = e.persona_id
-                JOIN programa prog ON e.programa_id = prog.id
-                """;
+        String sql = getSQL();
 
         List<DataTransfer> estudiantes = new ArrayList<>();
         try (Connection cn = database.getConnection();
@@ -107,6 +102,30 @@ public class EstudianteDAO implements Persistence {
             }
             return estudiantes;
         }
+    }
+
+    private String getSQL() {
+        String sql;
+        if (database instanceof Oracle) {
+            sql = """
+                    SELECT p.id, p.nombres, p.apellidos, p.email,
+                           e.codigo, e.activo, e.promedio,
+                           prog.id programa_id, prog.nombre programa_nombre
+                    FROM persona p
+                    JOIN estudiante e ON p.id = e.persona_id
+                    JOIN programa prog ON e.programa_id = prog.id
+                    """;
+        } else {
+            sql = """
+                    SELECT p.id, p.nombres, p.apellidos, p.email,
+                           e.codigo, e.activo, e.promedio,
+                           prog.id AS programa_id, prog.nombre AS programa_nombre
+                    FROM persona p
+                    JOIN estudiante e ON p.id = e.persona_id
+                    JOIN programa prog ON e.programa_id = prog.id
+                    """;
+        }
+        return sql;
     }
 
     @Override
