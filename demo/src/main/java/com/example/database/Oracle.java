@@ -137,12 +137,12 @@ public class Oracle implements DataBase{
     @Override
     public String getDate() {
 
-        String sql = "SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS') current_date_time FROM dual";
+        String sql = "SELECT SYSDATE FROM dual";
         try (Connection cn = getConnection();
              PreparedStatement st = cn.prepareStatement(sql);
              ResultSet rs = st.executeQuery()) {
             if (rs.next()) {
-                return rs.getString("current_date_time");
+                return rs.getString("SYSDATE");
             }
         } catch (Exception e) {
             e.printStackTrace();

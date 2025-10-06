@@ -6,6 +6,7 @@ services:
     environment:
       - ORACLE_PASSWORD=password
       - ORACLE_DISABLE_ASYNCH_IO=true  # Reducir uso de memoria
+      - TZ=America/Bogota
     ports:
       - "1521:1521"
     volumes:
@@ -31,6 +32,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=testdb
+      - TZ=America/Bogota
     ports:
       - "3307:3306"
     volumes:

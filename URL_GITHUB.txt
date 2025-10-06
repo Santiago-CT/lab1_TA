@@ -1,3 +1,7 @@
 https://github.com/Santiago-CT/lab1_TA.git
 
 Grupo: Santiago Cardona y Juan Aristizabal
+
+Para ejecutar es: 
+sudo docker-compose up -d
+Y luego se ejecuta normalmente el proyecto
